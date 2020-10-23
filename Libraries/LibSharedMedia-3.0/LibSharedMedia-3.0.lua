@@ -182,7 +182,7 @@ lib.DefaultMedia.statusbar = "Blizzard"
 if not lib.MediaTable.sound then
     lib.MediaTable.sound = {}
 end
-lib.MediaTable.sound["None"] = RESTRICTED_FILE_ACCESS and 1 or [[Interface\Quiet.ogg]] -- Relies on the fact that PlaySound[File] doesn't error on these values.
+lib.MediaTable.sound["None"] = RESTRICTED_FILE_ACCESS and 1 or [[Interface\Quiet.ogg]]
 lib.DefaultMedia.sound = "None"
 
 local function rebuildMediaList(mediatype)
@@ -224,7 +224,8 @@ function lib:Register(mediatype, key, data, langmask)
             -- files accessed via path only allowed from interface folder
             return false
         end
-        if mediatype == lib.MediaType.SOUND and not (path:find(".ogg", nil, true) or not path:find(".mp3", nil, true)) then
+        if mediatype == lib.MediaType.SOUND and not (path:find(".ogg", nil, true) or not path:find(".mp3", nil, true))
+            then
             -- Only ogg and mp3 are valid sounds.
             return false
         end
