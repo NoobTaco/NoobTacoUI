@@ -11,6 +11,8 @@
 ## Notes: Font's and Elite Frames
 ## X-Tukui-ProjectID: 185
 ## X-Tukui-ProjectFolders: NoobTacoUI-Media
+## X-WoWI-ID: 25745
+## X-Curse-Project-ID: 414875
 
 Libraries\Load_Libraries.xml
 Media\Load_Media.xml
