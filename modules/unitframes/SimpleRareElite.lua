@@ -1,6 +1,6 @@
--- SRE_VERSION = "0.1";
 local SimpleRareElite = CreateFrame('Frame', 'SimpleRareElite', UIParent)
 local TargetFrame
+local UnitClass
 
 -- Set Textures
 local function SetSimpleRareElite(Texture)
@@ -23,7 +23,7 @@ local function CreateSimpleRareElite()
 	SimpleRareElite:RegisterEvent('PLAYER_LOGIN')
 	SimpleRareElite:RegisterEvent("ADDON_LOADED")
 
-	SimpleRareElite:SetScript('OnEvent', function(self, event, arg1)
+	SimpleRareElite:SetScript('OnEvent', function(self, event)
 		self:Hide()
 
 		if event == 'PLAYER_LOGIN' then
