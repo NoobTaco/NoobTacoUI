@@ -7,7 +7,7 @@ This is a companion addon to ElvUI that adds elite overlay's for unitframes and 
 
 ### Elite Frames
 
-These overlays are the original ingame frames. They are designed to work with [NoobTacoUI](https://github.com/NoobTaco/NoobTacoUI), however you can use them with any unnitframe.
+These overlays are the original in game frames. They are designed to work with [NoobTacoUI](https://github.com/NoobTaco/NoobTacoUI), however you can use them with any unitframe.
 
 ![image](https://user-images.githubusercontent.com/1172935/96930063-f2a8b480-146f-11eb-896c-c708575199ff.png)
 
