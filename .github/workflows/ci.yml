@@ -15,12 +15,12 @@ jobs:
       # with:
       #   args: "--no-color -q"
 
-      - name: Run luacheck
+    - name: Run luacheck
       uses: BigWigsMods/actions/luacheck@master
       with:
         args: -q
 
-      - name: Package Retail
+    - name: Package Retail
       uses: BigWigsMods/packager@master
       with:
         args: -d
