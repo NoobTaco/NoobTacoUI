@@ -7,23 +7,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
     - name: Checkout repository
       uses: actions/checkout@v1
-
-      # - name: "Run Luacheck"
-      # uses: nebularg/actions-luacheck@v1
-      # with:
-      #   args: "--no-color -q"
 
     - name: Run luacheck
       uses: BigWigsMods/actions/luacheck@master
       with:
-        args: -q
+        args: -q --allow-defined
 
     - name: Package Retail
       uses: BigWigsMods/packager@master
       with:
         args: -d
+
     - name: Package Classic
       uses: BigWigsMods/packager@master
       with:
