@@ -1,5 +1,8 @@
 # NoobTacoUI-Media
 
+![CI Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/Release/badge.svg) 
+
+
 This is a companion addon to ElvUI that adds eleite overlay's for unitframes and Google Fonts to be used within (most) World of Warcraft addons. 
 
 ### Elite Frames
