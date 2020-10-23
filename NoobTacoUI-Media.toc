@@ -6,7 +6,7 @@
 #@end-non-retail@
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
-## Version: 1.0.2
+## Version: 1.0.3
 ## OptionalDeps: SharedMedia, ElvUI
 ## Notes: Font's and Elite Frames
 ## X-Tukui-ProjectID: 185
