@@ -9,11 +9,18 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v1
-    - name: "Run Luacheck"
-      uses: nebularg/actions-luacheck@v1
+
+      # - name: "Run Luacheck"
+      # uses: nebularg/actions-luacheck@v1
+      # with:
+      #   args: "--no-color -q"
+
+      - name: Run luacheck
+      uses: BigWigsMods/actions/luacheck@master
       with:
-        args: "--no-color -q"
-    - name: Package Retail
+        args: -q
+
+      - name: Package Retail
       uses: BigWigsMods/packager@master
       with:
         args: -d
