@@ -1,7 +1,12 @@
+#@retail@
 ## Interface: 90001
+#@end-retail@
+#@non-retail@
+# ## Interface: 11305
+#@end-non-retail@
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
-## Version: 1.21
+## Version: 1.0.2
 ## OptionalDeps: SharedMedia, ElvUI
 ## Notes: Font's and Elite Frames
 ## X-Tukui-ProjectID: 185
