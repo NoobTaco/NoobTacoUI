@@ -25,7 +25,7 @@ local table_sort = _G.table.sort
 
 local RESTRICTED_FILE_ACCESS =
     not not C_RaidLocks -- starting with 8.2, some rules for file access have changed; classic still uses the old way
-    
+
 local locale = GetLocale()
 local locale_is_western
 local LOCALE_MASK = 0
@@ -101,35 +101,6 @@ if not lib.MediaTable.font then
     lib.MediaTable.font = {}
 end
 local SML_MT_font = lib.MediaTable.font
---[[
-All font files are currently in all clients, the following table depicts which font supports which charset as of 5.0.4
-Fonts were checked using langcover.pl from DejaVu fonts (http://sourceforge.net/projects/dejavu/) and FontForge (http://fontforge.org/)
-latin means check for: de, en, es, fr, it, pt
-
-file				name							latin	koKR	ruRU	zhCN	zhTW
-2002.ttf			2002							X		X		X		-		-
-2002B.ttf			2002 Bold						X		X		X		-		-
-ARHei.ttf			AR CrystalzcuheiGBK Demibold	X		-		X		X		X
-ARIALN.TTF			Arial Narrow					X		-		X		-		-
-ARKai_C.ttf			AR ZhongkaiGBK Medium (Combat)	X		-		X		X		X
-ARKai_T.ttf			AR ZhongkaiGBK Medium			X		-		X		X		X
-bHEI00M.ttf			AR Heiti2 Medium B5				-		-		-		-		X
-bHEI01B.ttf			AR Heiti2 Bold B5				-		-		-		-		X
-bKAI00M.ttf			AR Kaiti Medium B5				-		-		-		-		X
-bLEI00D.ttf			AR Leisu Demi B5				-		-		-		-		X
-FRIZQT__.TTF		Friz Quadrata TT				X		-		-		-		-
-FRIZQT___CYR.TTF	FrizQuadrataCTT					x		-		X		-		-
-K_Damage.TTF		YDIWingsM						-		X		X		-		-
-K_Pagetext.TTF		MoK								X		X		X		-		-
-MORPHEUS.TTF		Morpheus						X		-		-		-		-
-MORPHEUS_CYR.TTF	Morpheus						X		-		X		-		-
-NIM_____.ttf		Nimrod MT						X		-		X		-		-
-SKURRI.TTF			Skurri							X		-		-		-		-
-SKURRI_CYR.TTF		Skurri							X		-		X		-		-
-
-WARNING: Although FRIZQT___CYR is available on western clients, it doesn't support special European characters e.g. é, ï, ö
-Due to this, we cannot use it as a replacement for FRIZQT__.TTF
-]]
 
 if locale == "koKR" then
     LOCALE_MASK = lib.LOCALE_BIT_koKR

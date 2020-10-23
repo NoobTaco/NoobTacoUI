@@ -1,6 +1,5 @@
 local SimpleRareElite = CreateFrame('Frame', 'SimpleRareElite', UIParent)
 local TargetFrame
-local UnitClass
 
 -- Set Textures
 local function SetSimpleRareElite(Texture)
