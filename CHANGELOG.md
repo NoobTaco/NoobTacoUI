@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.4] - 2020-10-26
+### Changed
+- Cleaned up LUA code. - Not a major update. 
+
 ## [1.0.3] - 2020-10-23
 ### Changed
 - Updated the SharedMedia Lib to a more current version
