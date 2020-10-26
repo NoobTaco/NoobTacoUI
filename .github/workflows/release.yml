@@ -30,6 +30,7 @@ jobs:
         # CF_API_KEY: ${{ secrets.CF_API_KEY }}
         GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
         # WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+        #test
 
     - name: Package Retail
       uses: BigWigsMods/packager@master
