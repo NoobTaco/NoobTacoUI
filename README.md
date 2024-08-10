@@ -1,8 +1,8 @@
 # NoobTacoUI-Media
 
-![CI Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/Release/badge.svg) 
+![CI Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/Release/badge.svg)
 
-This is a companion addon to NoobTacoUI/ElvUI that adds elite overlay's for unitframes as well as Google Fonts that can be used within (most) World of Warcraft addons. 
+This is a companion addon to NoobTacoUI/ElvUI that adds elite overlay's for unitframes as well as Google Fonts that can be used within (most) World of Warcraft addons.
 
 # Features
 
@@ -14,19 +14,23 @@ The overlays are original in game frames. They are designed to work with [NoobTa
 
 ## Google Fonts
 
-I have added several fonts from Google Fonts for easy use in wow. They are using shared media and should show up in any addon's font list. 
+I have added several fonts from Google Fonts for easy use in wow. They are using shared media and should show up in any addon's font list.
 
-* Montserrat
-* Lato
-* Roboto
+-   Montserrat
+-   Lato
+-   Roboto
+-   Dosis
+-   Exo2
+-   Mukta
 
 # Download and Support
 
-## Download from your favorite addon hosts 
-* [GitHub](https://github.com/NoobTaco/NoobTacoUI-Media) 
-* [Curse/Overwolf](https://www.curseforge.com/wow/addons/noobtacoui-media) 
-* [WoW Interface](https://www.wowinterface.com/downloads/info25745-NoobTacoUI-Media.html) 
-* [TukUI](https://www.tukui.org/addons.php?id=185) 
+## Download from your favorite addon hosts
+
+-   [GitHub](https://github.com/NoobTaco/NoobTacoUI-Media)
+-   [Curse/Overwolf](https://www.curseforge.com/wow/addons/noobtacoui-media)
+-   [WoW Interface](https://www.wowinterface.com/downloads/info25745-NoobTacoUI-Media.html)
+-   [TukUI](https://www.tukui.org/addons.php?id=185)
 
 Feel free to use any of the supported download managers.
 
