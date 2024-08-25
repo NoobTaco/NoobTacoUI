@@ -23,6 +23,10 @@ I have added several fonts from Google Fonts for easy use in wow. They are using
 -   Exo2
 -   Mukta
 
+## SoundFX
+
+I have added 4 audio clips to use with Rare Scanner or Silver Dragon.
+
 # Download and Support
 
 ## Download from your favorite addon hosts

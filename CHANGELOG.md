@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.6] - 2024-08-25
+
+### Added
+
+-   Added 4 sound files to use with SilverDragon or Rare Scanner
+
 ## [1.0.5] - 2024-08-10
 
 ### Changed

@@ -47,3 +47,9 @@ LSM:Register("font", "Mukta-Light", [[Interface\AddOns\NoobTacoUI-Media\Media\Fo
 LSM:Register("font", "Mukta-Medium", [[Interface\AddOns\NoobTacoUI-Media\Media\Fonts\Mukta-Medium.ttf]])
 LSM:Register("font", "Mukta-Regular", [[Interface\AddOns\NoobTacoUI-Media\Media\Fonts\Mukta-Regular.ttf]])
 LSM:Register("font", "Mukta-SemiBold", [[Interface\AddOns\NoobTacoUI-Media\Media\Fonts\Mukta-SemiBold.ttf]])
+
+-- Audio
+LSM:Register("sound", "NT_Chest", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_chest.ogg]])
+LSM:Register("sound", "NT_Group", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_groupnpc.ogg]])
+LSM:Register("sound", "NT_Mount", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_mount.ogg]])
+LSM:Register("sound", "NT_NPC", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_npc.ogg]])
