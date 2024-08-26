@@ -1,18 +1,15 @@
-#@retail@
-## Interface: 90001
-#@end-retail@
-#@non-retail@
-# ## Interface: 11305
-#@end-non-retail@
+## Interface: 11502,11503, 40400, 110000, 110002
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
-## Version: 1.0.3
-## OptionalDeps: SharedMedia, ElvUI
+## Version: 1.0.6
+## OptionalDeps: SharedMedia
 ## Notes: Font's and Elite Frames
+## DefaultState: enabled
 ## X-Tukui-ProjectID: 185
 ## X-Tukui-ProjectFolders: NoobTacoUI-Media
 ## X-WoWI-ID: 25745
 ## X-Curse-Project-ID: 414875
+## X-Wago-ID: 
 
 Libraries\Load_Libraries.xml
 Media\Load_Media.xml
