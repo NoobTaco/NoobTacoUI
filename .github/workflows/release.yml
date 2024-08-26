@@ -27,13 +27,13 @@ jobs:
       with:
         args: -g classic
       env:
-        CF_API_KEY: ${{ secrets.CF_API_KEY }}
+        # CF_API_KEY: ${{ secrets.CF_API_KEY }}
         GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-        WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+        # WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
 
     - name: Package Retail
       uses: BigWigsMods/packager@master
       env:
-        CF_API_KEY: ${{ secrets.CF_API_KEY }}
+        # CF_API_KEY: ${{ secrets.CF_API_KEY }}
         GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-        WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+        # WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
