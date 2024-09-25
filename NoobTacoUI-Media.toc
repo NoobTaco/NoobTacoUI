@@ -1,14 +1,17 @@
 ## Interface: 11502,11503, 40400, 110000, 110002
+## Interface: 11502,11503, 40400, 110000, 110002
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
 ## Version: 1.0.7
 ## OptionalDeps: SharedMedia
 ## Notes: Font's and Elite Frames
 ## DefaultState: enabled
+## DefaultState: enabled
 ## X-Tukui-ProjectID: 185
 ## X-Tukui-ProjectFolders: NoobTacoUI-Media
 ## X-WoWI-ID: 25745
 ## X-Curse-Project-ID: 414875
+## X-Wago-ID: 
 ## X-Wago-ID: 
 
 Libraries\Load_Libraries.xml
