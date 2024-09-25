@@ -1,5 +1,52 @@
 # Changelog
 
+## [1.0.7] - 2024-08-26
+
+### Added
+
+-   Font: Poppins
+
+## [1.0.6] - 2024-08-25
+
+### Added
+
+-   4 sound files for SilverDragon or Rare Scanner
+
+## [1.0.5] - 2024-08-10
+
+### Changed
+
+-   Updated game versions
+
+### Added
+
+-   Fonts: Dosis, Exo2, Mukta
+-   Font: Poppins
+
+## [1.0.4] - 2020-10-26
+
+### Changed
+
+-   Cleaned up LUA code
+
+## [1.0.3] - 2020-10-23
+
+### Changed
+
+-   Updated SharedMedia Lib to a more current version
+
+## [1.0.4] - 2020-10-26
+
+### Changed
+
+-   Cleaned up LUA code
+
+## [1.0.3] - 2020-10-23
+
+### Changed
+
+-   Updated SharedMedia Lib to a more current version# Changelog
+
 ## [1.0.6] - 2024-08-25
 
 ### Added
