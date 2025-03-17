@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.8] - 2025-03-17
+
+### Updated
+
+-   Changed game version
+-   Updated category
+
 ## [1.0.7] - 2024-08-26
 
 ### Added
