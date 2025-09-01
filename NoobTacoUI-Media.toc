@@ -1,7 +1,7 @@
 ## Interface: 11506, 40402, 110100
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
-## Version: 1.0.8
+## Version: 1.0.9
 ## OptionalDeps: SharedMedia
 ## Notes: Font's and Elite Frames
 ## DefaultState: enabled
