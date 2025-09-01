@@ -8,11 +8,11 @@
 
 ### Changed
 
--   
+-   Updated Interface versions to support 11506, 40402, 50407, 110205
 
 ### Fixed
 
--   
+-   Fixed statusbar texture paths to point to correct addon directory (NoobTacoUI-Media)
 
 ### Removed
 

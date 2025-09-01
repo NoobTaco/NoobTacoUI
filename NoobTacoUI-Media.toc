@@ -1,4 +1,4 @@
-## Interface: 11506, 40402, 110100
+## Interface: 11506, 40402, 50407, 110205
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
 ## Version: 1.0.9
