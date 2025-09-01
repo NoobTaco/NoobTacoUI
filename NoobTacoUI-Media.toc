@@ -21,8 +21,7 @@
 ## X-Tukui-ProjectFolders: NoobTacoUI-Media
 ## X-WoWI-ID: 25745
 ## X-Curse-Project-ID: 414875
-## X-Wago-ID: 
-## X-Wago-ID: 
+## X-Wago-ID: rN4VRxKD
 
 Libraries\Load_Libraries.xml
 Media\Load_Media.xml
