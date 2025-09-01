@@ -3,7 +3,7 @@
 ## Author: NoobTaco
 ## Version: 1.0.9
 ## OptionalDeps: SharedMedia
-## Notes: Font's and Elite Frames
+## Notes: Fonts, Audio, and Textures for World of Warcraft
 ## DefaultState: enabled
 ## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga
 ## Category-enUS: UI Overhaul

@@ -1,22 +1,31 @@
 # Changelog
 
-## [1.0.9] - TBD
+## [1.0.9] - 2025-09-01
 
 ### Added
 
--   
+-   Enhanced README.md with detailed font descriptions and weight variants
+-   Installation and compatibility sections in documentation
+-   Comprehensive media documentation
 
 ### Changed
 
 -   Updated Interface versions to support 11506, 40402, 50407, 110205
+-   Updated addon description from "Font's and Elite Frames" to "Fonts, Audio, and Textures for World of Warcraft"
+-   Completely restructured README.md for better clarity and accuracy
+-   Simplified project structure by removing unused modules
 
 ### Fixed
 
 -   Fixed statusbar texture paths to point to correct addon directory (NoobTacoUI-Media)
+-   Cleaned up duplicate LSM null checks in SharedMedia.lua
 
 ### Removed
 
--   
+-   **BREAKING:** Removed SimpleRareElite module and all elite frame functionality
+-   Removed elite texture files (elite.tga, rare.tga, rareelite.tga, worldboss.tga)
+-   Removed unitframes module directory and related XML files
+-   Removed elite frame images and references from documentation
 
 ## [1.0.8] - 2025-03-17
 

@@ -3,9 +3,6 @@ local LSM = LibStub("LibSharedMedia-3.0")
 if LSM == nil then
     return
 end
-if LSM == nil then
-    return
-end
 
 -- Montserrat
 LSM:Register("font", "Montserrat-Black", [[Interface\AddOns\NoobTacoUI-Media\Media\Fonts\Montserrat-Black.ttf]])
