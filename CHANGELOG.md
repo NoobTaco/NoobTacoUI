@@ -1,12 +1,16 @@
 # Changelog
 
-## [1.0.9] - 2025-09-01
+## [1.0.9] - 2025-09-03
 
 ### Added
 
 -   Enhanced README.md with detailed font descriptions and weight variants
 -   Installation and compatibility sections in documentation
 -   Comprehensive media documentation
+-   **New Audio:** NT_InfussionOfLight sound effect
+-   **New Status Bar Textures:** Complete Nord theme collection (32 textures total)
+    -   16 solid Nord-colored textures (NT_Nord00 through NT_Nord15)
+    -   16 gradient Nord-colored textures (NT_Nord00_Gradient through NT_Nord15_Gradient)
 
 ### Changed
 
@@ -14,6 +18,8 @@
 -   Updated addon description from "Font's and Elite Frames" to "Fonts, Audio, and Textures for World of Warcraft"
 -   Completely restructured README.md for better clarity and accuracy
 -   Simplified project structure by removing unused modules
+-   **BREAKING:** Replaced old NT_Bar01-04 textures with new Nord theme collection
+-   Improved texture naming with zero-padded numbers for better in-game sorting
 
 ### Fixed
 
@@ -26,6 +32,7 @@
 -   Removed elite texture files (elite.tga, rare.tga, rareelite.tga, worldboss.tga)
 -   Removed unitframes module directory and related XML files
 -   Removed elite frame images and references from documentation
+-   **BREAKING:** Removed old NT_Bar01-04 status bar textures (replaced with Nord theme)
 
 ## [1.0.8] - 2025-03-17
 

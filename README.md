@@ -20,21 +20,28 @@ A carefully curated collection of Google Fonts optimized for World of Warcraft. 
 
 ## Audio Files
 
-Four high-quality sound effects designed for use with rare mob scanning addons like Rare Scanner or Silver Dragon:
+Five high-quality sound effects designed for use with rare mob scanning addons like Rare Scanner or Silver Dragon:
 
 -   **NT_Chest** - Treasure chest discovery sound
 -   **NT_Group** - Group/party NPC encounter sound
 -   **NT_Mount** - Mount-related sound effect
 -   **NT_NPC** - General NPC/rare mob sound
+-   **NT_InfussionOfLight** - Special ability or light-based effect sound
 
 ## Status Bar Textures
 
-Custom status bar textures for health bars, mana bars, and other UI elements:
+Complete Nord theme collection with 32 high-quality status bar textures for health bars, mana bars, and other UI elements:
 
--   **NT_Bar01** - Clean minimalist bar texture
--   **NT_Bar02** - Subtle gradient bar texture
--   **NT_Bar03** - Textured bar with depth
--   **NT_Bar04** - Smooth rounded bar texture
+### Solid Nord Textures
+16 solid-colored textures based on the popular Nord color palette (NT_Nord00 through NT_Nord15)
+
+### Gradient Nord Textures
+16 matching gradient versions for enhanced visual depth (NT_Nord00_Gradient through NT_Nord15_Gradient)
+
+All textures feature:
+-   Clean, modern aesthetic inspired by the Nord color scheme
+-   Optimized for readability and visual appeal
+-   Consistent naming with zero-padded numbers for perfect sorting
 
 # Download and Support
 
