@@ -4,6 +4,11 @@
 
 ### Added
 
+-   **New Feature:** Version command system with slash commands
+    -   `/ntm version` - Display current addon version
+    -   `/ntm ver` - Short version command
+    -   `/ntm v` - Shortest version command
+    -   `/ntm` - Show help with available commands
 -   Enhanced README.md with detailed font descriptions and weight variants
 -   Installation and compatibility sections in documentation
 -   Comprehensive media documentation
@@ -20,6 +25,7 @@
 -   Simplified project structure by removing unused modules
 -   **BREAKING:** Replaced old NT_Bar01-04 textures with new Nord theme collection
 -   Improved texture naming with zero-padded numbers for better in-game sorting
+-   Enhanced luacheck configuration to support WoW slash command globals
 
 ### Fixed
 

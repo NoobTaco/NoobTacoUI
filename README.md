@@ -6,6 +6,15 @@ This is a media addon that provides high-quality fonts, audio files, and status 
 
 # Features
 
+## Slash Commands
+
+Easy-to-use in-game commands for addon information:
+
+-   **`/ntm version`** - Display current addon version
+-   **`/ntm ver`** - Short version command  
+-   **`/ntm v`** - Shortest version command
+-   **`/ntm`** - Show help with available commands
+
 ## Google Fonts
 
 A carefully curated collection of Google Fonts optimized for World of Warcraft. These fonts are registered with SharedMedia and will show up in any addon's font list.
