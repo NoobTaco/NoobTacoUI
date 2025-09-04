@@ -1,4 +1,11 @@
 # Changelog
+## [v1.1.2] - 2025-09-04
+
+## Changes
+
+
+
+
 ## [v1.1.1] - 2025-09-04
 
 - No changes
@@ -103,6 +110,13 @@
 ### Changed
 
 -   Updated SharedMedia Lib to a more current version# Changelog
+## [v1.1.2] - 2025-09-04
+
+## Changes
+
+
+
+
 ## [v1.1.1] - 2025-09-04
 
 - No changes
