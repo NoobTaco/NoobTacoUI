@@ -143,7 +143,14 @@ local function GetAddonVersion()
   elseif GetAddOnMetadata then
     version = GetAddOnMetadata("NoobTacoUI-Media", "Version")
   end
-  return version or "1.0.9"
+
+  -- Check if version is the placeholder token or invalid
+  if not version or version == "@project-version@" or version == "" then
+    -- During development, use a meaningful fallback
+    version = "dev-build"
+  end
+
+  return version
 end
 VersionText:SetText("v" .. GetAddonVersion())
 
