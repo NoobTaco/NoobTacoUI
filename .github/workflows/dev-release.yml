@@ -54,3 +54,4 @@ jobs:
           name: NoobTacoUI-Media-dev-${{ inputs.branch }}
           path: .release/*.zip
           retention-days: 14
+          if-no-files-found: error

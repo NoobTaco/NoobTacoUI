@@ -32,12 +32,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test packaging (no upload)
+      - name: Test packaging (no upload, no zip)
+        if: "!startsWith(github.ref, 'refs/heads/develop-')"
         uses: BigWigsMods/packager@v2
         with:
           args: -d -z  # -d = no upload, -z = no zip (faster)
 
-      - name: Test full package creation
+      - name: Test full package creation (with zip)
         if: startsWith(github.ref, 'refs/heads/develop-')
         uses: BigWigsMods/packager@v2
         with:
@@ -50,3 +51,4 @@ jobs:
           name: NoobTacoUI-Media-${{ github.ref_name }}
           path: .release/*.zip
           retention-days: 7
+          if-no-files-found: warn
