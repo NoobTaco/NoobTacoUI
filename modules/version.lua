@@ -4,7 +4,6 @@
 
 local addonName = "NoobTacoUI-Media"
 local addonVersion = "v1.1.3" -- Fallback version - should match latest git tag
-local isAddonLoaded = false
 
 -- Create a frame to handle the slash command
 local versionFrame = CreateFrame("Frame")
@@ -69,7 +68,6 @@ end
 -- Optional: Show a message when the addon loads (can be disabled)
 local function OnAddonLoaded(self, event, loadedAddonName)
   if loadedAddonName == addonName then
-    isAddonLoaded = true
     -- Try to update version from metadata now that addon is loaded
     if GetAddOnMetadata then
       addonVersion = GetAddOnMetadata(addonName, "Version") or addonVersion
