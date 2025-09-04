@@ -12,14 +12,18 @@ globals = {
   -- Slash command globals (pattern: SLASH_COMMANDNAME# and SlashCmdList)
   "SLASH_NTMVERSION1", "SLASH_NTMVERSION2",
   "SlashCmdList", -- Slash command handler table (writable)
+  -- Configuration menu globals
+  "NoobTacoDB",
+  "NoobTacoUIMediaAddon",
 }
 
 -- Allow access to WoW API globals (read-only)
 read_globals = {
   -- Common WoW API functions and globals
-  "CreateFrame", "UIParent", "GameFontNormal",
+  "CreateFrame", "UIParent", "GameFontNormal", "GameFontHighlight", "GameTooltipText",
+  "GetAddOnMetadata", "Mixin", "C_AddOns",
+  "Settings",                 -- New settings system
   "Interface", "AddOns",      -- Path components used in file paths
-  "GetAddOnMetadata",         -- Addon metadata functions
   "print", "string", "table", -- Standard Lua functions available in WoW
   -- Add other WoW API functions here as needed
 }

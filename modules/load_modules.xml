@@ -1,3 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="ConfigMenu.lua"/>
 	<Script file="version.lua"/>
 </Ui>
