@@ -59,7 +59,7 @@ All textures feature:
 -   [GitHub](https://github.com/NoobTaco/NoobTacoUI-Media)
 -   [Curse/Overwolf](https://www.curseforge.com/wow/addons/noobtacoui-media)
 -   [WoW Interface](https://www.wowinterface.com/downloads/info25745-NoobTacoUI-Media.html)
--   [TukUI](https://www.tukui.org/addons.php?id=185)
+-   [Wago](https://addons.wago.io/addons/noobtacoui-media)
 
 Feel free to use any of the supported download managers.
 
