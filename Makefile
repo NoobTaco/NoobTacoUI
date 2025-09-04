@@ -1,8 +1,8 @@
 PACKAGER_URL := https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh
 
-.PHONY: libs all clean test
+.PHONY: libs all clean test package
 
-all:
+all: test
 
 libs:
 	@echo "📥 Updating libraries using BigWigsMods packager..."
@@ -17,6 +17,12 @@ libs:
 		exit 1; \
 	fi
 	@rm -rf .release
+
+package:
+	@echo "📦 Building addon package with version replacement..."
+	@echo "Current git version: $$(git describe --tags --always)"
+	curl -s $(PACKAGER_URL) | bash -s -- -d -z
+	@echo "✅ Package created in .release directory"
 
 clean:
 	@echo "🧹 Cleaning up temporary files..."
@@ -36,4 +42,5 @@ test:
 		echo "❌ LibSharedMedia-3.0 missing or incomplete"; \
 		exit 1; \
 	fi
+	@echo "Current git version: $$(git describe --tags --always)"
 	@echo "✅ All tests passed!"

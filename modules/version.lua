@@ -1,24 +1,38 @@
 -- NoobTacoUI-Media Version Command Module
 -- Author: NoobTaco
--- Version: 1.0.9
+-- Version: @project-version@
 
 local addonName = "NoobTacoUI-Media"
-local addonVersion = "1.0.9" -- Fallback version
+local addonVersion = "v1.1.2" -- Fallback version - should match latest git tag
 local isAddonLoaded = false
 
 -- Create a frame to handle the slash command
 local versionFrame = CreateFrame("Frame")
 
+-- Function to get the current addon version
+local function GetCurrentVersion()
+  local version
+
+  -- Try modern API first, then fallback to legacy API
+  if C_AddOns and C_AddOns.GetAddOnMetadata then
+    version = C_AddOns.GetAddOnMetadata(addonName, "Version")
+  elseif GetAddOnMetadata then
+    version = GetAddOnMetadata(addonName, "Version")
+  end
+
+  -- Check if version is the placeholder token or invalid
+  if not version or version == "@project-version@" or version == "" then
+    -- During development, use the fallback version
+    version = addonVersion
+  end
+
+  return version
+end
+
 -- Function to display version information
 local function ShowVersion()
   local coloredTitle = "|cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r"
-
-  -- Try to get version from metadata if addon is loaded
-  local currentVersion = addonVersion
-  if isAddonLoaded and GetAddOnMetadata then
-    currentVersion = GetAddOnMetadata(addonName, "Version") or addonVersion
-  end
-
+  local currentVersion = GetCurrentVersion()
   local message = string.format("%s version: |cFF00FF00%s|r", coloredTitle, currentVersion)
   print(message)
 end

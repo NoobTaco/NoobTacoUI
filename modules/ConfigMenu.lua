@@ -146,8 +146,8 @@ local function GetAddonVersion()
 
   -- Check if version is the placeholder token or invalid
   if not version or version == "@project-version@" or version == "" then
-    -- During development, use a meaningful fallback
-    version = "dev-build"
+    -- During development, use the current fallback version
+    version = "v1.1.2"
   end
 
   return version
