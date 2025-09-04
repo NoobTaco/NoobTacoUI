@@ -4,6 +4,15 @@ on:
   push:
     tags:
       - "**"
+    paths-ignore:
+      - ".github/**"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - "*.md"
+      - ".luacheckrc"
+      - "Makefile"
+      - "check-lua.sh"
 
 # Required for creating GitHub releases
 permissions:

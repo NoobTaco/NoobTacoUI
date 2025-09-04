@@ -1,11 +1,23 @@
 package-as: NoobTacoUI-Media
 
 externals:
-    Libraries/LibSharedMedia-3.0:
-        url: https://github.com/WoWAddonMirrors/LibSharedMedia-3.0.git
-        tag: latest
+    Libraries/LibStub: https://repos.curseforge.com/wow/libstub/trunk
+    Libraries/CallbackHandler-1.0: https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0
+    Libraries/LibSharedMedia-3.0: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
 
-enable-nolib-creation: no
 ignore:
+    - README.md
+    - CHANGELOG.md
+    - LICENSE
+    - LUACHECK_SUMMARY.md
+    - WORKFLOW_FIX.md
+    - Makefile
+    - check-lua.sh
+    - "*.git*"
     - "*.md"
-    - ".git*"
+
+plain-copy:
+    - Media
+    - modules
+
+enable-toc-creation: yes

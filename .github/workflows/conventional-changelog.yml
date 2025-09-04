@@ -1,0 +1,27 @@
+name: Conventional Changelog
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        uses: conventional-changelog/standard-version@v12
+        with:
+          release-as: ${{ github.ref_name }}
+
+      - name: Update repository
+        run: |
+          git config --local user.email "action@github.com"  
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "chore(release): ${{ github.ref_name }}"
+          git push

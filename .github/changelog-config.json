@@ -1,0 +1,35 @@
+{
+  "template": "## Changes\n\n#{{CHANGELOG}}\n\n",
+  "pr_template": "- #{{TITLE}} (#{{NUMBER}})",
+  "empty_template": "- No changes",
+  "categories": [
+    {
+      "title": "### 🚀 Added",
+      "labels": ["enhancement", "feature"]
+    },
+    {
+      "title": "### 🐛 Fixed", 
+      "labels": ["bug", "fix"]
+    },
+    {
+      "title": "### 📝 Changed",
+      "labels": ["change", "update"]
+    },
+    {
+      "title": "### 🗑️ Removed",
+      "labels": ["removal", "deprecated"]
+    },
+    {
+      "title": "### 🎨 UI/Media",
+      "labels": ["ui", "media", "texture", "font", "audio"]
+    },
+    {
+      "title": "### 🏷️ WoW Version Support",
+      "labels": ["retail", "classic", "classic-era", "hardcore"]
+    }
+  ],
+  "ignore_labels": ["duplicate", "question", "invalid", "wontfix"],
+  "sort": "ASC",
+  "max_pull_requests": 200,
+  "max_back_track_time_days": 365
+}
