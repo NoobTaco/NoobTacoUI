@@ -274,8 +274,8 @@ end
 -- Register when addon loads
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", function(self, event, addonName)
-  if addonName == "NoobTacoUI-Media" then
+frame:SetScript("OnEvent", function(self, event, loadedAddonName)
+  if loadedAddonName == "NoobTacoUI-Media" then
     RegisterWithInterfaceOptions()
     self:UnregisterEvent("ADDON_LOADED")
   end
