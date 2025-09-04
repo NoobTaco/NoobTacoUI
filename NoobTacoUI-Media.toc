@@ -1,9 +1,9 @@
-## Interface: 11506, 40402, 110100
+## Interface: 11506, 40402, 50407, 110205
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
-## Version: 1.0.8
+## Version: 1.0.9
 ## OptionalDeps: SharedMedia
-## Notes: Font's and Elite Frames
+## Notes: Fonts, Audio, and Textures for World of Warcraft
 ## DefaultState: enabled
 ## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga
 ## Category-enUS: UI Overhaul
@@ -21,8 +21,7 @@
 ## X-Tukui-ProjectFolders: NoobTacoUI-Media
 ## X-WoWI-ID: 25745
 ## X-Curse-Project-ID: 414875
-## X-Wago-ID: 
-## X-Wago-ID: 
+## X-Wago-ID: rN4VRxKD
 
 Libraries\Load_Libraries.xml
 Media\Load_Media.xml

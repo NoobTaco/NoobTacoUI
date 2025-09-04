@@ -1,10 +1,11 @@
 package-as: NoobTacoUI-Media
+
+externals:
+    Libraries/LibSharedMedia-3.0:
+        url: https://github.com/WoWAddonMirrors/LibSharedMedia-3.0.git
+        tag: latest
+
 enable-nolib-creation: no
-
 ignore:
-  - README.md
-  - CHANGELOG.md
-
-manual-changelog:
-  filename: RECENT_CHANGES.md
-  markup-type: markdown
+    - "*.md"
+    - ".git*"

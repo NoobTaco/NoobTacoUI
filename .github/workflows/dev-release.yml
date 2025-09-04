@@ -1,0 +1,57 @@
+name: Development Release
+
+on:
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      branch:
+        description: 'Branch to package'
+        required: true
+        default: 'develop-1.0.9'
+        type: string
+      upload_to_github:
+        description: 'Create GitHub pre-release'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  dev-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+
+      - name: Run luacheck
+        uses: BigWigsMods/actions/luacheck@master
+        with:
+          args: -q
+
+      - name: Package for testing
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -d  # Don't upload to external sites
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload as GitHub pre-release
+        if: inputs.upload_to_github
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -w 0 -p 0 -a ""  # Only upload to GitHub, disable other sites
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload package as artifact
+        if: "!inputs.upload_to_github"
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoobTacoUI-Media-dev-${{ inputs.branch }}
+          path: .release/*.zip
+          retention-days: 14
+          if-no-files-found: error

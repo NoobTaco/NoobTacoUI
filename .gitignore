@@ -39,4 +39,9 @@ luac.out
 *.x86_64
 *.hex
 
+# Design files
+*.afdesign
+*.psd
+*.ai
+
 .vscode

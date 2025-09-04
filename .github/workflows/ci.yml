@@ -1,27 +1,54 @@
 name: CI
+
 on:
   push:
     branches:
       - "*"
+  pull_request:
+    branches:
+      - main
+      - develop-*
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Checkout repository
-      uses: actions/checkout@v1
+      - name: Run luacheck
+        uses: BigWigsMods/actions/luacheck@master
+        with:
+          args: -q
 
-    - name: Run luacheck
-      uses: BigWigsMods/actions/luacheck@master
-      with:
-        args: -q --ignore 113 631 211 212 112 311
+  package-test:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Package Retail
-      uses: BigWigsMods/packager@master
-      with:
-        args: -d
+      - name: Test packaging (no upload, no zip)
+        if: "!startsWith(github.ref, 'refs/heads/develop-')"
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -d -z  # -d = no upload, -z = no zip (faster)
 
-    - name: Package Classic
-      uses: BigWigsMods/packager@master
-      with:
-        args: -d -g classic
+      - name: Test full package creation (with zip)
+        if: startsWith(github.ref, 'refs/heads/develop-')
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -d  # Creates zip but doesn't upload
+
+      - name: Upload package as artifact (dev branches only)
+        if: startsWith(github.ref, 'refs/heads/develop-')
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoobTacoUI-Media-${{ github.ref_name }}
+          path: .release/*.zip
+          retention-days: 7
+          if-no-files-found: warn
