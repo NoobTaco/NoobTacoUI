@@ -6,16 +6,6 @@ externals:
         tag: latest
 
 enable-nolib-creation: no
-
 ignore:
-  - README.md
-  - CHANGELOG.md
-  - "*.md"
-  - ".git*"
-  - ".github"
-  - "update-libs.sh"
-  - "Makefile"
-
-manual-changelog:
-  filename: RECENT_CHANGES.md
-  markup-type: markdown
+    - "*.md"
+    - ".git*"
