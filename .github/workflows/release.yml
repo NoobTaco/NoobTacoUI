@@ -64,17 +64,39 @@ jobs:
             find .release -name "*.zip" -exec cp {} ./artifacts/ \;
             echo "Contents of .release directory:"
             ls -la .release/
+            
+            # Look for any changelog files the packager might have created
+            echo "Looking for changelog files in .release:"
+            find .release -name "*change*" -o -name "*CHANGE*" -o -name "*.md" -o -name "*.txt" | head -10
           else
             echo "No .release directory found"
           fi
           
-          # Copy the changelog file
+          # Copy our raw changelog file for comparison
           if [ -f ".changelog" ]; then
             echo "Found .changelog file, copying..."
-            cp .changelog ./artifacts/changelog.txt
-            echo "Changelog copied as changelog.txt"
+            cp .changelog ./artifacts/raw-changelog.txt
+            echo "Raw changelog copied as raw-changelog.txt"
           else
             echo "No .changelog file found"
+          fi
+          
+          # Also check what's inside the zip file structure
+          if ls ./artifacts/*.zip 1> /dev/null 2>&1; then
+            echo "=== Examining zip file contents ==="
+            for zipfile in ./artifacts/*.zip; do
+              if [ -f "$zipfile" ]; then
+                echo "Contents of $zipfile:"
+                unzip -l "$zipfile" | head -20
+                
+                # Try to extract any changelog files from the zip
+                echo "Extracting potential changelog files from zip:"
+                unzip -j "$zipfile" "*/CHANGELOG.md" -d ./artifacts/ 2>/dev/null || echo "No CHANGELOG.md in zip"
+                unzip -j "$zipfile" "*/changelog.txt" -d ./artifacts/ 2>/dev/null || echo "No changelog.txt in zip"
+                unzip -j "$zipfile" "*/*change*" -d ./artifacts/ 2>/dev/null || echo "No other changelog files in zip"
+                break
+              fi
+            done
           fi
           
           echo "=== Final artifacts directory contents ==="
