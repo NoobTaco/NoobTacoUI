@@ -81,3 +81,26 @@ This addon works with any World of Warcraft addon that uses LibSharedMedia-3.0 f
 -   Details!
 -   Bartender4
 -   And many more...
+
+# Development
+
+For developers working on this addon, all development files are organized in the `dev/` directory:
+
+- **Development documentation**: `dev/docs/`
+- **Build scripts and tools**: `dev/scripts/`
+
+Quick commands using the helper script:
+```bash
+./dev-helper.sh test      # Run addon tests
+./dev-helper.sh check-lua # Run Lua checks
+./dev-helper.sh build     # Build package
+./dev-helper.sh libs      # Update libraries
+```
+
+See `dev/README.md` for detailed development information.
+
+# License
+
+Code in this repository is licensed under the GNU General Public License v3.0 (GPLv3). See `LICENSE` for details.
+
+Note: Media files (fonts, audio, textures) are included under their respective upstream licenses. Ensure any redistribution complies with each asset's license terms.

@@ -4,6 +4,7 @@
 ## Version: @project-version@
 ## OptionalDeps: SharedMedia
 ## Notes: Fonts, Audio, and Textures for World of Warcraft
+## X-License: GPL-3.0-or-later
 ## DefaultState: enabled
 ## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga
 ## SavedVariables: NoobTacoDB

@@ -8,18 +8,11 @@ externals:
 ignore:
     - README.md
     - CHANGELOG.md
-    - LICENSE
-    - LUACHECK_SUMMARY.md
-    - WORKFLOW_FIX.md
-    - Makefile
-    - check-lua.sh
-    - release.sh
-    - test-version.sh
+    - dev/
+    - dev-helper.sh
     - "*.git*"
-    - "*.md"
     - "*.sh"
-    - PLUMBER_*.md
-    - ENHANCED_*.md
+    - release.sh
     - extract-plumber-assets.sh
 
 plain-copy:

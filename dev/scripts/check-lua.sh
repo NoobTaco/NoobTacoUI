@@ -3,6 +3,9 @@
 # NoobTacoUI-Media Lua Check Script
 # This script runs comprehensive Lua checks on the project
 
+# Change to project root directory
+cd "$(dirname "$0")/../.."
+
 echo "🔍 Running Lua checks for NoobTacoUI-Media..."
 echo
 
