@@ -195,10 +195,10 @@ local function OnNewToy(self, event, itemID)
       -- Check if we already have this toy using the toy box API
       local isToyUsable = C_ToyBox.IsToyUsable(itemID)
       local hasToy = PlayerHasToy(itemID)
-      
-      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Toy status - Usable: %s, Have: %s", 
+
+      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Toy status - Usable: %s, Have: %s",
         tostring(isToyUsable or "nil"), tostring(hasToy or "nil")))
-      
+
       -- For toys, the NEW_TOY_ADDED event should only fire for genuinely new toys
       -- Similar to mounts, toys are unique - you either have it or you don't
       PlayNotificationSound("soundToy")
@@ -225,18 +225,55 @@ local function OnTransmogCollected(self, event, appearanceID, sourceID)
     "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog event triggered! Event: %s, AppearanceID: %s, SourceID: %s",
     event or "nil", tostring(appearanceID or "nil"), tostring(sourceID or "nil")))
 
-  if GetSetting("newTransmog") then
+  if GetSetting("newTransmog") and appearanceID then
+    -- Get transmog appearance info using WoW's transmog APIs
+    local appearanceInfo = C_TransmogCollection.GetAppearanceInfoByID(appearanceID)
+    local sourceInfo = sourceID and C_TransmogCollection.GetSourceInfo(sourceID) or nil
+    
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog info - AppearanceInfo: %s, SourceInfo: %s", 
+      tostring(appearanceInfo and "found" or "nil"), tostring(sourceInfo and "found" or "nil")))
+    
+    -- Try to get item info if we have a source
+    local itemName = nil
+    local slotName = nil
+    
+    if sourceInfo then
+      if sourceInfo.itemID and sourceInfo.itemID > 0 then
+        itemName = GetItemInfo(sourceInfo.itemID)
+        print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Source ItemID: %s, ItemName: %s", 
+          tostring(sourceInfo.itemID), tostring(itemName or "nil")))
+      end
+      
+      -- Get slot information
+      if sourceInfo.invType then
+        slotName = _G["INVTYPE_" .. sourceInfo.invType] or sourceInfo.invType
+        print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Slot info - InvType: %s, SlotName: %s", 
+          tostring(sourceInfo.invType), tostring(slotName or "nil")))
+      end
+    end
+    
     PlayNotificationSound("soundTransmog")
     if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New transmog appearance collected!")
+      local displayText = "New transmog appearance collected!"
+      if itemName and slotName then
+        displayText = string.format("New transmog collected: |cFF00FF00%s|r (%s)", itemName, slotName)
+      elseif itemName then
+        displayText = string.format("New transmog collected: |cFF00FF00%s|r", itemName)
+      elseif slotName then
+        displayText = string.format("New transmog collected for: |cFF00FF00%s|r", slotName)
+      end
+      print(string.format("|cFF16C3F2NoobTacoUI|r: %s", displayText))
     end
+    
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification sent - AppearanceID: %s, ItemName: %s", 
+      tostring(appearanceID), tostring(itemName or "Unknown")))
   else
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification disabled. Enabled: %s",
-      tostring(GetSetting("newTransmog"))))
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification disabled or invalid data. Enabled: %s, AppearanceID: %s",
+      tostring(GetSetting("newTransmog")), tostring(appearanceID or "nil")))
   end
 end
 
--- Title earned notification  
+-- Title earned notification
 -- REMOVED: Most titles are earned through achievements, default WoW toasts work well
 -- local function OnTitleEarned(self, event, titleID)
 
@@ -353,7 +390,7 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     -- Count different categories of mounts
     for i = 1, math.min(numMounts or 0, 1500) do -- Limit to prevent lag
       local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected =
-      C_MountJournal.GetMountInfoByID(i)
+          C_MountJournal.GetMountInfoByID(i)
 
       if name then
         if isCollected then
@@ -386,7 +423,7 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
       if sampleCount >= 3 then break end
 
       local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected =
-      C_MountJournal.GetMountInfoByID(i)
+          C_MountJournal.GetMountInfoByID(i)
 
       if name and isCollected then
         sampleCount = sampleCount + 1
@@ -406,27 +443,27 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     end
   elseif args == "toys" then
     print("|cFF16C3F2NoobTacoUI|r Toy collection analysis:")
-    
+
     -- Get all toy IDs and check which ones we have
     local collectedCount = 0
     local usableCount = 0
     local sampleToys = {}
-    
+
     print("  Scanning toy collection...")
-    
+
     -- Sample some known toy IDs to test the API
-    local sampleToyIDs = {88375, 86573, 104299, 113670, 128310, 140325, 151016, 163750, 174450, 188692}
-    
+    local sampleToyIDs = { 88375, 86573, 104299, 113670, 128310, 140325, 151016, 163750, 174450, 188692 }
+
     for _, toyID in ipairs(sampleToyIDs) do
       local toyName = C_ToyBox.GetToyInfo(toyID)
       if toyName then
         local hasToy = PlayerHasToy(toyID)
         local isUsable = C_ToyBox.IsToyUsable(toyID)
-        
+
         if hasToy then
           collectedCount = collectedCount + 1
           if #sampleToys < 3 then
-            table.insert(sampleToys, {name = toyName, usable = isUsable})
+            table.insert(sampleToys, { name = toyName, usable = isUsable })
           end
         end
         if isUsable then
@@ -434,19 +471,19 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
         end
       end
     end
-    
+
     -- Try to get total toy count from C_ToyBox if available
     local totalToys = "unknown"
     if C_ToyBox.GetNumToys then
       totalToys = tostring(C_ToyBox.GetNumToys())
     end
-    
+
     print("  |cFFFFFF00Results (sample check):|r")
     print("    Total toys in sample: " .. tostring(#sampleToyIDs))
     print("    |cFF00FF00Sample toys you own:|r " .. tostring(collectedCount))
     print("    |cFF00FF00Sample toys usable:|r " .. tostring(usableCount))
     print("  |cFF808080Note: This is a limited sample of toy IDs|r")
-    
+
     -- Show collected toy samples
     if #sampleToys > 0 then
       print("  |cFFFFFF00Sample collected toys:|r")
@@ -454,6 +491,82 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
         local statusInfo = toy.usable and " |cFF00FF00Usable|r" or " |cFFFF0000Not Usable|r"
         print(string.format("    %s%s", toy.name, statusInfo))
       end
+    end
+  elseif args == "testtransmog" then
+    print("|cFF16C3F2NoobTacoUI|r Testing transmog notification...")
+    PlayNotificationSound("soundTransmog")
+    if GetSetting("showMessages") then
+      print("|cFF16C3F2NoobTacoUI|r: New transmog collected: |cFF00FF00Test Appearance|r (Chest)")
+    end
+  elseif args == "transmog" then
+    print("|cFF16C3F2NoobTacoUI|r Transmog collection analysis:")
+    
+    -- Test transmog APIs with some sample appearance IDs
+    local sampleAppearanceIDs = {
+      1, 2, 3, 4, 5, -- Early appearance IDs
+      1000, 2000, 3000, 4000, 5000, -- Mid-range IDs
+    }
+    
+    local validAppearances = 0
+    local collectedCount = 0
+    local sampleTransmog = {}
+    
+    print("  Scanning sample transmog appearances...")
+    
+    for _, appearanceID in ipairs(sampleAppearanceIDs) do
+      local appearanceInfo = C_TransmogCollection.GetAppearanceInfoByID(appearanceID)
+      if appearanceInfo then
+        validAppearances = validAppearances + 1
+        
+        local hasAppearance = C_TransmogCollection.PlayerHasTransmogBySourceID(appearanceID)
+        if hasAppearance then
+          collectedCount = collectedCount + 1
+          
+          if #sampleTransmog < 3 then
+            local sourceInfo = C_TransmogCollection.GetSourceInfo(appearanceID)
+            local itemName = "Unknown"
+            local slotName = "Unknown"
+            
+            if sourceInfo then
+              if sourceInfo.itemID and sourceInfo.itemID > 0 then
+                itemName = GetItemInfo(sourceInfo.itemID) or ("Item " .. sourceInfo.itemID)
+              end
+              if sourceInfo.invType then
+                slotName = _G["INVTYPE_" .. sourceInfo.invType] or sourceInfo.invType
+              end
+            end
+            
+            table.insert(sampleTransmog, {
+              id = appearanceID,
+              itemName = itemName,
+              slotName = slotName
+            })
+          end
+        end
+      end
+    end
+    
+    -- Try to get transmog collection stats
+    local totalSets = 0
+    if C_TransmogSets and C_TransmogSets.GetSetsInfo then
+      local setsInfo = C_TransmogSets.GetSetsInfo()
+      totalSets = setsInfo and #setsInfo or 0
+    end
+    
+    print("  |cFFFFFF00Results (sample check):|r")
+    print("    Valid appearances in sample: " .. tostring(validAppearances))
+    print("    |cFF00FF00Sample appearances you own:|r " .. tostring(collectedCount))
+    print("    Total transmog sets available: " .. tostring(totalSets))
+    print("  |cFF808080Note: This is a limited sample of appearance IDs|r")
+    
+    -- Show collected transmog samples
+    if #sampleTransmog > 0 then
+      print("  |cFFFFFF00Sample collected transmog:|r")
+      for _, tmog in ipairs(sampleTransmog) do
+        print(string.format("    %s (%s) - ID: %s", tmog.itemName, tmog.slotName, tostring(tmog.id)))
+      end
+    else
+      print("  |cFF808080No sample transmog found (may need higher appearance IDs)|r")
     end
   elseif args == "status" then
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications Status:")
@@ -469,6 +582,8 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     print("  |cFFFFFF00/ntmcollection mounts|r - Show mount collection debug info")
     print("  |cFFFFFF00/ntmcollection testtoy|r - Test toy notification specifically")
     print("  |cFFFFFF00/ntmcollection toys|r - Show toy collection debug info")
+    print("  |cFFFFFF00/ntmcollection testtransmog|r - Test transmog notification specifically")
+    print("  |cFFFFFF00/ntmcollection transmog|r - Show transmog collection debug info")
     print("  |cFFFFFF00/ntmcollection status|r - Show current settings")
     print("  |cFF808080Note: Achievement and title notifications removed (WoW defaults work better)|r")
   end
