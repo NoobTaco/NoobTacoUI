@@ -48,7 +48,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         uses: BigWigsMods/packager@v2
         with:
-          args: -d # Don't upload to external sites
+          args: -d -Z # -d=no upload, -Z=create zip
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
