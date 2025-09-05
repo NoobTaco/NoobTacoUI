@@ -46,6 +46,19 @@ addon.UIAssets = {
     Nord13 = { 0.92, 0.80, 0.54, 1 }, -- #ebcb8b (yellow)
     Nord14 = { 0.64, 0.75, 0.54, 1 }, -- #a3be8c (green)
     Nord15 = { 0.70, 0.56, 0.68, 1 }, -- #b48ead (purple)
+  },
+
+  -- WoW Texture Icons for Menu Categories
+  Icons = {
+    Audio = "Interface\\Icons\\INV_Misc_Bell_01",                     -- Bell for notifications/audio
+    Settings = "Interface\\Icons\\INV_Misc_Gear_01",                  -- Gear for settings
+    About = "Interface\\Icons\\INV_Misc_Book_09",                     -- Book for information
+    Close = "Interface\\Buttons\\UI-Panel-MinimizeButton-Up",         -- Close/X button
+    -- Alternative options:
+    AudioAlt = "Interface\\GossipFrame\\UI-GossipIcon-Chat",          -- Speech bubble
+    SettingsAlt = "Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up", -- Gear wheel
+    AboutAlt = "Interface\\Icons\\INV_Scroll_08",                     -- Scroll
+    CloseAlt = "Interface\\Buttons\\UI-Panel-HideButton-Up",          -- Alternative close button
   }
 }
 
@@ -133,6 +146,41 @@ function addon.UIUtils:CreateIconButton(parent, iconText, size)
   end)
 
   return button
+end
+
+-- Create a texture-based icon button (for WoW graphics)
+function addon.UIUtils:CreateTextureIconButton(parent, texturePath, size)
+  local button = CreateFrame("Button", nil, parent)
+  button:SetSize(size or 20, size or 20)
+
+  -- Icon texture
+  button.Icon = button:CreateTexture(nil, "OVERLAY")
+  button.Icon:SetAllPoints()
+  button.Icon:SetTexture(texturePath)
+  button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord4))
+
+  -- Hover effects
+  button:SetScript("OnEnter", function(self)
+    self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord11)) -- Red on hover for close buttons
+  end)
+
+  button:SetScript("OnLeave", function(self)
+    self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord4))
+  end)
+
+  return button
+end
+
+-- Create a texture icon from WoW's graphics library
+function addon.UIUtils:CreateTextureIcon(parent, texturePath, size)
+  local icon = parent:CreateTexture(nil, "OVERLAY")
+  icon:SetSize(size or 16, size or 16)
+  icon:SetTexture(texturePath)
+
+  -- Apply Nord color tinting for consistency
+  icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord8))
+
+  return icon
 end
 
 -- Create a category header with Nord styling

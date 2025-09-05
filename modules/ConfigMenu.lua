@@ -92,9 +92,6 @@ local function CreateEnhancedConfigFrame()
   frame:SetPoint("CENTER")
   frame:SetMovable(true)
   frame:SetClampedToScreen(true)
-  frame:RegisterForDrag("LeftButton")
-  frame:SetScript("OnDragStart", function(self) self:StartMoving() end)
-  frame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
   frame:SetFrameStrata("DIALOG")
   frame:Hide()
 
@@ -117,6 +114,16 @@ local function CreateEnhancedHeader(parent)
   header:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
   header:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
 
+  -- Make header draggable to move the parent frame
+  header:EnableMouse(true)
+  header:RegisterForDrag("LeftButton")
+  header:SetScript("OnDragStart", function(self)
+    parent:StartMoving()
+  end)
+  header:SetScript("OnDragStop", function(self)
+    parent:StopMovingOrSizing()
+  end)
+
   -- Header background with gradient
   header.Background = header:CreateTexture(nil, "BACKGROUND")
   header.Background:SetAllPoints()
@@ -127,19 +134,10 @@ local function CreateEnhancedHeader(parent)
   header.Title = addon.UIUtils:CreateCategoryHeader(header, "NoobTacoUI-Media Configuration")
   header.Title:SetPoint("LEFT", header, "LEFT", PADDING, 0)
 
-  -- Close button with enhanced styling
-  header.CloseButton = addon.UIUtils:CreateIconButton(header, "×", 24)
+  -- Close button with enhanced styling using WoW texture
+  header.CloseButton = addon.UIUtils:CreateTextureIconButton(header, addon.UIAssets.Icons.Close, 24)
   header.CloseButton:SetPoint("RIGHT", header, "RIGHT", -PADDING, 0)
   header.CloseButton:SetScript("OnClick", function() parent:Hide() end)
-
-  -- Add hover effect to close button
-  header.CloseButton:SetScript("OnEnter", function(self)
-    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord11)) -- Red on hover
-  end)
-
-  header.CloseButton:SetScript("OnLeave", function(self)
-    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-  end)
 
   -- Bottom divider
   header.Divider = addon.UIUtils:CreateDivider(header, "HORIZONTAL", 2)
@@ -180,7 +178,7 @@ local function CreateEnhancedContentArea(parent, header, sidebar)
 end
 
 -- Enhanced category button with Plumber-style design
-local function CreateEnhancedCategoryButton(parent, text, iconText)
+local function CreateEnhancedCategoryButton(parent, text, iconData)
   local button = CreateFrame("Button", nil, parent)
   button:SetSize(SIDEBAR_WIDTH - (PADDING * 2), BUTTON_HEIGHT)
 
@@ -200,17 +198,27 @@ local function CreateEnhancedCategoryButton(parent, text, iconText)
   button.SelectedBG:SetAlpha(0.3)
   button.SelectedBG:Hide()
 
-  -- Icon (if provided)
-  if iconText then
-    button.Icon = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    button.Icon:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
-    button.Icon:SetText(iconText)
-    button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+  -- Icon (supports both texture paths and text)
+  if iconData then
+    if type(iconData) == "string" and iconData:find("Interface\\") then
+      -- WoW texture icon
+      button.Icon = button:CreateTexture(nil, "OVERLAY")
+      button.Icon:SetSize(16, 16)
+      button.Icon:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
+      button.Icon:SetTexture(iconData)
+      button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord8))
+    else
+      -- Text/Unicode icon
+      button.Icon = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      button.Icon:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
+      button.Icon:SetText(iconData)
+      button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+    end
   end
 
   -- Text label
   button.Label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  if iconText then
+  if iconData then
     button.Label:SetPoint("LEFT", button.Icon, "RIGHT", 8, 0)
   else
     button.Label:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
@@ -224,13 +232,25 @@ local function CreateEnhancedCategoryButton(parent, text, iconText)
       self.SelectedBG:Show()
       self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
       if self.Icon then
-        self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+        if self.Icon.SetTextColor then
+          -- Text icon
+          self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+        else
+          -- Texture icon
+          self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord8))
+        end
       end
     else
       self.SelectedBG:Hide()
       self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
       if self.Icon then
-        self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+        if self.Icon.SetTextColor then
+          -- Text icon
+          self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+        else
+          -- Texture icon
+          self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord8))
+        end
       end
     end
     self.selected = selected
@@ -307,7 +327,7 @@ local categories = {}
 local currentCategory = nil
 
 -- Add categories
-local audioButton = CreateEnhancedCategoryButton(sidebar, "Audio Settings", "🔊")
+local audioButton = CreateEnhancedCategoryButton(sidebar, "Audio Settings", addon.UIAssets.Icons.Audio)
 audioButton:SetPoint("TOPLEFT", sidebar, "TOPLEFT", PADDING, -PADDING)
 audioButton:SetScript("OnClick", function(self)
   -- Clear previous selection
@@ -335,29 +355,140 @@ audioButton:SetScript("OnClick", function(self)
     local collectionHeader = addon.UIUtils:CreateCategoryHeader(content.audioPanel, "Collection Notifications")
     collectionHeader:SetPoint("TOPLEFT", content.audioPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
 
-    -- Enable toggle
+    -- Helper function to get collection notification settings
+    local function GetCollectionSetting(key)
+      if not NoobTacoDB.CollectionNotifications then
+        NoobTacoDB.CollectionNotifications = {}
+      end
+      return NoobTacoDB.CollectionNotifications[key]
+    end
+
+    -- Helper function to set collection notification settings
+    local function SetCollectionSetting(key, value)
+      if not NoobTacoDB.CollectionNotifications then
+        NoobTacoDB.CollectionNotifications = {}
+      end
+      NoobTacoDB.CollectionNotifications[key] = value
+      if addon.CallbackRegistry then
+        addon.CallbackRegistry:Trigger("CollectionNotifications." .. key, value)
+      end
+    end
+
+    local yOffset = -INNER_PADDING
+    local configurableElements = {}
+
+    -- Global Enable Toggle
     local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 20)
-    enableCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 0, -INNER_PADDING)
-    enableCheckbox:SetChecked(addon.GetDBValue("CollectionNotificationsEnabled") ~= false)
+    enableCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 0, yOffset)
+    enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
 
     local enableLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 8, 0)
     enableLabel:SetText("Enable Collection Notifications")
     enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
-    enableCheckbox:SetScript("OnClick", function(self)
-      addon.SetDBValue("CollectionNotificationsEnabled", self:GetChecked())
+    yOffset = yOffset - 35
+
+    -- Collection Type Toggles with Test Buttons
+    local collectionTypes = {
+      { key = "newPet",      label = "Pet Collections",      sound = "soundPet",      default = true },
+      { key = "newMount",    label = "Mount Collections",    sound = "soundMount",    default = true },
+      { key = "newToy",      label = "Toy Collections",      sound = "soundToy",      default = true },
+      { key = "newTransmog", label = "Transmog Collections", sound = "soundTransmog", default = true }
+    }
+
+    for _, typeData in ipairs(collectionTypes) do
+      local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 18)
+      typeCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 20, yOffset)
+
+      -- Set default if not set
+      if GetCollectionSetting(typeData.key) == nil then
+        SetCollectionSetting(typeData.key, typeData.default)
+      end
+      typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
+
+      local typeLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+      typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 8, 0)
+      typeLabel:SetText(typeData.label)
+      typeLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+      -- Test button for each type
+      local testButton = addon.UIUtils:CreateThemedButton(content.audioPanel, "Test", 50, 20)
+      testButton:SetPoint("LEFT", typeLabel, "RIGHT", 100, 0)
+      testButton:SetScript("OnClick", function()
+        if addon.CollectionNotifications and addon.CollectionNotifications.PlayNotificationSound then
+          addon.CollectionNotifications.PlayNotificationSound(typeData.sound)
+        end
+      end)
+
+      typeCheckbox:SetScript("OnClick", function(self)
+        SetCollectionSetting(typeData.key, self:GetChecked())
+      end)
+
+      -- Store elements for enable/disable functionality
+      table.insert(configurableElements, { element = typeLabel, type = "fontstring" })
+      table.insert(configurableElements, { element = typeCheckbox, type = "button" })
+      table.insert(configurableElements, { element = testButton, type = "button" })
+
+      yOffset = yOffset - 25
+    end
+
+    -- Show Chat Messages Toggle
+    local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 18)
+    chatCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 20, yOffset)
+
+    -- Set default if not set
+    if GetCollectionSetting("showMessages") == nil then
+      SetCollectionSetting("showMessages", true)
+    end
+    chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
+
+    local chatLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 8, 0)
+    chatLabel:SetText("Show Chat Messages")
+    chatLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+    chatCheckbox:SetScript("OnClick", function(self)
+      SetCollectionSetting("showMessages", self:GetChecked())
     end)
 
-    -- Settings button
-    local settingsButton = addon.UIUtils:CreateThemedButton(content.audioPanel, "Detailed Settings", 150, 28)
-    settingsButton:SetPoint("TOPLEFT", enableCheckbox, "BOTTOMLEFT", 0, -INNER_PADDING)
-    settingsButton:SetScript("OnClick", function()
-      -- Call the popup function from the main ConfigMenu
-      if addon.CreateCollectionNotificationsPopup then
-        addon.CreateCollectionNotificationsPopup()
+    -- Add chat elements to configurable list
+    table.insert(configurableElements, { element = chatLabel, type = "fontstring" })
+    table.insert(configurableElements, { element = chatCheckbox, type = "button" })
+
+    -- Function to update elements state based on master toggle
+    local function UpdateElementsState(enabled)
+      for _, elementData in ipairs(configurableElements) do
+        local element = elementData.element
+        local elementType = elementData.type
+
+        if elementType == "fontstring" then
+          if enabled then
+            element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+          else
+            element:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
+          end
+        elseif elementType == "button" then
+          if enabled then
+            element:Enable()
+            element:SetAlpha(1.0)
+          else
+            element:Disable()
+            element:SetAlpha(0.5)
+          end
+        end
       end
+    end
+
+    -- Global enable checkbox functionality
+    enableCheckbox:SetScript("OnClick", function(self)
+      local enabled = self:GetChecked()
+      SetCollectionSetting("enabled", enabled)
+      UpdateElementsState(enabled)
     end)
+
+    -- Apply initial state
+    UpdateElementsState(GetCollectionSetting("enabled") ~= false)
   end
 
   content.audioPanel:Show()
@@ -367,12 +498,12 @@ end)
 table.insert(categories, audioButton)
 
 -- General settings button
-local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", "⚙️")
+local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.Settings)
 generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
 table.insert(categories, generalButton)
 
 -- About button
-local aboutButton = CreateEnhancedCategoryButton(sidebar, "About", "ℹ️")
+local aboutButton = CreateEnhancedCategoryButton(sidebar, "About", addon.UIAssets.Icons.About)
 aboutButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
 aboutButton:SetScript("OnClick", function(self)
   -- Clear previous selection
