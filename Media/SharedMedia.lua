@@ -66,6 +66,11 @@ LSM:Register("sound", "NT_Mount", [[Interface\AddOns\NoobTacoUI-Media\Media\Audi
 LSM:Register("sound", "NT_NPC", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_npc.ogg]])
 LSM:Register("sound", "NT_InfussionOfLight", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_InfussionOfLight.ogg]])
 LSM:Register("sound", "NT_Collection", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_InfussionOfLight.ogg]])
+-- New collection-specific sounds
+LSM:Register("sound", "NT_Pet", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\NT_sd_pet.ogg]])
+LSM:Register("sound", "NT_Mount_Collection", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\NT_sd_mount_collection.ogg]])
+LSM:Register("sound", "NT_Toy_Collection", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\NT_sd_toy_collection.ogg]])
+LSM:Register("sound", "NT_Transmog", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\NT_sd_transmog.ogg]])
 
 -- Status Bar Textures - Nord Theme
 LSM:Register("statusbar", "NT_Nord00", [[Interface\AddOns\NoobTacoUI-Media\Media\Textures\NT_nord0.tga]])
