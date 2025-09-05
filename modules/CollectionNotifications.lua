@@ -219,57 +219,56 @@ end
 -- local function OnAchievementEarned(self, event, achievementID)
 
 -- Transmog collection notification
-local function OnTransmogCollected(self, event, appearanceID, sourceID)
-  -- Debug message to test if event is triggering
+local function OnTransmogCollected(self, event, ...)
+  -- Debug message to test if event is triggering with all parameters
+  local args = {...}
   print(string.format(
-    "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog event triggered! Event: %s, AppearanceID: %s, SourceID: %s",
-    event or "nil", tostring(appearanceID or "nil"), tostring(sourceID or "nil")))
+    "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog event triggered! Event: %s, ArgCount: %d",
+    tostring(event), #args))
+  
+  -- Print all arguments to see what we actually get
+  for i, arg in ipairs(args) do
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Arg[%d] = %s (type: %s)", 
+      i, tostring(arg), type(arg)))
+  end
 
-  if GetSetting("newTransmog") and appearanceID then
-    -- Get transmog appearance info using WoW's transmog APIs
-    local appearanceInfo = C_TransmogCollection.GetAppearanceInfoByID(appearanceID)
-    local sourceInfo = sourceID and C_TransmogCollection.GetSourceInfo(sourceID) or nil
-    
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog info - AppearanceInfo: %s, SourceInfo: %s", 
-      tostring(appearanceInfo and "found" or "nil"), tostring(sourceInfo and "found" or "nil")))
-    
-    -- Try to get item info if we have a source
+  if GetSetting("newTransmog") then
+    -- Try to get source info if we have parameters
     local itemName = nil
-    local slotName = nil
+    local sourceID = args[1] -- First argument might be sourceID
+    local appearanceID = args[2] -- Second argument might be appearanceID
     
-    if sourceInfo then
-      if sourceInfo.itemID and sourceInfo.itemID > 0 then
+    -- Try different parameter combinations
+    if sourceID and C_TransmogCollection and C_TransmogCollection.GetSourceInfo then
+      local sourceInfo = C_TransmogCollection.GetSourceInfo(sourceID)
+      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Source info lookup - SourceID: %s, Found: %s", 
+        tostring(sourceID), tostring(sourceInfo and "yes" or "no")))
+      
+      if sourceInfo and sourceInfo.itemID and sourceInfo.itemID > 0 then
         itemName = GetItemInfo(sourceInfo.itemID)
-        print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Source ItemID: %s, ItemName: %s", 
+        print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Item lookup - ItemID: %s, Name: %s", 
           tostring(sourceInfo.itemID), tostring(itemName or "nil")))
       end
-      
-      -- Get slot information
-      if sourceInfo.invType then
-        slotName = _G["INVTYPE_" .. sourceInfo.invType] or sourceInfo.invType
-        print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Slot info - InvType: %s, SlotName: %s", 
-          tostring(sourceInfo.invType), tostring(slotName or "nil")))
-      end
     end
-    
+
     PlayNotificationSound("soundTransmog")
     if GetSetting("showMessages") then
       local displayText = "New transmog appearance collected!"
-      if itemName and slotName then
-        displayText = string.format("New transmog collected: |cFF00FF00%s|r (%s)", itemName, slotName)
-      elseif itemName then
+      if itemName then
         displayText = string.format("New transmog collected: |cFF00FF00%s|r", itemName)
-      elseif slotName then
-        displayText = string.format("New transmog collected for: |cFF00FF00%s|r", slotName)
+      elseif sourceID or appearanceID then
+        displayText = string.format("New transmog appearance collected (Source: %s, Appearance: %s)", 
+          tostring(sourceID or "nil"), tostring(appearanceID or "nil"))
       end
       print(string.format("|cFF16C3F2NoobTacoUI|r: %s", displayText))
     end
-    
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification sent - AppearanceID: %s, ItemName: %s", 
-      tostring(appearanceID), tostring(itemName or "Unknown")))
+
+    print(string.format(
+      "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification sent - SourceID: %s, AppearanceID: %s, ItemName: %s",
+      tostring(sourceID), tostring(appearanceID), tostring(itemName or "Unknown")))
   else
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification disabled or invalid data. Enabled: %s, AppearanceID: %s",
-      tostring(GetSetting("newTransmog")), tostring(appearanceID or "nil")))
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification disabled. Enabled: %s",
+      tostring(GetSetting("newTransmog"))))
   end
 end
 
@@ -501,73 +500,81 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
   elseif args == "transmog" then
     print("|cFF16C3F2NoobTacoUI|r Transmog collection analysis:")
     
-    -- Test transmog APIs with some sample appearance IDs
-    local sampleAppearanceIDs = {
-      1, 2, 3, 4, 5, -- Early appearance IDs
-      1000, 2000, 3000, 4000, 5000, -- Mid-range IDs
+    -- Test basic transmog API availability
+    print("  Checking transmog API availability...")
+    
+    if C_TransmogCollection then
+      print("    |cFF00FF00C_TransmogCollection|r - Available")
+      
+      -- Check what functions are available
+      local availableFunctions = {}
+      local functionNames = {
+        "GetSourceInfo",
+        "PlayerHasTransmog", 
+        "PlayerHasTransmogBySourceID",
+        "GetSourcesOfAppearance",
+        "GetAllSourcesOfAppearance"
+      }
+      
+      for _, funcName in ipairs(functionNames) do
+        if C_TransmogCollection[funcName] then
+          table.insert(availableFunctions, funcName)
+        end
+      end
+      
+      if #availableFunctions > 0 then
+        print("    Available functions:")
+        for _, funcName in ipairs(availableFunctions) do
+          print("      |cFF00FF00" .. funcName .. "|r")
+        end
+      else
+        print("    |cFFFF0000No C_TransmogCollection functions found|r")
+      end
+    else
+      print("    |cFFFF0000C_TransmogCollection|r - Not available")
+    end
+    
+    -- Check transmog sets API
+    if C_TransmogSets then
+      print("    |cFF00FF00C_TransmogSets|r - Available")
+      if C_TransmogSets.GetSetsInfo then
+        local setsInfo = C_TransmogSets.GetSetsInfo()
+        local totalSets = setsInfo and #setsInfo or 0
+        print("      Total transmog sets: " .. tostring(totalSets))
+      end
+    else
+      print("    |cFFFF0000C_TransmogSets|r - Not available")
+    end
+    
+    -- Simple test with known items instead of appearance IDs
+    print("  |cFFFFFF00Testing with sample items:|r")
+    local sampleItems = {
+      2589, -- Linen Cloth (basic item)
+      25, -- Worn Shortsword
+      6948, -- Hearthstone
+      1396, -- Elven Chain Vest
+      2447, -- Peacebloom
     }
     
-    local validAppearances = 0
-    local collectedCount = 0
-    local sampleTransmog = {}
-    
-    print("  Scanning sample transmog appearances...")
-    
-    for _, appearanceID in ipairs(sampleAppearanceIDs) do
-      local appearanceInfo = C_TransmogCollection.GetAppearanceInfoByID(appearanceID)
-      if appearanceInfo then
-        validAppearances = validAppearances + 1
+    local foundItems = 0
+    for _, itemID in ipairs(sampleItems) do
+      local itemName = GetItemInfo(itemID)
+      if itemName then
+        foundItems = foundItems + 1
+        print(string.format("    Item %d: %s", itemID, itemName))
         
-        local hasAppearance = C_TransmogCollection.PlayerHasTransmogBySourceID(appearanceID)
-        if hasAppearance then
-          collectedCount = collectedCount + 1
-          
-          if #sampleTransmog < 3 then
-            local sourceInfo = C_TransmogCollection.GetSourceInfo(appearanceID)
-            local itemName = "Unknown"
-            local slotName = "Unknown"
-            
-            if sourceInfo then
-              if sourceInfo.itemID and sourceInfo.itemID > 0 then
-                itemName = GetItemInfo(sourceInfo.itemID) or ("Item " .. sourceInfo.itemID)
-              end
-              if sourceInfo.invType then
-                slotName = _G["INVTYPE_" .. sourceInfo.invType] or sourceInfo.invType
-              end
-            end
-            
-            table.insert(sampleTransmog, {
-              id = appearanceID,
-              itemName = itemName,
-              slotName = slotName
-            })
+        -- Try to get source info if the API is available
+        if C_TransmogCollection and C_TransmogCollection.GetSourceInfo then
+          -- Note: This may not work for all items as not all items have transmog sources
+          local sourceInfo = C_TransmogCollection.GetSourceInfo(itemID)
+          if sourceInfo then
+            print(string.format("      Source info found for item %d", itemID))
           end
         end
       end
     end
     
-    -- Try to get transmog collection stats
-    local totalSets = 0
-    if C_TransmogSets and C_TransmogSets.GetSetsInfo then
-      local setsInfo = C_TransmogSets.GetSetsInfo()
-      totalSets = setsInfo and #setsInfo or 0
-    end
-    
-    print("  |cFFFFFF00Results (sample check):|r")
-    print("    Valid appearances in sample: " .. tostring(validAppearances))
-    print("    |cFF00FF00Sample appearances you own:|r " .. tostring(collectedCount))
-    print("    Total transmog sets available: " .. tostring(totalSets))
-    print("  |cFF808080Note: This is a limited sample of appearance IDs|r")
-    
-    -- Show collected transmog samples
-    if #sampleTransmog > 0 then
-      print("  |cFFFFFF00Sample collected transmog:|r")
-      for _, tmog in ipairs(sampleTransmog) do
-        print(string.format("    %s (%s) - ID: %s", tmog.itemName, tmog.slotName, tostring(tmog.id)))
-      end
-    else
-      print("  |cFF808080No sample transmog found (may need higher appearance IDs)|r")
-    end
+    print("  |cFF808080Note: Transmog API varies by WoW version - some functions may not be available|r")
   elseif args == "status" then
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications Status:")
     print("  Enabled: " .. (GetSetting("enabled") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
