@@ -12,6 +12,7 @@ body:
         - Classic
         - Classic Era
         - Hardcore Classic
+        - All
     validations:
       required: true
   
