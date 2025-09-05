@@ -73,8 +73,6 @@ local function OnAddonLoaded(self, event, loadedAddonName)
     if GetAddOnMetadata then
       addonVersion = GetAddOnMetadata(addonName, "Version") or addonVersion
     end
-    -- Uncomment the line below if you want a load message
-    -- print(string.format("|cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r %s loaded. Type |cFFFFFF00/ntm version|r to see version info.", addonVersion))
     versionFrame:UnregisterEvent("ADDON_LOADED")
   end
 end

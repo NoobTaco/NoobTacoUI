@@ -42,9 +42,9 @@ addon.CallbackRegistry = CallbackRegistry
 local function GetDBValue(dbKey)
   return NoobTacoDB[dbKey]
 end
-local function SetDBValue(dbKey, value, userInput)
+local function SetDBValue(dbKey, value)
   NoobTacoDB[dbKey] = value
-  CallbackRegistry:Trigger(dbKey, value, userInput)
+  CallbackRegistry:Trigger(dbKey, value)
 end
 addon.GetDBValue = GetDBValue
 addon.SetDBValue = SetDBValue
@@ -260,7 +260,6 @@ exampleCheckbox:SetPoint("TOPLEFT", Description, "BOTTOMLEFT", 0, -20)
 
 -- Register callback for this setting
 CallbackRegistry:RegisterSettingCallback("EnhancedAudio", function(value)
-  print("Enhanced Audio changed:", value)
   -- Add enable/disable logic here
 end)
 
@@ -337,7 +336,7 @@ RegisterModule({
   name = "Enhanced Audio",
   dbKey = "EnhancedAudio",
   description = "Provides enhanced audio features and custom sound effects.",
-  toggleFunc = function(state) print("Enhanced Audio toggled:", state) end,
+  toggleFunc = function(state) end,
   categoryID = 2, -- Audio category
   uiOrder = 100,
 })
@@ -346,7 +345,7 @@ RegisterModule({
   name = "Custom Fonts",
   dbKey = "CustomFonts",
   description = "Enables custom font rendering and typography options.",
-  toggleFunc = function(state) print("Custom Fonts toggled:", state) end,
+  toggleFunc = function(state) end,
   categoryID = 3, -- Fonts category
   uiOrder = 200,
 })
