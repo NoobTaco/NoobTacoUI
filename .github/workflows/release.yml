@@ -66,6 +66,10 @@ jobs:
           echo "=== Directory contents before upload ==="
           ls -la .release/ || echo "No .release directory found"
           echo ""
+          echo "=== Current working directory ==="
+          pwd
+          ls -la
+          echo ""
           echo "=== Test completed - package would be ready for release ==="
 
       - name: Upload test package as artifact
@@ -73,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NoobTacoUI-Media-Test-Package
-          path: .release/*.zip
+          path: .release/
           retention-days: 7
 
       - name: Upload changelog as artifact
