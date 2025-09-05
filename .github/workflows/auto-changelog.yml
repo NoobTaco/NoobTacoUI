@@ -8,7 +8,7 @@ on:
       - ".github/**"
       - "README.md"
       - "LICENSE"
-      - "*.md"
+      - "CHANGELOG.md"  # Prevent infinite loops from changelog updates
 
 jobs:
   update-changelog:
@@ -32,9 +32,21 @@ jobs:
 
       - name: Update CHANGELOG.md
         run: |
-          # Get the version from the latest commit
-          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "Unreleased")
+          # Get version from git tags or generate from date
+          VERSION=$(git describe --tags --exact-match 2>/dev/null || echo "v$(date +%Y.%m.%d)")
           DATE=$(date +%Y-%m-%d)
+          
+          # Check if this version already exists in changelog
+          if grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "Version $VERSION already exists in changelog, skipping update"
+            exit 0
+          fi
+          
+          # Check if the temp changelog has meaningful content
+          if [ ! -s TEMP_CHANGELOG.md ] || grep -q "^- No changes$" TEMP_CHANGELOG.md; then
+            echo "No meaningful changes to add to changelog"
+            exit 0
+          fi
           
           # Create new changelog entry
           echo "## [$VERSION] - $DATE" > NEW_ENTRY.md
@@ -42,16 +54,23 @@ jobs:
           cat TEMP_CHANGELOG.md >> NEW_ENTRY.md
           echo "" >> NEW_ENTRY.md
           
-          # Insert into existing changelog
-          sed -i '/# Changelog/r NEW_ENTRY.md' CHANGELOG.md
+          # Insert into existing changelog (after the first line "# Changelog")
+          sed -i '1 a\\' CHANGELOG.md  # Add empty line after title if needed
+          sed -i '2r NEW_ENTRY.md' CHANGELOG.md  # Insert after "# Changelog" line
           
           # Clean up
-          rm TEMP_CHANGELOG.md NEW_ENTRY.md
+          rm -f TEMP_CHANGELOG.md NEW_ENTRY.md
 
       - name: Commit updated changelog
         run: |
+          # Check if there are any changes to commit
+          if git diff --quiet CHANGELOG.md; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
           git config --local user.email "mike@corcra.dev"
           git config --local user.name "NoobTaco"
           git add CHANGELOG.md
-          git commit -m "📝 Auto-update changelog [skip ci]" || exit 0
+          git commit -m "📝 Auto-update changelog [skip changelog]" || exit 0
           git push

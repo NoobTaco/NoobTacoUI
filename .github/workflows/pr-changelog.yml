@@ -9,13 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Generate changelog preview
+        id: generate
         uses: mikepenz/release-changelog-builder-action@v4
         with:
           configuration: ".github/changelog-config.json"
-          fromTag: "latest"
-          toTag: "HEAD"
+          outputFile: "PR_CHANGELOG.md"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -24,15 +26,51 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
             
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            // Read the generated changelog for this PR
+            let changelog = '';
+            try {
+              changelog = fs.readFileSync('PR_CHANGELOG.md', 'utf8').trim();
+            } catch (error) {
+              changelog = '- No changes detected';
+            }
+            
+            if (!changelog || changelog === '') {
+              changelog = '- No changes detected';
+            }
+            
+            const body = `## 📝 Changelog Preview
+            
+            ${changelog}
+            
+            > This preview shows what will be added to the changelog when this PR is merged.`;
+            
+            // Check if we already commented on this PR to avoid spam
+            const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 📝 Changelog Preview
-              
-              ${changelog}
-              
-              > This preview shows what will be added to the changelog when this PR is merged.`
+              issue_number: context.issue.number,
             });
+            
+            const existingComment = comments.data.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('📝 Changelog Preview')
+            );
+            
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }

@@ -1,35 +1,32 @@
 {
-  "template": "## Changes\n\n#{{CHANGELOG}}\n\n",
+  "template": "#{{CHANGELOG}}",
   "pr_template": "- #{{TITLE}} (#{{NUMBER}})",
-  "empty_template": "- No changes",
+  "empty_template": "",
   "categories": [
     {
-      "title": "### 🚀 Added",
-      "labels": ["enhancement", "feature"]
+      "title": "### Added",
+      "labels": ["enhancement", "feature", "added"]
     },
     {
-      "title": "### 🐛 Fixed", 
-      "labels": ["bug", "fix"]
+      "title": "### Fixed", 
+      "labels": ["bug", "fix", "bugfix", "fixed"]
     },
     {
-      "title": "### 📝 Changed",
-      "labels": ["change", "update"]
+      "title": "### Changed",
+      "labels": ["change", "update", "changed", "improvement"]
     },
     {
-      "title": "### 🗑️ Removed",
-      "labels": ["removal", "deprecated"]
+      "title": "### Removed",
+      "labels": ["removal", "deprecated", "removed"]
     },
     {
-      "title": "### 🎨 UI/Media",
-      "labels": ["ui", "media", "texture", "font", "audio"]
-    },
-    {
-      "title": "### 🏷️ WoW Version Support",
-      "labels": ["retail", "classic", "classic-era", "hardcore"]
+      "title": "### Security",
+      "labels": ["security"]
     }
   ],
-  "ignore_labels": ["duplicate", "question", "invalid", "wontfix"],
+  "ignore_labels": ["duplicate", "question", "invalid", "wontfix", "documentation"],
   "sort": "ASC",
   "max_pull_requests": 200,
-  "max_back_track_time_days": 365
+  "max_back_track_time_days": 90,
+  "uncategorized_title": "### Changed"
 }
