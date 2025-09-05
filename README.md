@@ -101,6 +101,6 @@ See `dev/README.md` for detailed development information.
 
 # License
 
-Code in this repository is licensed under the GNU General Public License v3.0 (GPLv3). See `LICENSE` for details.
+Code in this repository is licensed under GPL-3.0-or-later. See `LICENSE` for details.
 
 Note: Media files (fonts, audio, textures) are included under their respective upstream licenses. Ensure any redistribution complies with each asset's license terms.
