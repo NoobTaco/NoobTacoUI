@@ -63,6 +63,9 @@ jobs:
           echo "Extracted changelog (.changelog file):"
           cat .changelog
           echo ""
+          echo "=== Directory contents before upload ==="
+          ls -la .release/ || echo "No .release directory found"
+          echo ""
           echo "=== Test completed - package would be ready for release ==="
 
       - name: Upload test package as artifact
@@ -70,5 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NoobTacoUI-Media-Test-Package
-          path: .release/
+          path: |
+            .release/*.zip
+            .changelog
           retention-days: 7
