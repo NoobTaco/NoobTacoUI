@@ -57,14 +57,14 @@ jobs:
         run: |
           echo "Contents of .release directory:"
           ls -la .release/ || echo "No .release directory found"
-          echo "Contents of current directory:"
-          ls -la
+          echo "Zip files specifically:"
+          find .release -name "*.zip" -ls || echo "No zip files found"
 
       - name: Upload test package as artifact
         if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: NoobTacoUI-Media-Test-Package-${{ github.event.inputs.branch }}
-          path: .release/*.zip
+          path: .release/
           retention-days: 7
           if-no-files-found: error
