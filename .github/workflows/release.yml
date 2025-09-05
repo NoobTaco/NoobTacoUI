@@ -65,6 +65,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NoobTacoUI-Media-Test-Package-${{ github.event.inputs.branch }}
-          path: .release/
+          path: |
+            .release/*.zip
+            .release/NoobTacoUI-Media/
           retention-days: 7
           if-no-files-found: error
