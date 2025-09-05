@@ -7,7 +7,7 @@
 ## X-License: GPL-3.0-or-later
 ## DefaultState: enabled
 ## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga
-## SavedVariables: NoobTacoDB
+## SavedVariables: NoobTacoUIMediaDB
 ## Category-enUS: UI Overhaul
 ## Category-deDE: UI-Überholung
 ## Category-esES: Renovación de la UI

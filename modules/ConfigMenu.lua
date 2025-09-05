@@ -5,7 +5,7 @@ local addonName, addon = ...
 local CreateFrame = CreateFrame
 
 -- Initialize database if needed (account-wide)
-NoobTacoDB = NoobTacoDB or {}
+NoobTacoUIMediaDB = NoobTacoUIMediaDB or {}
 
 -- Ensure database is account-wide by setting up saved variables properly
 local frame = CreateFrame("Frame")
@@ -14,11 +14,19 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:SetScript("OnEvent", function(self, event, loadedAddonName)
   if event == "ADDON_LOADED" and loadedAddonName == addonName then
     -- Initialize global database structure
-    NoobTacoDB = NoobTacoDB or {}
+    NoobTacoUIMediaDB = NoobTacoUIMediaDB or {}
+
+    -- One-time migration from legacy NoobTacoDB if present
+    local legacy = rawget(_G, "NoobTacoDB")
+    if legacy and type(legacy) == "table" then
+      _G.NoobTacoUIMediaDB = _G.NoobTacoUIMediaDB or {}
+      _G.NoobTacoUIMediaDB.CollectionNotifications = _G.NoobTacoUIMediaDB.CollectionNotifications or legacy.CollectionNotifications
+      -- Do not nil the old table to avoid affecting other addons; just stop using it here
+    end
 
     -- Initialize Collection Notifications settings if needed with full defaults
-    if not NoobTacoDB.CollectionNotifications then
-      NoobTacoDB.CollectionNotifications = {
+    if not NoobTacoUIMediaDB.CollectionNotifications then
+      NoobTacoUIMediaDB.CollectionNotifications = {
         enabled = true,
         newPet = true,
         newMount = true,
@@ -47,8 +55,8 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
       }
 
       for key, defaultValue in pairs(defaults) do
-        if NoobTacoDB.CollectionNotifications[key] == nil then
-          NoobTacoDB.CollectionNotifications[key] = defaultValue
+        if NoobTacoUIMediaDB.CollectionNotifications[key] == nil then
+          NoobTacoUIMediaDB.CollectionNotifications[key] = defaultValue
         end
       end
     end
@@ -56,7 +64,7 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
     self:UnregisterEvent("ADDON_LOADED")
   elseif event == "PLAYER_LOGOUT" then
     -- Force save the database on logout (shouldn't be needed but adds safety)
-    if NoobTacoDB and NoobTacoDB.CollectionNotifications then
+    if NoobTacoUIMediaDB and NoobTacoUIMediaDB.CollectionNotifications then
       print("|cFF16C3F2NoobTacoUI-Media|r: Saving Collection Notifications settings...")
     end
   end
@@ -88,23 +96,23 @@ end
 local function GetDBValue(key)
   if key == "CollectionNotificationsEnabled" then
     -- Use CollectionNotifications settings structure
-    if not NoobTacoDB.CollectionNotifications then
-      NoobTacoDB.CollectionNotifications = {}
+    if not NoobTacoUIMediaDB.CollectionNotifications then
+      NoobTacoUIMediaDB.CollectionNotifications = {}
     end
-    return NoobTacoDB.CollectionNotifications.enabled
+    return NoobTacoUIMediaDB.CollectionNotifications.enabled
   end
-  return NoobTacoDB[key]
+  return NoobTacoUIMediaDB[key]
 end
 
 local function SetDBValue(key, value)
   if key == "CollectionNotificationsEnabled" then
     -- Use CollectionNotifications settings structure
-    if not NoobTacoDB.CollectionNotifications then
-      NoobTacoDB.CollectionNotifications = {}
+    if not NoobTacoUIMediaDB.CollectionNotifications then
+      NoobTacoUIMediaDB.CollectionNotifications = {}
     end
-    NoobTacoDB.CollectionNotifications.enabled = value
+    NoobTacoUIMediaDB.CollectionNotifications.enabled = value
   else
-    NoobTacoDB[key] = value
+    NoobTacoUIMediaDB[key] = value
   end
 
   -- Trigger callback if available
@@ -411,8 +419,9 @@ audioButton:SetScript("OnClick", function(self)
     collectionHeader:SetPoint("TOPLEFT", content.audioPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
 
     local yOffset = -INNER_PADDING
-    local configurableElements = {}
-    local soundDropdowns = {} -- Store references to dropdowns for refreshing
+  local configurableElements = {}
+  local soundDropdowns = {} -- Store references to dropdowns for refreshing
+  local checkboxRefs = { types = {} } -- Store references to checkboxes for refreshing
 
     -- Helper functions to use CollectionNotifications module functions
     local function GetCollectionSetting(key)
@@ -421,23 +430,28 @@ audioButton:SetScript("OnClick", function(self)
         value = addon.CollectionNotifications.GetSetting(key)
       else
         -- Fallback to direct access if module not loaded yet
-        if not NoobTacoDB.CollectionNotifications then
-          NoobTacoDB.CollectionNotifications = {}
+        if not NoobTacoUIMediaDB.CollectionNotifications then
+          NoobTacoUIMediaDB.CollectionNotifications = {}
         end
-        value = NoobTacoDB.CollectionNotifications[key]
+        value = NoobTacoUIMediaDB.CollectionNotifications[key]
       end
       return value
     end
 
-    local function SetCollectionSetting(key, value)
+  local function SetCollectionSetting(key, value)
       if addon.CollectionNotifications and addon.CollectionNotifications.SetSetting then
-        addon.CollectionNotifications.SetSetting(key, value)
+    -- Coerce checkbox values to explicit booleans
+    if value == nil then value = false end
+    if value == 1 then value = true end
+    addon.CollectionNotifications.SetSetting(key, value)
       else
         -- Fallback to direct access if module not loaded yet
-        if not NoobTacoDB.CollectionNotifications then
-          NoobTacoDB.CollectionNotifications = {}
+        if not NoobTacoUIMediaDB.CollectionNotifications then
+          NoobTacoUIMediaDB.CollectionNotifications = {}
         end
-        NoobTacoDB.CollectionNotifications[key] = value
+    if value == nil then value = false end
+    if value == 1 then value = true end
+    NoobTacoUIMediaDB.CollectionNotifications[key] = value
         if addon.CallbackRegistry then
           addon.CallbackRegistry:Trigger("CollectionNotifications." .. key, value)
         end
@@ -445,9 +459,10 @@ audioButton:SetScript("OnClick", function(self)
     end
 
     -- Global Enable Toggle
-    local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 20)
+  local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 20)
     enableCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 0, yOffset)
     enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
+  checkboxRefs.enable = enableCheckbox
 
     local enableLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 8, 0)
@@ -472,7 +487,8 @@ audioButton:SetScript("OnClick", function(self)
       if GetCollectionSetting(typeData.key) == nil then
         SetCollectionSetting(typeData.key, typeData.default)
       end
-      typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
+  typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
+  checkboxRefs.types[typeData.key] = typeCheckbox
 
       local typeLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
       typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 8, 0)
@@ -505,7 +521,7 @@ audioButton:SetScript("OnClick", function(self)
         -- If saved sound doesn't exist, fall back to default
         if not soundExists then
           print("|cFF16C3F2NoobTacoUI-Media|r: Saved sound '" .. currentSound .. "' no longer available, using default")
-          validSound = nil
+          validSound = false
         end
       end
 
@@ -532,13 +548,14 @@ audioButton:SetScript("OnClick", function(self)
       soundDropdowns[typeData.sound] = soundDropdown
 
       -- Callback when sound changes - updates both settings and test button
-      soundDropdown.OnValueChanged = function(self, value)
+  soundDropdown.OnValueChanged = function(self, value)
         SetCollectionSetting(typeData.sound, value)
         testButton:SetSound(value)
       end
 
       typeCheckbox:SetScript("OnClick", function(self)
-        SetCollectionSetting(typeData.key, self:GetChecked())
+        local checked = self:GetChecked() and true or false
+        SetCollectionSetting(typeData.key, checked)
       end)
 
       -- Store elements for enable/disable functionality
@@ -559,7 +576,8 @@ audioButton:SetScript("OnClick", function(self)
     if GetCollectionSetting("showMessages") == nil then
       SetCollectionSetting("showMessages", true)
     end
-    chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
+  chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
+  checkboxRefs.chat = chatCheckbox
 
     local chatLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 8, 0)
@@ -567,7 +585,8 @@ audioButton:SetScript("OnClick", function(self)
     chatLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
     chatCheckbox:SetScript("OnClick", function(self)
-      SetCollectionSetting("showMessages", self:GetChecked())
+      local checked = self:GetChecked() and true or false
+      SetCollectionSetting("showMessages", checked)
     end)
 
     -- Add chat elements to configurable list
@@ -615,7 +634,7 @@ audioButton:SetScript("OnClick", function(self)
 
     -- Global enable checkbox functionality
     enableCheckbox:SetScript("OnClick", function(self)
-      local enabled = self:GetChecked()
+      local enabled = self:GetChecked() and true or false
       SetCollectionSetting("enabled", enabled)
       UpdateElementsState(enabled)
     end)
@@ -633,14 +652,45 @@ audioButton:SetScript("OnClick", function(self)
       end
     end
 
-    -- Store refresh function for external access
+    -- Function to refresh checkbox values
+    local function RefreshCheckboxes()
+      local enabledValue = GetCollectionSetting("enabled") ~= false
+      if checkboxRefs.enable then
+        checkboxRefs.enable:SetChecked(enabledValue)
+      end
+      if checkboxRefs.chat then
+        checkboxRefs.chat:SetChecked(GetCollectionSetting("showMessages") and true or false)
+      end
+      for key, cb in pairs(checkboxRefs.types) do
+        cb:SetChecked(GetCollectionSetting(key) and true or false)
+      end
+      -- Ensure dependent controls enable/disable reflects current master state
+      if UpdateElementsState then
+        UpdateElementsState(enabledValue)
+      end
+    end
+
+    -- Store refresh functions for external access
     content.audioPanel.RefreshDropdowns = RefreshSoundDropdowns
+    content.audioPanel.RefreshCheckboxes = RefreshCheckboxes
+
+    -- Live sync: update UI when settings change
+    if addon.CallbackRegistry and addon.CallbackRegistry.RegisterCallback then
+      local keys = { "enabled", "showMessages", "newPet", "newMount", "newToy", "newTransmog", "soundPet", "soundMount", "soundToy", "soundTransmog" }
+      for _, key in ipairs(keys) do
+        addon.CallbackRegistry:RegisterCallback("CollectionNotifications." .. key, function()
+          if content.currentPanel == content.audioPanel then
+            if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
+            if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
+          end
+        end)
+      end
+    end
   end
 
-  -- Refresh dropdown values before showing
-  if content.audioPanel.RefreshDropdowns then
-    content.audioPanel.RefreshDropdowns()
-  end
+  -- Refresh UI values before showing
+  if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
+  if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
 
   content.audioPanel:Show()
   content.currentPanel = content.audioPanel
@@ -722,8 +772,9 @@ addon.ShowConfigMenu = function()
   EnhancedConfigFrame:Show()
 
   -- Refresh current panel if it's the audio panel
-  if content.currentPanel == content.audioPanel and content.audioPanel.RefreshDropdowns then
-    content.audioPanel.RefreshDropdowns()
+  if content.currentPanel == content.audioPanel then
+    if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
+    if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
   end
 end
 
@@ -746,6 +797,11 @@ SlashCmdList["NTCC"] = function()
   -- Auto-select audio category if possible
   if audioButton and audioButton.GetScript and audioButton:GetScript("OnClick") then
     audioButton:GetScript("OnClick")(audioButton)
+    -- After selection, ensure refresh runs
+    if content.audioPanel then
+      if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
+      if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
+    end
   end
 end
 
@@ -753,14 +809,14 @@ end
 SLASH_NTDEBUG1 = "/ntdebug"
 SlashCmdList["NTDEBUG"] = function()
   print("|cFF16C3F2NoobTacoUI-Media Debug:|r")
-  print("NoobTacoDB exists: " .. tostring(NoobTacoDB ~= nil))
+  print("NoobTacoUIMediaDB exists: " .. tostring(NoobTacoUIMediaDB ~= nil))
 
-  if NoobTacoDB then
-    print("CollectionNotifications table exists: " .. tostring(NoobTacoDB.CollectionNotifications ~= nil))
+  if NoobTacoUIMediaDB then
+    print("CollectionNotifications table exists: " .. tostring(NoobTacoUIMediaDB.CollectionNotifications ~= nil))
 
-    if NoobTacoDB.CollectionNotifications then
+    if NoobTacoUIMediaDB.CollectionNotifications then
       print("Current settings:")
-      for key, value in pairs(NoobTacoDB.CollectionNotifications) do
+      for key, value in pairs(NoobTacoUIMediaDB.CollectionNotifications) do
         print("  " .. key .. " = " .. tostring(value))
       end
 
@@ -770,8 +826,8 @@ SlashCmdList["NTDEBUG"] = function()
 
       print("Sound validation:")
       for _, soundKey in ipairs(soundKeys) do
-        local soundName = NoobTacoDB.CollectionNotifications[soundKey]
-        if soundName then
+        local soundName = NoobTacoUIMediaDB.CollectionNotifications[soundKey]
+        if type(soundName) == "string" and soundName ~= "" then
           local soundFile = LSM:Fetch("sound", soundName, true) -- silent fetch
           print("  " .. soundKey .. " (" .. soundName .. "): " .. (soundFile and "FOUND" or "MISSING"))
         else

@@ -14,7 +14,6 @@ local defaultSettings = {
   newToy = true,
   newTransmog = true,
   showMessages = true,
-  volume = 0.8,
   soundPet = "NT_InfussionOfLight",
   soundMount = "NT_Mount",
   soundToy = "NT_Chest",
@@ -23,22 +22,43 @@ local defaultSettings = {
 
 -- Initialize settings if they don't exist
 local function InitializeSettings()
-  if not NoobTacoDB then
-    NoobTacoDB = {}
+  if not NoobTacoUIMediaDB then
+    NoobTacoUIMediaDB = {}
   end
 
-  if not NoobTacoDB.CollectionNotifications then
-    NoobTacoDB.CollectionNotifications = {}
+  -- One-time migration from legacy NoobTacoDB if present
+    local legacy = rawget(_G, "NoobTacoDB")
+    if legacy and type(legacy) == "table" and type(legacy.CollectionNotifications) == "table" then
+      NoobTacoUIMediaDB.CollectionNotifications = NoobTacoUIMediaDB.CollectionNotifications or legacy.CollectionNotifications
+    end
+
+  if not NoobTacoUIMediaDB.CollectionNotifications then
+    NoobTacoUIMediaDB.CollectionNotifications = {}
     print("|cFF16C3F2NoobTacoUI-Media|r: Creating new CollectionNotifications settings table")
   end
 
   -- Set defaults for any missing values
   local changedSettings = {}
   for key, value in pairs(defaultSettings) do
-    if NoobTacoDB.CollectionNotifications[key] == nil then
-      NoobTacoDB.CollectionNotifications[key] = value
+    if NoobTacoUIMediaDB.CollectionNotifications[key] == nil then
+      NoobTacoUIMediaDB.CollectionNotifications[key] = value
       table.insert(changedSettings, key)
     end
+  end
+
+  -- Normalize legacy non-boolean values for checkbox keys
+  local boolKeys = { "enabled", "newPet", "newMount", "newToy", "newTransmog", "showMessages" }
+  for _, k in ipairs(boolKeys) do
+    local v = NoobTacoUIMediaDB.CollectionNotifications[k]
+    if v == 1 or v == "1" or v == "true" then
+      v = true
+    elseif v == 0 or v == "0" or v == "false" or v == nil then
+      v = false
+    elseif type(v) ~= "boolean" then
+      -- Anything else non-boolean defaults to false for safety
+      v = false
+    end
+    NoobTacoUIMediaDB.CollectionNotifications[k] = v
   end
 
   if #changedSettings > 0 then
@@ -49,14 +69,28 @@ end
 -- Helper function to get setting value
 local function GetSetting(key)
   InitializeSettings()
-  local value = NoobTacoDB.CollectionNotifications[key]
-  return value
+  local value = NoobTacoUIMediaDB.CollectionNotifications[key]
+  if value ~= nil then return value end
+  -- Fallback to legacy table if present
+  local legacy = rawget(_G, "NoobTacoDB")
+  if legacy and legacy.CollectionNotifications then
+    return legacy.CollectionNotifications[key]
+  end
+  return nil
 end
 
 -- Helper function to set setting value
 local function SetSetting(key, value)
   InitializeSettings()
-  NoobTacoDB.CollectionNotifications[key] = value
+  if value == 1 then value = true end
+  if value == nil then value = false end
+  NoobTacoUIMediaDB.CollectionNotifications[key] = value
+  -- Mirror to legacy table for backward compatibility during transition
+  local legacy = rawget(_G, "NoobTacoDB")
+  if legacy then
+    legacy.CollectionNotifications = legacy.CollectionNotifications or {}
+    legacy.CollectionNotifications[key] = value
+  end
   if addon.CallbackRegistry then
     addon.CallbackRegistry:Trigger("CollectionNotifications." .. key, value)
   end
@@ -67,7 +101,7 @@ local function PlayNotificationSound(soundKey)
   if not GetSetting("enabled") then return end
 
   local soundName = GetSetting(soundKey)
-  if not soundName then return end
+  if type(soundName) ~= "string" or soundName == "" then return end
 
   -- Get the sound file from LibSharedMedia
   local soundFile = LSM:Fetch("sound", soundName)
