@@ -12,16 +12,12 @@ local defaultSettings = {
   newPet = true,
   newMount = true,
   newToy = true,
-  newAchievement = true,
   newTransmog = true,
-  newTitle = true,
   volume = 0.8,
   soundPet = "NT_InfussionOfLight",
   soundMount = "NT_Mount",
   soundToy = "NT_Chest",
-  soundAchievement = "NT_InfussionOfLight",
   soundTransmog = "NT_Chest",
-  soundTitle = "NT_InfussionOfLight",
 }
 
 -- Initialize settings if they don't exist
@@ -219,30 +215,8 @@ local function OnNewToy(self, event, itemID)
 end
 
 -- Achievement notification
-local function OnAchievementEarned(self, event, achievementID)
-  -- Debug message to test if event is triggering
-  print(string.format(
-    "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Achievement event triggered! Event: %s, AchievementID: %s",
-    event or "nil",
-    tostring(achievementID or "nil")))
-
-  if GetSetting("newAchievement") and achievementID then
-    local name = GetAchievementInfo(achievementID)
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Achievement name lookup result: %s",
-      tostring(name or "nil")))
-
-    if name then
-      PlayNotificationSound("soundAchievement")
-      if GetSetting("showMessages") then
-        print(string.format("|cFF16C3F2NoobTacoUI|r: Achievement earned: |cFF00FF00%s|r", name))
-      end
-    end
-  else
-    print(string.format(
-      "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Achievement notification disabled or invalid achievementID. Enabled: %s",
-      tostring(GetSetting("newAchievement"))))
-  end
-end
+-- REMOVED: Default WoW toasts work well for achievements
+-- local function OnAchievementEarned(self, event, achievementID)
 
 -- Transmog collection notification
 local function OnTransmogCollected(self, event, appearanceID, sourceID)
@@ -262,18 +236,9 @@ local function OnTransmogCollected(self, event, appearanceID, sourceID)
   end
 end
 
--- Title earned notification
--- Note: Most titles in WoW are earned through achievements, so title notifications
--- are typically handled by the achievement notification system above.
--- This function is kept for potential future use if a separate title event is added.
-local function OnTitleEarned(self, event, titleID)
-  if GetSetting("newTitle") and titleID then
-    PlayNotificationSound("soundTitle")
-    if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New title earned!")
-    end
-  end
-end
+-- Title earned notification  
+-- REMOVED: Most titles are earned through achievements, default WoW toasts work well
+-- local function OnTitleEarned(self, event, titleID)
 
 -- Event registration and handlers
 local function RegisterEvents()
@@ -293,18 +258,12 @@ local function RegisterEvents()
       CollectionNotifications:RegisterEvent("NEW_TOY_ADDED")
     end
 
-    -- Achievement events
-    if GetSetting("newAchievement") then
-      CollectionNotifications:RegisterEvent("ACHIEVEMENT_EARNED")
-    end
-
     -- Transmog events
     if GetSetting("newTransmog") then
       CollectionNotifications:RegisterEvent("TRANSMOG_COLLECTION_UPDATED")
     end
 
-    -- Note: Title notifications are handled through achievements
-    -- as there's no separate TITLE_EARNED event in WoW's API
+    -- Note: Achievement and title notifications removed - default WoW toasts work well
   end
 end
 
@@ -320,11 +279,10 @@ CollectionNotifications:SetScript("OnEvent", function(self, event, ...)
     OnNewMount(self, event, ...)
   elseif event == "NEW_TOY_ADDED" then
     OnNewToy(self, event, ...)
-  elseif event == "ACHIEVEMENT_EARNED" then
-    OnAchievementEarned(self, event, ...)
   elseif event == "TRANSMOG_COLLECTION_UPDATED" then
     OnTransmogCollected(self, event, ...)
   end
+  -- Note: Achievement and title events removed - default WoW toasts work well
 end)
 
 -- Initialize on addon loaded
@@ -375,9 +333,7 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     PlayNotificationSound("soundPet")
     C_Timer.After(1, function() PlayNotificationSound("soundMount") end)
     C_Timer.After(2, function() PlayNotificationSound("soundToy") end)
-    C_Timer.After(3, function() PlayNotificationSound("soundAchievement") end)
-    C_Timer.After(4, function() PlayNotificationSound("soundTransmog") end)
-    C_Timer.After(5, function() PlayNotificationSound("soundTitle") end)
+    C_Timer.After(3, function() PlayNotificationSound("soundTransmog") end)
   elseif args == "testmount" then
     print("|cFF16C3F2NoobTacoUI|r Testing mount notification...")
     PlayNotificationSound("soundMount")
@@ -505,9 +461,7 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     print("  Pets: " .. (GetSetting("newPet") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
     print("  Mounts: " .. (GetSetting("newMount") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
     print("  Toys: " .. (GetSetting("newToy") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
-    print("  Achievements: " .. (GetSetting("newAchievement") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
     print("  Transmog: " .. (GetSetting("newTransmog") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
-    print("  Titles: " .. (GetSetting("newTitle") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
   else
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications commands:")
     print("  |cFFFFFF00/ntmcollection test|r - Test all notification sounds")
@@ -516,5 +470,6 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     print("  |cFFFFFF00/ntmcollection testtoy|r - Test toy notification specifically")
     print("  |cFFFFFF00/ntmcollection toys|r - Show toy collection debug info")
     print("  |cFFFFFF00/ntmcollection status|r - Show current settings")
+    print("  |cFF808080Note: Achievement and title notifications removed (WoW defaults work better)|r")
   end
 end

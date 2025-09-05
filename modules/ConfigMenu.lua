@@ -318,9 +318,7 @@ local function CreateCollectionNotificationsConfig()
   CreateCheckbox(RightPanel, "New Pet Notifications", "newPet")
   CreateCheckbox(RightPanel, "New Mount Notifications", "newMount")
   CreateCheckbox(RightPanel, "New Toy Notifications", "newToy")
-  CreateCheckbox(RightPanel, "Achievement Notifications", "newAchievement")
   CreateCheckbox(RightPanel, "Transmog Notifications", "newTransmog")
-  CreateCheckbox(RightPanel, "Title Notifications", "newTitle")
   CreateCheckbox(RightPanel, "Show Chat Messages", "showMessages")
 end
 
@@ -329,7 +327,7 @@ RegisterModule({
   name = "Collection Notifications",
   dbKey = "CollectionNotifications",
   description =
-  "Play audio notifications when you collect new pets, mounts, toys, achievements, transmog appearances, and titles. Configure which types of collections trigger notifications and customize the sounds played for each type.",
+  "Play audio notifications when you collect new pets, mounts, toys, and transmog appearances. Configure which types of collections trigger notifications and customize the sounds played for each type. Achievement and title notifications removed as WoW's default toasts work better.",
   configFunc = CreateCollectionNotificationsConfig,
   categoryID = 2, -- Audio category
   uiOrder = 50,
