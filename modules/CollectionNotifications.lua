@@ -14,10 +14,10 @@ local defaultSettings = {
   newToy = true,
   newTransmog = true,
   showMessages = true,
-  soundPet = "NT_InfussionOfLight",
-  soundMount = "NT_Mount",
-  soundToy = "NT_Chest",
-  soundTransmog = "NT_Chest",
+  soundPet = "NT_Pet",
+  soundMount = "NT_Mount_Collection",
+  soundToy = "NT_Toy_Collection",
+  soundTransmog = "NT_Transmog",
 }
 
 -- Initialize settings if they don't exist
@@ -27,10 +27,11 @@ local function InitializeSettings()
   end
 
   -- One-time migration from legacy NoobTacoDB if present
-    local legacy = rawget(_G, "NoobTacoDB")
-    if legacy and type(legacy) == "table" and type(legacy.CollectionNotifications) == "table" then
-      NoobTacoUIMediaDB.CollectionNotifications = NoobTacoUIMediaDB.CollectionNotifications or legacy.CollectionNotifications
-    end
+  local legacy = rawget(_G, "NoobTacoDB")
+  if legacy and type(legacy) == "table" and type(legacy.CollectionNotifications) == "table" then
+    NoobTacoUIMediaDB.CollectionNotifications = NoobTacoUIMediaDB.CollectionNotifications or
+    legacy.CollectionNotifications
+  end
 
   if not NoobTacoUIMediaDB.CollectionNotifications then
     NoobTacoUIMediaDB.CollectionNotifications = {}
@@ -63,6 +64,24 @@ local function InitializeSettings()
 
   if #changedSettings > 0 then
     print("|cFF16C3F2NoobTacoUI-Media|r: Initialized default values for: " .. table.concat(changedSettings, ", "))
+  end
+
+  -- One-time migration of legacy default sounds to new dedicated collection sounds
+  local db = NoobTacoUIMediaDB.CollectionNotifications
+  if not db.soundDefaultsMigratedV2 then
+    local migrated = {}
+    if db.soundPet == "NT_InfussionOfLight" then
+      db.soundPet = "NT_Pet"; table.insert(migrated, "Pet") end
+    if db.soundMount == "NT_Mount" then
+      db.soundMount = "NT_Mount_Collection"; table.insert(migrated, "Mount") end
+    if db.soundToy == "NT_Chest" then
+      db.soundToy = "NT_Toy_Collection"; table.insert(migrated, "Toy") end
+    if db.soundTransmog == "NT_Chest" then
+      db.soundTransmog = "NT_Transmog"; table.insert(migrated, "Transmog") end
+    db.soundDefaultsMigratedV2 = true
+    if #migrated > 0 then
+      print("|cFF16C3F2NoobTacoUI-Media|r: Updated collection sound defaults (" .. table.concat(migrated, ", ") .. ")")
+    end
   end
 end
 
