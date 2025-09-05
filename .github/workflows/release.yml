@@ -69,20 +69,13 @@ jobs:
           fi
           
           # The BigWigs packager doesn't include changelog in the zip file
-          # Instead, copy our processed changelog that was used for metadata
+          # Copy the processed changelog that was used for packaging metadata
           if [ -f ".changelog" ]; then
             echo "Found .changelog file, copying as processed changelog..."
             cp .changelog ./artifacts/changelog.txt
             echo "Processed changelog copied as changelog.txt"
           else
             echo "No .changelog file found"
-          fi
-          
-          # Also include the source changelog for reference
-          if [ -f "CHANGELOG.md" ]; then
-            echo "Copying source CHANGELOG.md for reference..."
-            cp CHANGELOG.md ./artifacts/CHANGELOG.md
-            echo "Source changelog copied"
           fi
           
           echo "=== Final artifacts directory contents ==="
@@ -99,9 +92,8 @@ jobs:
           cat ./artifacts/changelog.txt 2>/dev/null || echo "No processed changelog found"
           echo ""
           echo "=== Artifacts Summary ==="
-          echo "The zip file contains the addon package without changelog"
-          echo "The changelog.txt contains the processed changelog used for upload metadata"
-          echo "The CHANGELOG.md contains the full source changelog for reference"
+          echo "- ZIP file: Clean addon package (no changelog included by design)"
+          echo "- changelog.txt: Processed changelog for current version (used for upload metadata)"
           echo ""
           ls -la ./artifacts/
           echo ""
