@@ -52,19 +52,38 @@ jobs:
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Preserve artifacts before cleanup
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "=== Copying artifacts before any cleanup ==="
+          mkdir -p ./artifacts
+          if [ -d ".release" ]; then
+            echo "Found .release directory, copying contents..."
+            cp -r .release/* ./artifacts/ 2>/dev/null || echo "No files to copy from .release"
+            ls -la .release/
+          fi
+          if [ -f ".changelog" ]; then
+            echo "Found .changelog file, copying..."
+            cp .changelog ./artifacts/
+          fi
+          echo "=== Artifacts directory contents ==="
+          ls -la ./artifacts/
+
       - name: Show test results
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "=== Test Package Created Successfully ==="
           echo "Zip file:"
-          find .release -name "*.zip" -ls
+          find .release -name "*.zip" -ls 2>/dev/null || echo "No zip files found in .release"
+          find ./artifacts -name "*.zip" -ls 2>/dev/null || echo "No zip files found in ./artifacts"
           echo ""
           echo "=== Changelog Content ==="
           echo "Extracted changelog (.changelog file):"
-          cat .changelog
+          cat .changelog 2>/dev/null || cat ./artifacts/.changelog 2>/dev/null || echo "No changelog found"
           echo ""
           echo "=== Directory contents before upload ==="
-          ls -la .release/ || echo "No .release directory found"
+          ls -la .release/ 2>/dev/null || echo "No .release directory found"
+          ls -la ./artifacts/ 2>/dev/null || echo "No ./artifacts directory found"
           echo ""
           echo "=== Current working directory ==="
           pwd
@@ -77,13 +96,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NoobTacoUI-Media-Test-Package
-          path: .release/
-          retention-days: 7
-
-      - name: Upload changelog as artifact
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
-        with:
-          name: NoobTacoUI-Media-Changelog
-          path: .changelog
+          path: ./artifacts/
           retention-days: 7
