@@ -1,900 +1,463 @@
--- NoobTacoUI-Media Configuration Menu
--- Based on Plumber's ControlCenter design
+-- NoobTacoUI-Media Enhanced Config Menu
+-- Enhanced with Plumber-style design patterns using Nord theme
 
 local addonName, addon = ...
 local CreateFrame = CreateFrame
-local L = addon and addon.L or {}
-local tinsert = table.insert
 
--- Make addon globally accessible for other modules
-_G.NoobTacoUIMediaAddon = addon
-
--- Settings table (replace with SavedVariables in production)
+-- Initialize database if needed
 NoobTacoDB = NoobTacoDB or {}
 
--- Layout constants (following Plumber's design)
-local RATIO = 0.75 -- height/width
-local FRAME_WIDTH = 600
-local PADDING = 16
-local BUTTON_HEIGHT = 24
-local OPTION_GAP_Y = 8
-local DIFFERENT_CATEGORY_OFFSET = 8
-local LEFT_SECTOR_WIDTH = math.floor(0.618 * FRAME_WIDTH + 0.5) -- Golden ratio split
-
--- Callback registry for settings changes
-local CallbackRegistry = {}
-CallbackRegistry.callbacks = {}
-function CallbackRegistry:RegisterSettingCallback(dbKey, func)
-  self.callbacks[dbKey] = self.callbacks[dbKey] or {}
-  table.insert(self.callbacks[dbKey], func)
+-- Simple callback registry for settings changes
+if not addon.CallbackRegistry then
+  addon.CallbackRegistry = {
+    callbacks = {},
+    Trigger = function(self, key, value)
+      if self.callbacks[key] then
+        for _, func in ipairs(self.callbacks[key]) do
+          func(value)
+        end
+      end
+    end,
+    RegisterCallback = function(self, key, func)
+      self.callbacks[key] = self.callbacks[key] or {}
+      table.insert(self.callbacks[key], func)
+    end,
+    RegisterSettingCallback = function(self, key, func)
+      -- Alias for RegisterCallback to maintain compatibility
+      self:RegisterCallback(key, func)
+    end
+  }
 end
 
-function CallbackRegistry:Trigger(dbKey, value)
-  if self.callbacks[dbKey] then
-    for _, func in ipairs(self.callbacks[dbKey]) do
-      func(value)
+-- Database helper functions
+local function GetDBValue(key)
+  if key == "CollectionNotificationsEnabled" then
+    -- Use CollectionNotifications settings structure
+    if not NoobTacoDB.CollectionNotifications then
+      NoobTacoDB.CollectionNotifications = {}
     end
+    return NoobTacoDB.CollectionNotifications.enabled
+  end
+  return NoobTacoDB[key]
+end
+
+local function SetDBValue(key, value)
+  if key == "CollectionNotificationsEnabled" then
+    -- Use CollectionNotifications settings structure
+    if not NoobTacoDB.CollectionNotifications then
+      NoobTacoDB.CollectionNotifications = {}
+    end
+    NoobTacoDB.CollectionNotifications.enabled = value
+  else
+    NoobTacoDB[key] = value
+  end
+
+  -- Trigger callback if available
+  if addon.CallbackRegistry then
+    addon.CallbackRegistry:Trigger(key, value)
   end
 end
 
-addon.CallbackRegistry = CallbackRegistry
-
--- Helper to get/set DB values
-local function GetDBValue(dbKey)
-  return NoobTacoDB[dbKey]
-end
-local function SetDBValue(dbKey, value)
-  NoobTacoDB[dbKey] = value
-  CallbackRegistry:Trigger(dbKey, value)
-end
+-- Expose to addon namespace
 addon.GetDBValue = GetDBValue
 addon.SetDBValue = SetDBValue
 
--- Categories for organizing modules
-local CATEGORY_ORDER = {
-  [1] = "Audio",
-}
-
--- Module registry
-addon.Modules = addon.Modules or {}
-local function RegisterModule(moduleData)
-  tinsert(addon.Modules, moduleData)
+-- Wait for UIAssets to be loaded
+if not addon.UIAssets then
+  local frame = CreateFrame("Frame")
+  frame:RegisterEvent("ADDON_LOADED")
+  frame:SetScript("OnEvent", function(self, event, loadedAddonName)
+    if loadedAddonName == addonName and addon.UIAssets then
+      -- Reload this file or trigger initialization
+      self:UnregisterEvent("ADDON_LOADED")
+    end
+  end)
+  return
 end
 
--- Forward declarations
-local CreateCollectionNotificationsConfig
-local ScrollFrame, ScrollChild, SelectionTexture, preview, description
+-- Enhanced Layout Constants (Plumber-inspired)
+local FRAME_WIDTH = 720 -- Slightly larger for better proportions
+local FRAME_HEIGHT = 540
+local HEADER_HEIGHT = 40
+local SIDEBAR_WIDTH = 240
+local PADDING = 16
+local INNER_PADDING = 12
+local BUTTON_HEIGHT = 32
+local SECTION_SPACING = 24
 
--- Main Config Frame using Plumber's approach
-local ConfigFrame = CreateFrame("Frame", "NoobTacoUIConfigFrame", UIParent)
-ConfigFrame:SetSize(FRAME_WIDTH, FRAME_WIDTH * RATIO)
-ConfigFrame:SetPoint("CENTER")
-ConfigFrame:SetMovable(true)
-ConfigFrame:SetClampedToScreen(true)
-ConfigFrame:RegisterForDrag("LeftButton")
-ConfigFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
-ConfigFrame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
-ConfigFrame:Hide()
+-- Create main config frame with enhanced styling
+local function CreateEnhancedConfigFrame()
+  local frame = addon.UIUtils:CreateThemedFrame(UIParent, "Frame")
+  frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
+  frame:SetPoint("CENTER")
+  frame:SetMovable(true)
+  frame:SetClampedToScreen(true)
+  frame:RegisterForDrag("LeftButton")
+  frame:SetScript("OnDragStart", function(self) self:StartMoving() end)
+  frame:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+  frame:SetFrameStrata("DIALOG")
+  frame:Hide()
 
--- Create Nine-Slice Background (simplified version of Plumber's approach)
-local Background = ConfigFrame:CreateTexture(nil, "BACKGROUND")
-Background:SetAllPoints()
-Background:SetColorTexture(0.1, 0.1, 0.1, 0.9) -- Dark semi-transparent background
+  -- Enhanced background with gradient
+  frame.Background:SetTexture(addon.UIAssets.Background.Main)
 
--- Title Bar
-local TitleBar = CreateFrame("Frame", nil, ConfigFrame)
-TitleBar:SetHeight(32)
-TitleBar:SetPoint("TOPLEFT", ConfigFrame, "TOPLEFT", 0, 0)
-TitleBar:SetPoint("TOPRIGHT", ConfigFrame, "TOPRIGHT", 0, 0)
+  -- Add a subtle border
+  frame.Border = frame:CreateTexture(nil, "BORDER")
+  frame.Border:SetTexture(addon.UIAssets.Background.Accent)
+  frame.Border:SetPoint("TOPLEFT", frame, "TOPLEFT", -2, 2)
+  frame.Border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 2, -2)
 
-local TitleBG = TitleBar:CreateTexture(nil, "BACKGROUND")
-TitleBG:SetAllPoints()
-TitleBG:SetColorTexture(0.2, 0.2, 0.2, 1)
-
-local Title = TitleBar:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-Title:SetPoint("CENTER", TitleBar, "CENTER", 0, 0)
-Title:SetText("NoobTacoUI-Media Configuration")
-
--- Close Button
-local CloseButton = CreateFrame("Button", nil, TitleBar, "UIPanelCloseButton")
-CloseButton:SetPoint("TOPRIGHT", TitleBar, "TOPRIGHT", -4, -4)
-CloseButton:SetScript("OnClick", function() ConfigFrame:Hide() end)
-
--- ScrollFrame for left panel (following Plumber's pattern)
-ScrollFrame = CreateFrame("Frame", nil, ConfigFrame)
-ScrollFrame:SetPoint("TOPLEFT", TitleBar, "BOTTOMLEFT", 0, 0)
-ScrollFrame:SetPoint("BOTTOMLEFT", ConfigFrame, "BOTTOMLEFT", 0, 0)
-ScrollFrame:SetWidth(LEFT_SECTOR_WIDTH)
-
-ScrollChild = CreateFrame("Frame", nil, ScrollFrame)
-ScrollChild:SetSize(8, 8)
-ScrollChild:SetPoint("TOPLEFT", ScrollFrame, "TOPLEFT", 0, 0)
-ScrollFrame.ScrollChild = ScrollChild
-
--- Right Panel (Details)
-local RightPanel = CreateFrame("Frame", nil, ConfigFrame)
-RightPanel:SetPoint("TOPLEFT", TitleBar, "BOTTOMLEFT", LEFT_SECTOR_WIDTH, 0)
-RightPanel:SetPoint("BOTTOMRIGHT", ConfigFrame, "BOTTOMRIGHT", 0, 0)
-
-local RightPanelBG = RightPanel:CreateTexture(nil, "BACKGROUND")
-RightPanelBG:SetAllPoints()
-RightPanelBG:SetColorTexture(0.08, 0.08, 0.08, 0.8)
-
--- Header height for calculations
-local headerHeight = TitleBar:GetHeight()
-
--- Preview texture (following Plumber's design)
-local previewSize = FRAME_WIDTH - LEFT_SECTOR_WIDTH - 2 * PADDING + 4
-preview = RightPanel:CreateTexture(nil, "OVERLAY")
-preview:SetSize(previewSize, previewSize)
-preview:SetPoint("TOPRIGHT", RightPanel, "TOPRIGHT", -PADDING, -PADDING)
-
--- Description text in right panel
-description = RightPanel:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-description:SetPoint("TOPLEFT", preview, "BOTTOMLEFT", 4, -PADDING)
-description:SetPoint("BOTTOMRIGHT", RightPanel, "BOTTOMRIGHT", -PADDING - 4, PADDING)
-description:SetJustifyH("LEFT")
-description:SetJustifyV("TOP")
-description:SetSpacing(2)
-description:SetTextColor(0.659, 0.659, 0.659)
-description:SetShadowColor(0, 0, 0)
-description:SetShadowOffset(1, -1)
-description:SetText("Select a category from the left panel to view its description and options.")
-
--- Dividers (following Plumber's design)
-local dividerTop = RightPanel:CreateTexture(nil, "OVERLAY")
-dividerTop:SetSize(16, 16)
-dividerTop:SetPoint("TOPRIGHT", ConfigFrame, "TOPLEFT", LEFT_SECTOR_WIDTH, -headerHeight)
-dividerTop:SetColorTexture(0.2, 0.2, 0.2, 0.8)
-
-local dividerBottom = RightPanel:CreateTexture(nil, "OVERLAY")
-dividerBottom:SetSize(16, 16)
-dividerBottom:SetPoint("BOTTOMRIGHT", ConfigFrame, "BOTTOMLEFT", LEFT_SECTOR_WIDTH, 0)
-dividerBottom:SetColorTexture(0.2, 0.2, 0.2, 0.8)
-
-local dividerMiddle = RightPanel:CreateTexture(nil, "OVERLAY")
-dividerMiddle:SetPoint("TOPLEFT", dividerTop, "BOTTOMLEFT", 0, 0)
-dividerMiddle:SetPoint("BOTTOMRIGHT", dividerBottom, "TOPRIGHT", 0, 0)
-dividerMiddle:SetColorTexture(0.2, 0.2, 0.2, 0.8)
-
--- Selection highlight (following Plumber's design)
-SelectionTexture = ScrollChild:CreateTexture(nil, "ARTWORK")
-SelectionTexture:SetSize(LEFT_SECTOR_WIDTH - PADDING, BUTTON_HEIGHT)
-SelectionTexture:SetColorTexture(0.2, 0.6, 1, 0.1)
-SelectionTexture:SetBlendMode("ADD")
-SelectionTexture:Hide()
-
--- Version text in lower right corner (following Plumber's pattern)
-local VersionText = RightPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-VersionText:SetPoint("BOTTOMRIGHT", RightPanel, "BOTTOMRIGHT", -PADDING, PADDING)
-VersionText:SetTextColor(0.24, 0.24, 0.24) -- Subtle gray color like Plumber
-VersionText:SetJustifyH("RIGHT")
-VersionText:SetJustifyV("BOTTOM")
-
--- Get version from addon metadata or fallback
-local function GetAddonVersion()
-  local version
-  -- Try modern API first
-  if C_AddOns and C_AddOns.GetAddOnMetadata then
-    version = C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version")
-  end
-
-  -- Check if version is the placeholder token or invalid
-  if not version or version == "@project-version@" or version == "" then
-    -- During development, use the current fallback version
-    version = "1.1.3"
-  end
-
-  return version
-end
-VersionText:SetText("v" .. GetAddonVersion())
-
--- Category Button Mixin (following Plumber's pattern)
-local CategoryButtonMixin = {}
-
-function CategoryButtonMixin:SetCategory(categoryID)
-  self.categoryID = categoryID
-  self.categoryKey = CATEGORY_ORDER[categoryID] or "Unknown"
-  self.Label:SetText(self.categoryKey)
+  return frame
 end
 
-function CategoryButtonMixin:OnLoad()
-  self.collapsed = false
-  self.childOptions = {}
-  self:UpdateArrow()
+-- Create enhanced header with Nord styling
+local function CreateEnhancedHeader(parent)
+  local header = CreateFrame("Frame", nil, parent)
+  header:SetHeight(HEADER_HEIGHT)
+  header:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+  header:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
+
+  -- Header background with gradient
+  header.Background = header:CreateTexture(nil, "BACKGROUND")
+  header.Background:SetAllPoints()
+  header.Background:SetTexture(addon.UIAssets.Gradients.PanelGrad)
+  header.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
+
+  -- Title with enhanced styling
+  header.Title = addon.UIUtils:CreateCategoryHeader(header, "NoobTacoUI-Media Configuration")
+  header.Title:SetPoint("LEFT", header, "LEFT", PADDING, 0)
+
+  -- Close button with enhanced styling
+  header.CloseButton = addon.UIUtils:CreateIconButton(header, "×", 24)
+  header.CloseButton:SetPoint("RIGHT", header, "RIGHT", -PADDING, 0)
+  header.CloseButton:SetScript("OnClick", function() parent:Hide() end)
+
+  -- Add hover effect to close button
+  header.CloseButton:SetScript("OnEnter", function(self)
+    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord11)) -- Red on hover
+  end)
+
+  header.CloseButton:SetScript("OnLeave", function(self)
+    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+  end)
+
+  -- Bottom divider
+  header.Divider = addon.UIUtils:CreateDivider(header, "HORIZONTAL", 2)
+  header.Divider:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 0, 0)
+  header.Divider:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, 0)
+
+  return header
 end
 
-function CategoryButtonMixin:UpdateArrow()
-  if self.collapsed then
-    self.Arrow:SetText("▶")
-  else
-    self.Arrow:SetText("▼")
-  end
+-- Create enhanced sidebar
+local function CreateEnhancedSidebar(parent, header)
+  local sidebar = addon.UIUtils:CreateThemedFrame(parent, "Frame")
+  sidebar:SetWidth(SIDEBAR_WIDTH)
+  sidebar:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+  sidebar:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 0, 0)
+
+  -- Sidebar background with different shade
+  sidebar.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord0))
+
+  -- Vertical divider on the right
+  sidebar.Divider = addon.UIUtils:CreateDivider(sidebar, "VERTICAL", 2)
+  sidebar.Divider:SetPoint("TOPRIGHT", sidebar, "TOPRIGHT", 0, 0)
+  sidebar.Divider:SetPoint("BOTTOMRIGHT", sidebar, "BOTTOMRIGHT", 0, 0)
+
+  return sidebar
 end
 
-function CategoryButtonMixin:Expand()
-  if self.collapsed then
-    self.collapsed = false
-    self.Drawer:SetHeight(self.drawerHeight or 100)
-    self.Drawer:Show()
-    self:UpdateArrow()
-  end
+-- Create enhanced content area
+local function CreateEnhancedContentArea(parent, header, sidebar)
+  local content = addon.UIUtils:CreateThemedFrame(parent, "Frame")
+  content:SetPoint("TOPLEFT", header, "BOTTOMLEFT", SIDEBAR_WIDTH, 0)
+  content:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", 0, 0)
+
+  -- Content background
+  content.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+
+  return content
 end
 
-function CategoryButtonMixin:Collapse()
-  if not self.collapsed then
-    self.collapsed = true
-    self.Drawer:SetHeight(DIFFERENT_CATEGORY_OFFSET)
-    self.Drawer:Hide()
-    self:UpdateArrow()
-  end
-end
-
-function CategoryButtonMixin:ToggleCollapse()
-  if self.collapsed then
-    self:Expand()
-  else
-    self:Collapse()
-  end
-end
-
-function CategoryButtonMixin:OnClick()
-  self:ToggleCollapse()
-
-  -- Show category description
-  if self.categoryID == 1 then -- Audio category (now category 1)
-    description:SetText(
-      "Audio Category\n\nConfigure audio-related features including collection notifications, custom sounds, and audio alerts.")
-    preview:SetColorTexture(0.1, 0.3, 0.5, 0.8) -- Blue tint for audio
-  else
-    description:SetText("Category: " ..
-      (self.categoryKey or "Unknown") .. "\n\nThis category contains media assets and configuration options.")
-    preview:SetColorTexture(0.15, 0.15, 0.15, 0.8)
-  end
-end
-
-function CategoryButtonMixin:OnEnter()
-  self.Background:SetColorTexture(0.2, 0.2, 0.2, 1)
-
-  -- Show selection highlight
-  SelectionTexture:ClearAllPoints()
-  SelectionTexture:SetPoint("LEFT", self, "LEFT", -PADDING, 0)
-  SelectionTexture:Show()
-end
-
-function CategoryButtonMixin:OnLeave()
-  self.Background:SetColorTexture(0.1, 0.1, 0.1, 0.8)
-  if not self:IsMouseOver() then
-    SelectionTexture:Hide()
-  end
-end
-
-function CategoryButtonMixin:AddChildOption(option)
-  if not self.numOptions then
-    self.numOptions = 0
-  end
-  self.numOptions = self.numOptions + 1
-  tinsert(self.childOptions, option)
-end
-
-function CategoryButtonMixin:InitializeDrawer()
-  self.drawerHeight = (self.numOptions or 1) * (OPTION_GAP_Y + BUTTON_HEIGHT) + OPTION_GAP_Y + DIFFERENT_CATEGORY_OFFSET
-  self.Drawer:SetHeight(self.drawerHeight)
-end
-
--- Create Category Button function (following Plumber's design)
-local function CreateCategoryButton(parent)
+-- Enhanced category button with Plumber-style design
+local function CreateEnhancedCategoryButton(parent, text, iconText)
   local button = CreateFrame("Button", nil, parent)
-  button:SetSize(LEFT_SECTOR_WIDTH - PADDING, BUTTON_HEIGHT)
+  button:SetSize(SIDEBAR_WIDTH - (PADDING * 2), BUTTON_HEIGHT)
 
-  -- Background
-  button.Background = button:CreateTexture(nil, "BACKGROUND")
-  button.Background:SetAllPoints()
-  button.Background:SetColorTexture(0.1, 0.1, 0.1, 0.8)
+  -- Background with multiple states
+  button.NormalBG = button:CreateTexture(nil, "BACKGROUND")
+  button.NormalBG:SetAllPoints()
+  button.NormalBG:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
 
-  -- Arrow indicator
-  button.Arrow = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  button.Arrow:SetPoint("LEFT", button, "LEFT", 8, 0)
-  button.Arrow:SetTextColor(0.8, 0.8, 0.8)
+  button.HoverBG = button:CreateTexture(nil, "BACKGROUND")
+  button.HoverBG:SetAllPoints()
+  button.HoverBG:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
+  button.HoverBG:Hide()
 
-  -- Label
+  button.SelectedBG = button:CreateTexture(nil, "BACKGROUND")
+  button.SelectedBG:SetAllPoints()
+  button.SelectedBG:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
+  button.SelectedBG:SetAlpha(0.3)
+  button.SelectedBG:Hide()
+
+  -- Icon (if provided)
+  if iconText then
+    button.Icon = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    button.Icon:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
+    button.Icon:SetText(iconText)
+    button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+  end
+
+  -- Text label
   button.Label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  button.Label:SetPoint("LEFT", button, "LEFT", 28, 0)
-  button.Label:SetJustifyH("LEFT")
-  button.Label:SetTextColor(1, 1, 1)
-
-  -- Drawer for child options
-  button.Drawer = CreateFrame("Frame", nil, button)
-  button.Drawer:SetPoint("TOPLEFT", button, "BOTTOMLEFT", 0, 0)
-  button.Drawer:SetSize(16, 16)
-
-  Mixin(button, CategoryButtonMixin)
-  button:SetScript("OnClick", button.OnClick)
-  button:SetScript("OnEnter", button.OnEnter)
-  button:SetScript("OnLeave", button.OnLeave)
-  button:OnLoad()
-
-  return button
-end
-
--- Sub-option Button function (for items under categories)
-local function CreateSubOptionButton(parent, text, onClick)
-  local button = CreateFrame("Button", nil, parent)
-  button:SetSize(LEFT_SECTOR_WIDTH - 6 * PADDING, BUTTON_HEIGHT)
-
-  button.Background = button:CreateTexture(nil, "BACKGROUND")
-  button.Background:SetAllPoints()
-  button.Background:SetColorTexture(0.05, 0.05, 0.05, 0.6)
-
-  button.Label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  button.Label:SetPoint("LEFT", button, "LEFT", 24, 0) -- Indented more than category
+  if iconText then
+    button.Label:SetPoint("LEFT", button.Icon, "RIGHT", 8, 0)
+  else
+    button.Label:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
+  end
   button.Label:SetText(text)
-  button.Label:SetTextColor(0.8, 0.8, 0.8)             -- Slightly dimmer than category
+  button.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
-  button:SetScript("OnClick", onClick)
+  -- State management
+  function button:SetSelected(selected)
+    if selected then
+      self.SelectedBG:Show()
+      self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+      if self.Icon then
+        self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+      end
+    else
+      self.SelectedBG:Hide()
+      self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+      if self.Icon then
+        self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+      end
+    end
+    self.selected = selected
+  end
+
+  -- Hover effects
   button:SetScript("OnEnter", function(self)
-    self.Background:SetColorTexture(0.15, 0.15, 0.15, 0.8)
-    self.Label:SetTextColor(1, 1, 1)
-
-    -- Show selection highlight
-    SelectionTexture:ClearAllPoints()
-    SelectionTexture:SetPoint("LEFT", self, "LEFT", -PADDING * 1.5, 0)
-    SelectionTexture:Show()
+    if not self.selected then
+      self.HoverBG:Show()
+      self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+    end
   end)
+
   button:SetScript("OnLeave", function(self)
-    self.Background:SetColorTexture(0.05, 0.05, 0.05, 0.6)
-    self.Label:SetTextColor(0.8, 0.8, 0.8)
-    if not self:IsMouseOver() then
-      SelectionTexture:Hide()
+    self.HoverBG:Hide()
+    if not self.selected then
+      self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
     end
   end)
 
   return button
 end
 
--- Create category buttons and structure
-local categoryButtons = {}
-local fromOffsetY = PADDING
-local lastCategoryButton
+-- Enhanced settings panel
+local function CreateEnhancedSettingsPanel(parent, title, description)
+  local panel = CreateFrame("Frame", nil, parent)
+  panel:SetAllPoints()
 
--- Create only the Audio category
-local button = CreateCategoryButton(ScrollChild)
-button:SetCategory(1) -- Audio is now category 1
-button:SetPoint("TOPLEFT", ScrollChild, "TOPLEFT", PADDING, -fromOffsetY)
+  -- Title with enhanced styling
+  panel.Title = addon.UIUtils:CreateCategoryHeader(panel, title)
+  panel.Title:SetPoint("TOPLEFT", panel, "TOPLEFT", PADDING, -PADDING)
 
-tinsert(categoryButtons, button)
+  -- Add a decorative line under the title
+  panel.TitleLine = addon.UIUtils:CreateDivider(panel, "HORIZONTAL", 2)
+  panel.TitleLine:SetPoint("TOPLEFT", panel.Title, "BOTTOMLEFT", 0, -4)
+  panel.TitleLine:SetWidth(200)
+  panel.TitleLine:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
 
--- Add sub-options for Audio category
-local collectionNotifButton = CreateSubOptionButton(button.Drawer, "Collection Notifications", function()
-  description:SetText(
-    "Collection Notifications\n\nReceive audio notifications when you collect new pets, mounts, toys, and transmog appearances.\n\nUse the settings button (⚙) to open the detailed configuration window, or toggle the checkbox to enable/disable globally.")
-  preview:SetColorTexture(0.1, 0.5, 0.3, 0.8) -- Green tint for collection notifications
-  -- Removed CreateCollectionNotificationsConfig() - now using popup instead
-end)
+  -- Description with better formatting
+  panel.Description = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  panel.Description:SetPoint("TOPLEFT", panel.TitleLine, "BOTTOMLEFT", 0, -8)
+  panel.Description:SetPoint("RIGHT", panel, "RIGHT", -PADDING, 0)
+  panel.Description:SetJustifyH("LEFT")
+  panel.Description:SetJustifyV("TOP")
+  panel.Description:SetText(description)
+  panel.Description:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+  panel.Description:SetSpacing(2)
 
--- Add checkbox for global enable toggle
-local globalEnableCheckbox = CreateFrame("CheckButton", nil, collectionNotifButton, "ChatConfigCheckButtonTemplate")
-globalEnableCheckbox:SetPoint("LEFT", collectionNotifButton, "LEFT", 2, 0)
-globalEnableCheckbox:SetSize(16, 16)
-globalEnableCheckbox:SetChecked(GetDBValue("CollectionNotificationsEnabled") ~= false)
-globalEnableCheckbox:SetScript("OnClick", function(self)
-  SetDBValue("CollectionNotificationsEnabled", self:GetChecked())
-  -- No longer need to refresh right panel config since we use popup now
-end)
+  -- Content divider
+  panel.Divider = addon.UIUtils:CreateDivider(panel, "HORIZONTAL", 1)
+  panel.Divider:SetPoint("TOPLEFT", panel.Description, "BOTTOMLEFT", 0, -INNER_PADDING)
+  panel.Divider:SetPoint("RIGHT", panel, "RIGHT", -PADDING, 0)
 
--- Adjust the label position to make room for the checkbox
-collectionNotifButton.Label:SetPoint("LEFT", collectionNotifButton, "LEFT", 44, 0)
+  return panel
+end
 
--- Add cog wheel settings button (following Plumber's design)
-local cogButton = CreateFrame("Button", nil, collectionNotifButton)
-cogButton:SetSize(16, 16)
-cogButton:SetPoint("RIGHT", collectionNotifButton, "RIGHT", -4, 0)
+-- Create the enhanced config frame
+local EnhancedConfigFrame = CreateEnhancedConfigFrame()
+local header = CreateEnhancedHeader(EnhancedConfigFrame)
+local sidebar = CreateEnhancedSidebar(EnhancedConfigFrame, header)
+local content = CreateEnhancedContentArea(EnhancedConfigFrame, header, sidebar)
 
--- Create cog wheel texture/icon
-local cogIcon = cogButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-cogIcon:SetPoint("CENTER")
-cogIcon:SetText("⚙") -- Gear/cog Unicode character
-cogIcon:SetTextColor(0.7, 0.7, 0.7)
+-- Add version footer to the enhanced frame
+local versionFooter = EnhancedConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+versionFooter:SetPoint("BOTTOMRIGHT", EnhancedConfigFrame, "BOTTOMRIGHT", -PADDING, PADDING)
+versionFooter:SetJustifyH("RIGHT")
+versionFooter:SetText("v" .. (C_AddOns and C_AddOns.GetAddOnMetadata and
+  C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.1.3"))
+versionFooter:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
+versionFooter:SetAlpha(0.7)
 
--- Hover effects for cog button
-cogButton:SetScript("OnEnter", function(self)
-  cogIcon:SetTextColor(1, 1, 1) -- Brighter on hover
-  GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-  GameTooltip:SetText("Collection Notifications Settings", 1, 1, 1)
-  GameTooltip:AddLine("Click to open detailed configuration window", 0.8, 0.8, 0.8, true)
-  GameTooltip:Show()
-end)
+-- Category management
+local categories = {}
+local currentCategory = nil
 
-cogButton:SetScript("OnLeave", function(self)
-  cogIcon:SetTextColor(0.7, 0.7, 0.7) -- Back to normal
-  GameTooltip:Hide()
-end)
-
--- Forward declaration for the popup window function
-local CreateCollectionNotificationsPopup
-
-cogButton:SetScript("OnClick", function()
-  CreateCollectionNotificationsPopup()
-end)
-
-collectionNotifButton:SetPoint("TOPLEFT", button.Drawer, "TOPLEFT", 8, -OPTION_GAP_Y)
-button:AddChildOption(collectionNotifButton)
-
-button:InitializeDrawer()
-lastCategoryButton = button
-
--- Collection Notifications Config Creation Function
-function CreateCollectionNotificationsConfig()
-  -- Clear existing config elements
-  if RightPanel.configElements then
-    for _, element in ipairs(RightPanel.configElements) do
-      if element and element.Hide then
-        element:Hide()
-      end
-    end
-    RightPanel.configElements = nil
+-- Add categories
+local audioButton = CreateEnhancedCategoryButton(sidebar, "Audio Settings", "🔊")
+audioButton:SetPoint("TOPLEFT", sidebar, "TOPLEFT", PADDING, -PADDING)
+audioButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
   end
 
-  RightPanel.configElements = {}
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
 
-  -- Configuration panel for Collection Notifications
-  local configPanel = CreateFrame("Frame", nil, RightPanel)
-  configPanel:SetPoint("TOPLEFT", description, "BOTTOMLEFT", -4, -20)
-  configPanel:SetPoint("BOTTOMRIGHT", RightPanel, "BOTTOMRIGHT", -PADDING, 40)
-  tinsert(RightPanel.configElements, configPanel)
+  -- Show audio settings panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
 
-  local yOffset = 0
+  if not content.audioPanel then
+    content.audioPanel = CreateEnhancedSettingsPanel(
+      content,
+      "Audio Configuration",
+      "Configure audio notifications, custom sounds, and sound effects used throughout NoobTacoUI-Media."
+    )
 
-  -- Check if Collection Notifications are globally enabled
-  local isGloballyEnabled = GetDBValue("CollectionNotificationsEnabled") ~= false
+    -- Add collection notifications section
+    local collectionHeader = addon.UIUtils:CreateCategoryHeader(content.audioPanel, "Collection Notifications")
+    collectionHeader:SetPoint("TOPLEFT", content.audioPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
 
-  -- Store all configurable elements for enabling/disabling
-  local configurableElements = {}
+    -- Enable toggle
+    local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 20)
+    enableCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 0, -INNER_PADDING)
+    enableCheckbox:SetChecked(addon.GetDBValue("CollectionNotificationsEnabled") ~= false)
 
-  -- Collection Type Toggles
-  local collectionTypes = {
-    { key = "PetNotificationsEnabled",      label = "Pet Collections" },
-    { key = "MountNotificationsEnabled",    label = "Mount Collections" },
-    { key = "ToyNotificationsEnabled",      label = "Toy Collections" },
-    { key = "TransmogNotificationsEnabled", label = "Transmog Collections" }
-  }
+    local enableLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 8, 0)
+    enableLabel:SetText("Enable Collection Notifications")
+    enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
-  for _, typeData in ipairs(collectionTypes) do
-    local typeLabel = configPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    typeLabel:SetPoint("TOPLEFT", configPanel, "TOPLEFT", 20, -yOffset)
-    typeLabel:SetText(typeData.label)
-    typeLabel:SetTextColor(0.9, 0.9, 0.9)
-
-    local typeCheckbox = CreateFrame("CheckButton", nil, configPanel, "ChatConfigCheckButtonTemplate")
-    typeCheckbox:SetPoint("LEFT", typeLabel, "RIGHT", 10, 0)
-    typeCheckbox:SetSize(18, 18)
-    typeCheckbox:SetChecked(GetDBValue(typeData.key) ~= false)
-    typeCheckbox:SetScript("OnClick", function(self)
-      SetDBValue(typeData.key, self:GetChecked())
+    enableCheckbox:SetScript("OnClick", function(self)
+      addon.SetDBValue("CollectionNotificationsEnabled", self:GetChecked())
     end)
 
-    -- Add to configurable elements for enable/disable functionality
-    tinsert(configurableElements, { element = typeLabel, type = "fontstring" })
-    tinsert(configurableElements, { element = typeCheckbox, type = "button" })
-
-    yOffset = yOffset + 25
-  end
-
-  yOffset = yOffset + 10
-
-  -- Audio Selection Section
-  local audioLabel = configPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  audioLabel:SetPoint("TOPLEFT", configPanel, "TOPLEFT", 0, -yOffset)
-  audioLabel:SetText("Notification Sound")
-  audioLabel:SetTextColor(1, 1, 1)
-  tinsert(configurableElements, { element = audioLabel, type = "fontstring" })
-
-  yOffset = yOffset + 25
-
-  -- Simple dropdown for audio selection (avoiding deprecated APIs)
-  local currentSound = GetDBValue("CollectionNotificationSound") or "NT_InfussionOfLight"
-
-  local dropdownButton = CreateFrame("Button", nil, configPanel)
-  dropdownButton:SetSize(200, 24)
-  dropdownButton:SetPoint("TOPLEFT", configPanel, "TOPLEFT", 20, -yOffset)
-
-  local dropdownBG = dropdownButton:CreateTexture(nil, "BACKGROUND")
-  dropdownBG:SetAllPoints()
-  dropdownBG:SetColorTexture(0.15, 0.15, 0.15, 0.9)
-
-  local dropdownText = dropdownButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  dropdownText:SetPoint("LEFT", dropdownButton, "LEFT", 8, 0)
-  dropdownText:SetText(currentSound)
-  dropdownText:SetTextColor(1, 1, 1)
-
-  local dropdownArrow = dropdownButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  dropdownArrow:SetPoint("RIGHT", dropdownButton, "RIGHT", -8, 0)
-  dropdownArrow:SetText("▼")
-  dropdownArrow:SetTextColor(0.8, 0.8, 0.8)
-
-  -- Test button next to dropdown
-  local testButton = CreateFrame("Button", nil, configPanel)
-  testButton:SetSize(60, 24)
-  testButton:SetPoint("LEFT", dropdownButton, "RIGHT", 10, 0)
-
-  local testBG = testButton:CreateTexture(nil, "BACKGROUND")
-  testBG:SetAllPoints()
-  testBG:SetColorTexture(0.2, 0.4, 0.2, 0.9)
-
-  local testText = testButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  testText:SetPoint("CENTER")
-  testText:SetText("Test")
-  testText:SetTextColor(1, 1, 1)
-
-  testButton:SetScript("OnClick", function()
-    -- Test play the current sound
-    local soundFile = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Audio\\nt_InfussionOfLight.ogg"
-    PlaySoundFile(soundFile, "Master")
-  end)
-
-  testButton:SetScript("OnEnter", function(self)
-    testBG:SetColorTexture(0.3, 0.5, 0.3, 1)
-  end)
-
-  testButton:SetScript("OnLeave", function(self)
-    testBG:SetColorTexture(0.2, 0.4, 0.2, 0.9)
-  end)
-
-  -- Add dropdown and test button to configurable elements
-  tinsert(configurableElements, { element = dropdownButton, type = "button" })
-  tinsert(configurableElements, { element = testButton, type = "button" })
-
-  -- Simple sound selection (can be expanded later)
-  local sounds = { "NT_InfussionOfLight", "NT_Chest", "NT_Mount" }
-  local currentIndex = 1
-  for i, sound in ipairs(sounds) do
-    if sound == currentSound then
-      currentIndex = i
-      break
-    end
-  end
-
-  dropdownButton:SetScript("OnClick", function()
-    currentIndex = currentIndex + 1
-    if currentIndex > #sounds then
-      currentIndex = 1
-    end
-    local newSound = sounds[currentIndex]
-    dropdownText:SetText(newSound)
-    SetDBValue("CollectionNotificationSound", newSound)
-  end)
-
-  dropdownButton:SetScript("OnEnter", function(self)
-    dropdownBG:SetColorTexture(0.25, 0.25, 0.25, 1)
-  end)
-
-  dropdownButton:SetScript("OnLeave", function(self)
-    dropdownBG:SetColorTexture(0.15, 0.15, 0.15, 0.9)
-  end)
-
-  -- Function to enable/disable elements based on global toggle
-  local function UpdateElementsState(enabled)
-    for _, elementData in ipairs(configurableElements) do
-      local element = elementData.element
-      local elementType = elementData.type
-
-      if elementType == "fontstring" then
-        if enabled then
-          element:SetTextColor(0.9, 0.9, 0.9) -- Normal color
-        else
-          element:SetTextColor(0.4, 0.4, 0.4) -- Greyed out
-        end
-      elseif elementType == "button" then
-        if enabled then
-          element:Enable()
-          element:SetAlpha(1.0)
-        else
-          element:Disable()
-          element:SetAlpha(0.5) -- Semi-transparent when disabled
-        end
+    -- Settings button
+    local settingsButton = addon.UIUtils:CreateThemedButton(content.audioPanel, "Detailed Settings", 150, 28)
+    settingsButton:SetPoint("TOPLEFT", enableCheckbox, "BOTTOMLEFT", 0, -INNER_PADDING)
+    settingsButton:SetScript("OnClick", function()
+      -- Call the popup function from the main ConfigMenu
+      if addon.CreateCollectionNotificationsPopup then
+        addon.CreateCollectionNotificationsPopup()
       end
-    end
-  end
-
-  -- Apply initial state
-  UpdateElementsState(isGloballyEnabled)
-end
-
--- Collection Notifications Popup Window (following Plumber's design pattern)
-function CreateCollectionNotificationsPopup()
-  -- Check if popup already exists and close it
-  if _G["NoobTacoUICollectionNotifPopup"] then
-    _G["NoobTacoUICollectionNotifPopup"]:Hide()
-    _G["NoobTacoUICollectionNotifPopup"] = nil
-  end
-
-  -- Create the popup window
-  local popupWidth = 400
-  local popupHeight = 300
-  local popup = CreateFrame("Frame", "NoobTacoUICollectionNotifPopup", UIParent)
-  popup:SetSize(popupWidth, popupHeight)
-  popup:SetPoint("CENTER", UIParent, "CENTER", 50, 0) -- Slight offset from center
-  popup:SetMovable(true)
-  popup:SetClampedToScreen(true)
-  popup:RegisterForDrag("LeftButton")
-  popup:SetScript("OnDragStart", function(self) self:StartMoving() end)
-  popup:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
-  popup:SetFrameStrata("DIALOG")
-  popup:SetFrameLevel(100)
-
-  -- Background (following Plumber's style)
-  local bg = popup:CreateTexture(nil, "BACKGROUND")
-  bg:SetAllPoints()
-  bg:SetColorTexture(0.1, 0.1, 0.1, 0.95)
-
-  -- Border
-  local border = popup:CreateTexture(nil, "BORDER")
-  border:SetAllPoints()
-  border:SetColorTexture(0.3, 0.3, 0.3, 1)
-  border:SetPoint("TOPLEFT", popup, "TOPLEFT", -2, 2)
-  border:SetPoint("BOTTOMRIGHT", popup, "BOTTOMRIGHT", 2, -2)
-
-  -- Title Bar
-  local titleBar = CreateFrame("Frame", nil, popup)
-  titleBar:SetHeight(28)
-  titleBar:SetPoint("TOPLEFT", popup, "TOPLEFT", 0, 0)
-  titleBar:SetPoint("TOPRIGHT", popup, "TOPRIGHT", 0, 0)
-
-  local titleBG = titleBar:CreateTexture(nil, "BACKGROUND")
-  titleBG:SetAllPoints()
-  titleBG:SetColorTexture(0.2, 0.2, 0.2, 1)
-
-  local title = titleBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  title:SetPoint("LEFT", titleBar, "LEFT", 12, 0)
-  title:SetText("Collection Notifications Settings")
-  title:SetTextColor(1, 1, 1)
-
-  -- Close button
-  local closeButton = CreateFrame("Button", nil, titleBar)
-  closeButton:SetSize(20, 20)
-  closeButton:SetPoint("RIGHT", titleBar, "RIGHT", -4, 0)
-
-  local closeX = closeButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  closeX:SetPoint("CENTER")
-  closeX:SetText("×")
-  closeX:SetTextColor(0.8, 0.8, 0.8)
-
-  closeButton:SetScript("OnClick", function() popup:Hide() end)
-  closeButton:SetScript("OnEnter", function() closeX:SetTextColor(1, 0.2, 0.2) end)
-  closeButton:SetScript("OnLeave", function() closeX:SetTextColor(0.8, 0.8, 0.8) end)
-
-  -- Content area
-  local contentFrame = CreateFrame("Frame", nil, popup)
-  contentFrame:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 12, -8)
-  contentFrame:SetPoint("BOTTOMRIGHT", popup, "BOTTOMRIGHT", -12, 12)
-
-  -- Check if Collection Notifications are globally enabled
-  local isGloballyEnabled = GetDBValue("CollectionNotificationsEnabled") ~= false
-
-  local yOffset = 0
-
-  -- Global Enable Toggle
-  local enableLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  enableLabel:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)
-  enableLabel:SetText("Enable Collection Notifications")
-  enableLabel:SetTextColor(1, 1, 1)
-
-  local enableCheckbox = CreateFrame("CheckButton", nil, contentFrame, "ChatConfigCheckButtonTemplate")
-  enableCheckbox:SetPoint("LEFT", enableLabel, "RIGHT", 10, 0)
-  enableCheckbox:SetSize(20, 20)
-  enableCheckbox:SetChecked(isGloballyEnabled)
-
-  yOffset = yOffset + 35
-
-  -- Store configurable elements for enable/disable functionality
-  local popupConfigurableElements = {}
-
-  -- Collection Type Toggles
-  local collectionTypes = {
-    { key = "PetNotificationsEnabled",      label = "Pet Collections" },
-    { key = "MountNotificationsEnabled",    label = "Mount Collections" },
-    { key = "ToyNotificationsEnabled",      label = "Toy Collections" },
-    { key = "TransmogNotificationsEnabled", label = "Transmog Collections" }
-  }
-
-  for _, typeData in ipairs(collectionTypes) do
-    local typeLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    typeLabel:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 20, -yOffset)
-    typeLabel:SetText(typeData.label)
-    typeLabel:SetTextColor(0.9, 0.9, 0.9)
-
-    local typeCheckbox = CreateFrame("CheckButton", nil, contentFrame, "ChatConfigCheckButtonTemplate")
-    typeCheckbox:SetPoint("LEFT", typeLabel, "RIGHT", 10, 0)
-    typeCheckbox:SetSize(18, 18)
-    typeCheckbox:SetChecked(GetDBValue(typeData.key) ~= false)
-    typeCheckbox:SetScript("OnClick", function(self)
-      SetDBValue(typeData.key, self:GetChecked())
     end)
-
-    -- Add to configurable elements
-    tinsert(popupConfigurableElements, { element = typeLabel, type = "fontstring" })
-    tinsert(popupConfigurableElements, { element = typeCheckbox, type = "button" })
-
-    yOffset = yOffset + 25
   end
 
-  yOffset = yOffset + 15
-
-  -- Audio Selection Section
-  local audioLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  audioLabel:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)
-  audioLabel:SetText("Notification Sound")
-  audioLabel:SetTextColor(1, 1, 1)
-  tinsert(popupConfigurableElements, { element = audioLabel, type = "fontstring" })
-
-  yOffset = yOffset + 25
-
-  -- Audio dropdown and test button
-  local currentSound = GetDBValue("CollectionNotificationSound") or "NT_InfussionOfLight"
-
-  local dropdownButton = CreateFrame("Button", nil, contentFrame)
-  dropdownButton:SetSize(180, 24)
-  dropdownButton:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 20, -yOffset)
-
-  local dropdownBG = dropdownButton:CreateTexture(nil, "BACKGROUND")
-  dropdownBG:SetAllPoints()
-  dropdownBG:SetColorTexture(0.15, 0.15, 0.15, 0.9)
-
-  local dropdownText = dropdownButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  dropdownText:SetPoint("LEFT", dropdownButton, "LEFT", 8, 0)
-  dropdownText:SetText(currentSound)
-  dropdownText:SetTextColor(1, 1, 1)
-
-  local dropdownArrow = dropdownButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  dropdownArrow:SetPoint("RIGHT", dropdownButton, "RIGHT", -8, 0)
-  dropdownArrow:SetText("▼")
-  dropdownArrow:SetTextColor(0.8, 0.8, 0.8)
-
-  -- Test button
-  local testButton = CreateFrame("Button", nil, contentFrame)
-  testButton:SetSize(60, 24)
-  testButton:SetPoint("LEFT", dropdownButton, "RIGHT", 10, 0)
-
-  local testBG = testButton:CreateTexture(nil, "BACKGROUND")
-  testBG:SetAllPoints()
-  testBG:SetColorTexture(0.2, 0.4, 0.2, 0.9)
-
-  local testText = testButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  testText:SetPoint("CENTER")
-  testText:SetText("Test")
-  testText:SetTextColor(1, 1, 1)
-
-  testButton:SetScript("OnClick", function()
-    local soundFile = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Audio\\nt_InfussionOfLight.ogg"
-    PlaySoundFile(soundFile, "Master")
-  end)
-
-  testButton:SetScript("OnEnter", function(self) testBG:SetColorTexture(0.3, 0.5, 0.3, 1) end)
-  testButton:SetScript("OnLeave", function(self) testBG:SetColorTexture(0.2, 0.4, 0.2, 0.9) end)
-
-  -- Add dropdown and test button to configurable elements
-  tinsert(popupConfigurableElements, { element = dropdownButton, type = "button" })
-  tinsert(popupConfigurableElements, { element = testButton, type = "button" })
-
-  -- Sound selection functionality
-  local sounds = { "NT_InfussionOfLight", "NT_Chest", "NT_Mount" }
-  local currentIndex = 1
-  for i, sound in ipairs(sounds) do
-    if sound == currentSound then
-      currentIndex = i
-      break
-    end
-  end
-
-  dropdownButton:SetScript("OnClick", function()
-    currentIndex = currentIndex + 1
-    if currentIndex > #sounds then
-      currentIndex = 1
-    end
-    local newSound = sounds[currentIndex]
-    dropdownText:SetText(newSound)
-    SetDBValue("CollectionNotificationSound", newSound)
-  end)
-
-  dropdownButton:SetScript("OnEnter", function(self) dropdownBG:SetColorTexture(0.25, 0.25, 0.25, 1) end)
-  dropdownButton:SetScript("OnLeave", function(self) dropdownBG:SetColorTexture(0.15, 0.15, 0.15, 0.9) end)
-
-  -- Function to update popup elements state
-  local function UpdatePopupElementsState(enabled)
-    for _, elementData in ipairs(popupConfigurableElements) do
-      local element = elementData.element
-      local elementType = elementData.type
-
-      if elementType == "fontstring" then
-        if enabled then
-          element:SetTextColor(0.9, 0.9, 0.9)
-        else
-          element:SetTextColor(0.4, 0.4, 0.4)
-        end
-      elseif elementType == "button" then
-        if enabled then
-          element:Enable()
-          element:SetAlpha(1.0)
-        else
-          element:Disable()
-          element:SetAlpha(0.5)
-        end
-      end
-    end
-  end
-
-  -- Global enable checkbox functionality
-  enableCheckbox:SetScript("OnClick", function(self)
-    local enabled = self:GetChecked()
-    SetDBValue("CollectionNotificationsEnabled", enabled)
-    UpdatePopupElementsState(enabled)
-
-    -- Also update the main config if it's open
-    if RightPanel.configElements and RightPanel.configElements[1] and RightPanel.configElements[1]:IsShown() then
-      CreateCollectionNotificationsConfig()
-    end
-  end)
-
-  -- Apply initial state
-  UpdatePopupElementsState(isGloballyEnabled)
-
-  popup:Show()
-end
-
--- Function to show config menu (called from existing slash command)
-local function ShowConfigMenu()
-  ConfigFrame:Show()
-end
-addon.ShowConfigMenu = ShowConfigMenu
-
--- Integration with WoW's Interface Options
-local function RegisterWithInterfaceOptions()
-  if Settings and Settings.RegisterCanvasLayoutCategory then
-    local category = Settings.RegisterCanvasLayoutCategory(ConfigFrame, "NoobTacoUI-Media")
-    Settings.RegisterAddOnCategory(category)
-  end
-end
-
--- Register when addon loads
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", function(self, event, loadedAddonName)
-  if loadedAddonName == "NoobTacoUI-Media" then
-    RegisterWithInterfaceOptions()
-    self:UnregisterEvent("ADDON_LOADED")
-  end
+  content.audioPanel:Show()
+  content.currentPanel = content.audioPanel
 end)
 
--- Slash command to open config
+table.insert(categories, audioButton)
+
+-- General settings button
+local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", "⚙️")
+generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
+table.insert(categories, generalButton)
+
+-- About button
+local aboutButton = CreateEnhancedCategoryButton(sidebar, "About", "ℹ️")
+aboutButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
+aboutButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
+  end
+
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
+
+  -- Show about panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
+
+  if not content.aboutPanel then
+    content.aboutPanel = CreateEnhancedSettingsPanel(
+      content,
+      "About NoobTacoUI-Media",
+      "Media assets and shared resources for NoobTacoUI addon suite."
+    )
+
+    -- Version info
+    local versionText = content.aboutPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    versionText:SetPoint("TOPLEFT", content.aboutPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
+      C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.1.3"))
+    versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+    -- Author info
+    local authorText = content.aboutPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    authorText:SetPoint("TOPLEFT", versionText, "BOTTOMLEFT", 0, -8)
+    authorText:SetText("Created by NoobTaco")
+    authorText:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+    -- Description
+    local descText = content.aboutPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    descText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    descText:SetPoint("RIGHT", content.aboutPanel, "RIGHT", -PADDING, 0)
+    descText:SetJustifyH("LEFT")
+    descText:SetJustifyV("TOP")
+    descText:SetSpacing(3)
+    descText:SetText(
+      "This addon provides shared media assets including fonts, textures, and audio files for use across the NoobTacoUI addon suite. It also includes configuration interfaces and utility functions for managing media assets.")
+    descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+  end
+
+  content.aboutPanel:Show()
+  content.currentPanel = content.aboutPanel
+end)
+
+table.insert(categories, aboutButton)
+
+-- Select first category by default
+if audioButton then
+  audioButton:GetScript("OnClick")(audioButton)
+end
+
+-- Expose the enhanced frame
+addon.EnhancedConfigFrame = EnhancedConfigFrame
+
+-- Function to show config
+addon.ShowConfigMenu = function()
+  EnhancedConfigFrame:Show()
+end
+
+-- Expose for compatibility
+addon.ShowEnhancedConfig = addon.ShowConfigMenu
+
+-- Main slash commands
 SLASH_NTUICONFIG1 = "/ntconfig"
+SLASH_NTUICONFIG2 = "/ntuiconfig"
+SLASH_NTUICONFIG3 = "/ntmedia"
+SLASH_NTUICONFIG4 = "/ntuimedia"
 SlashCmdList["NTUICONFIG"] = function()
-  ShowConfigMenu()
+  addon.ShowConfigMenu()
 end
 
--- Additional slash commands for Collection Notifications
+-- Collection Notifications shortcut
 SLASH_NTCC1 = "/ntcc"
 SlashCmdList["NTCC"] = function()
-  ShowConfigMenu()
-  -- Find and click the Collection Notifications button to open it directly
-  for _, button in ipairs(categoryButtons) do
-    if button.categoryID == 1 then -- Audio category (now category 1)
-      if button.collapsed then
-        button:Expand()
-      end
-      break
-    end
+  addon.ShowConfigMenu()
+  -- Auto-select audio category if possible
+  if audioButton and audioButton.GetScript and audioButton:GetScript("OnClick") then
+    audioButton:GetScript("OnClick")(audioButton)
   end
 end
-
--- Test Collection Notification function
-local function TestCollectionNotification()
-  if addon.PlayNotificationSound then
-    addon.PlayNotificationSound()
-    print("NoobTacoUI-Media: Test notification played!")
-  else
-    print("NoobTacoUI-Media: Collection notification system not loaded.")
-  end
-end
-
-SLASH_NTTESTCOLLECTION1 = "/nttestcollection"
-SlashCmdList["NTTESTCOLLECTION"] = TestCollectionNotification

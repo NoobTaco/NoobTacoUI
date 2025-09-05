@@ -18,6 +18,9 @@ ignore:
     - "*.git*"
     - "*.md"
     - "*.sh"
+    - PLUMBER_*.md
+    - ENHANCED_*.md
+    - extract-plumber-assets.sh
 
 plain-copy:
     - Media

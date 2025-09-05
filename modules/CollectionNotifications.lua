@@ -302,3 +302,177 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     print("  |cFFFFFF00/ntmcollection status|r - Show current settings")
   end
 end
+
+-- Collection Notifications Configuration Popup
+function addon.CreateCollectionNotificationsPopup()
+  -- Check if popup already exists and close it
+  if _G["NoobTacoUICollectionNotifPopup"] then
+    _G["NoobTacoUICollectionNotifPopup"]:Hide()
+    _G["NoobTacoUICollectionNotifPopup"] = nil
+  end
+
+  -- Create the popup window
+  local popupWidth = 450
+  local popupHeight = 350
+  local popup = CreateFrame("Frame", "NoobTacoUICollectionNotifPopup", UIParent)
+  popup:SetSize(popupWidth, popupHeight)
+  popup:SetPoint("CENTER", UIParent, "CENTER", 50, 0)
+  popup:SetMovable(true)
+  popup:SetClampedToScreen(true)
+  popup:RegisterForDrag("LeftButton")
+  popup:SetScript("OnDragStart", function(self) self:StartMoving() end)
+  popup:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
+  popup:SetFrameStrata("DIALOG")
+  popup:SetFrameLevel(100)
+
+  -- Background using Nord colors
+  local bg = popup:CreateTexture(nil, "BACKGROUND")
+  bg:SetAllPoints()
+  bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+
+  -- Border
+  local border = popup:CreateTexture(nil, "BORDER")
+  border:SetPoint("TOPLEFT", popup, "TOPLEFT", -2, 2)
+  border:SetPoint("BOTTOMRIGHT", popup, "BOTTOMRIGHT", 2, -2)
+  border:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
+
+  -- Title Bar
+  local titleBar = CreateFrame("Frame", nil, popup)
+  titleBar:SetHeight(32)
+  titleBar:SetPoint("TOPLEFT", popup, "TOPLEFT", 0, 0)
+  titleBar:SetPoint("TOPRIGHT", popup, "TOPRIGHT", 0, 0)
+
+  local titleBG = titleBar:CreateTexture(nil, "BACKGROUND")
+  titleBG:SetAllPoints()
+  titleBG:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
+
+  local title = titleBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  title:SetPoint("LEFT", titleBar, "LEFT", 12, 0)
+  title:SetText("Collection Notifications Settings")
+  title:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+
+  -- Close button
+  local closeButton = CreateFrame("Button", nil, titleBar)
+  closeButton:SetSize(20, 20)
+  closeButton:SetPoint("RIGHT", titleBar, "RIGHT", -6, 0)
+
+  local closeX = closeButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  closeX:SetPoint("CENTER")
+  closeX:SetText("×")
+  closeX:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+  closeButton:SetScript("OnClick", function() popup:Hide() end)
+  closeButton:SetScript("OnEnter", function() closeX:SetTextColor(unpack(addon.UIAssets.Colors.Nord11)) end)
+  closeButton:SetScript("OnLeave", function() closeX:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) end)
+
+  -- Content area
+  local contentFrame = CreateFrame("Frame", nil, popup)
+  contentFrame:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 16, -12)
+  contentFrame:SetPoint("BOTTOMRIGHT", popup, "BOTTOMRIGHT", -16, 16)
+
+  local yOffset = 0
+
+  -- Global Enable Toggle
+  local enableLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  enableLabel:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)
+  enableLabel:SetText("Enable Collection Notifications")
+  enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+
+  local enableCheckbox = CreateFrame("CheckButton", nil, contentFrame, "ChatConfigCheckButtonTemplate")
+  enableCheckbox:SetPoint("LEFT", enableLabel, "RIGHT", 10, 0)
+  enableCheckbox:SetSize(20, 20)
+  enableCheckbox:SetChecked(GetSetting("enabled"))
+
+  yOffset = yOffset + 40
+
+  -- Collection Type Toggles
+  local collectionTypes = {
+    { key = "newPet",      label = "Pet Collections",      sound = "soundPet" },
+    { key = "newMount",    label = "Mount Collections",    sound = "soundMount" },
+    { key = "newToy",      label = "Toy Collections",      sound = "soundToy" },
+    { key = "newTransmog", label = "Transmog Collections", sound = "soundTransmog" }
+  }
+
+  local configurableElements = {}
+
+  for _, typeData in ipairs(collectionTypes) do
+    local typeLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    typeLabel:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 20, -yOffset)
+    typeLabel:SetText(typeData.label)
+    typeLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+    local typeCheckbox = CreateFrame("CheckButton", nil, contentFrame, "ChatConfigCheckButtonTemplate")
+    typeCheckbox:SetPoint("LEFT", typeLabel, "RIGHT", 10, 0)
+    typeCheckbox:SetSize(18, 18)
+    typeCheckbox:SetChecked(GetSetting(typeData.key))
+    typeCheckbox:SetScript("OnClick", function(self)
+      SetSetting(typeData.key, self:GetChecked())
+    end)
+
+    -- Test button for each type
+    local testButton = CreateFrame("Button", nil, contentFrame)
+    testButton:SetSize(50, 20)
+    testButton:SetPoint("LEFT", typeCheckbox, "RIGHT", 80, 0)
+
+    local testBG = testButton:CreateTexture(nil, "BACKGROUND")
+    testBG:SetAllPoints()
+    testBG:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+    testBG:SetAlpha(0.8)
+
+    local testText = testButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    testText:SetPoint("CENTER")
+    testText:SetText("Test")
+    testText:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+    testButton:SetScript("OnClick", function()
+      local soundType = typeData.key:gsub("new", ""):lower()
+      PlayNotificationSound(soundType)
+    end)
+
+    testButton:SetScript("OnEnter", function(self) testBG:SetAlpha(1.0) end)
+    testButton:SetScript("OnLeave", function(self) testBG:SetAlpha(0.8) end)
+
+    -- Add to configurable elements
+    table.insert(configurableElements, { element = typeLabel, type = "fontstring" })
+    table.insert(configurableElements, { element = typeCheckbox, type = "button" })
+    table.insert(configurableElements, { element = testButton, type = "button" })
+
+    yOffset = yOffset + 25
+  end
+
+  -- Function to update elements state
+  local function UpdateElementsState(enabled)
+    for _, elementData in ipairs(configurableElements) do
+      local element = elementData.element
+      local elementType = elementData.type
+
+      if elementType == "fontstring" then
+        if enabled then
+          element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+        else
+          element:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
+        end
+      elseif elementType == "button" then
+        if enabled then
+          element:Enable()
+          element:SetAlpha(1.0)
+        else
+          element:Disable()
+          element:SetAlpha(0.5)
+        end
+      end
+    end
+  end
+
+  -- Global enable checkbox functionality
+  enableCheckbox:SetScript("OnClick", function(self)
+    local enabled = self:GetChecked()
+    SetSetting("enabled", enabled)
+    UpdateElementsState(enabled)
+  end)
+
+  -- Apply initial state
+  UpdateElementsState(GetSetting("enabled"))
+
+  popup:Show()
+end
