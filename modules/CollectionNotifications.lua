@@ -89,7 +89,7 @@ local function OnNewPet(self, event, petGUID)
       -- Check how many of this species we have collected using WoW's API
       local numCollected, limit = C_PetJournal.GetNumCollectedInfo(speciesID)
       print(string.format(
-      "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Species collection count - Collected: %s, Limit: %s",
+        "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Species collection count - Collected: %s, Limit: %s",
         tostring(numCollected or "nil"), tostring(limit or "nil")))
 
       -- Only notify if this is the first one we've collected of this species
@@ -99,10 +99,10 @@ local function OnNewPet(self, event, petGUID)
           print(string.format("|cFF16C3F2NoobTacoUI|r: New pet species collected: |cFF00FF00%s|r", name))
         end
         print(string.format(
-        "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: First collection of species %s - notification sent", name))
+          "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: First collection of species %s - notification sent", name))
       else
         print(string.format(
-        "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Already have %s of species %s - no notification",
+          "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Already have %s of species %s - no notification",
           tostring(numCollected), name))
       end
     elseif speciesID then
@@ -115,7 +115,7 @@ local function OnNewPet(self, event, petGUID)
         -- Check how many of this species we have collected using WoW's API
         local numCollected, limit = C_PetJournal.GetNumCollectedInfo(speciesID)
         print(string.format(
-        "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Fallback collection count - Collected: %s, Limit: %s",
+          "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Fallback collection count - Collected: %s, Limit: %s",
           tostring(numCollected or "nil"), tostring(limit or "nil")))
 
         -- Only notify if this is the first one we've collected of this species
@@ -125,10 +125,10 @@ local function OnNewPet(self, event, petGUID)
             print(string.format("|cFF16C3F2NoobTacoUI|r: New pet species collected: |cFF00FF00%s|r", speciesName))
           end
           print(string.format(
-          "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: First collection of species %s - notification sent", speciesName))
+            "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: First collection of species %s - notification sent", speciesName))
         else
           print(string.format(
-          "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Already have %s of species %s - no notification",
+            "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Already have %s of species %s - no notification",
             tostring(numCollected), speciesName))
         end
       end
@@ -149,15 +149,33 @@ local function OnNewMount(self, event, mountID)
     tostring(mountID or "nil")))
 
   if GetSetting("newMount") and mountID then
-    local name = C_MountJournal.GetMountInfoByID(mountID)
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Mount name lookup result: %s",
-      tostring(name or "nil")))
+    local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected =
+        C_MountJournal.GetMountInfoByID(mountID)
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Mount info lookup - Name: %s, IsCollected: %s",
+      tostring(name or "nil"), tostring(isCollected or "nil")))
 
     if name then
+      -- Check if this mount was already collected before this event
+      -- The isCollected flag should be true now, but we want to check if this is the first time
+      -- We can do this by checking if the mount is usable (newly collected mounts are immediately usable)
+
+      -- Additional check: get all mounts and see if this one was already known
+      local numMounts = C_MountJournal.GetNumMounts()
+      local wasAlreadyKnown = false
+
+      -- Note: This is a simple approach - in a real scenario, we might need more sophisticated tracking
+      -- For now, we'll assume that if the mount journal event fired, it's a new collection
+      print(string.format(
+        "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Mount collection status - Name: %s, Usable: %s, Total mounts: %s",
+        tostring(name), tostring(isUsable or "nil"), tostring(numMounts or "nil")))
+
+      -- For mounts, the NEW_MOUNT_ADDED event should only fire for genuinely new mounts
+      -- Unlike pets which can have duplicates, mounts are unique - you either have it or you don't
       PlayNotificationSound("soundMount")
       if GetSetting("showMessages") then
         print(string.format("|cFF16C3F2NoobTacoUI|r: New mount collected: |cFF00FF00%s|r", name))
       end
+      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Mount notification sent for: %s", name))
     end
   else
     print(string.format(
@@ -178,10 +196,20 @@ local function OnNewToy(self, event, itemID)
     print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Toy name lookup result: %s", tostring(name or "nil")))
 
     if name then
+      -- Check if we already have this toy using the toy box API
+      local isToyUsable = C_ToyBox.IsToyUsable(itemID)
+      local hasToy = PlayerHasToy(itemID)
+      
+      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Toy status - Usable: %s, Have: %s", 
+        tostring(isToyUsable or "nil"), tostring(hasToy or "nil")))
+      
+      -- For toys, the NEW_TOY_ADDED event should only fire for genuinely new toys
+      -- Similar to mounts, toys are unique - you either have it or you don't
       PlayNotificationSound("soundToy")
       if GetSetting("showMessages") then
         print(string.format("|cFF16C3F2NoobTacoUI|r: New toy collected: |cFF00FF00%s|r", name))
       end
+      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Toy notification sent for: %s", name))
     end
   else
     print(string.format(
@@ -350,6 +378,127 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     C_Timer.After(3, function() PlayNotificationSound("soundAchievement") end)
     C_Timer.After(4, function() PlayNotificationSound("soundTransmog") end)
     C_Timer.After(5, function() PlayNotificationSound("soundTitle") end)
+  elseif args == "testmount" then
+    print("|cFF16C3F2NoobTacoUI|r Testing mount notification...")
+    PlayNotificationSound("soundMount")
+    if GetSetting("showMessages") then
+      print("|cFF16C3F2NoobTacoUI|r: New mount collected: |cFF00FF00Test Mount|r")
+    end
+  elseif args == "mounts" then
+    print("|cFF16C3F2NoobTacoUI|r Mount collection analysis:")
+    local numMounts = C_MountJournal.GetNumMounts()
+    local collectedCount = 0
+    local usableCount = 0
+    local factionRestrictedCount = 0
+    local hiddenCount = 0
+
+    print("  Scanning mount database...")
+
+    -- Count different categories of mounts
+    for i = 1, math.min(numMounts or 0, 1500) do -- Limit to prevent lag
+      local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected =
+      C_MountJournal.GetMountInfoByID(i)
+
+      if name then
+        if isCollected then
+          collectedCount = collectedCount + 1
+        end
+        if isUsable then
+          usableCount = usableCount + 1
+        end
+        if isFactionSpecific then
+          factionRestrictedCount = factionRestrictedCount + 1
+        end
+        if shouldHideOnChar then
+          hiddenCount = hiddenCount + 1
+        end
+      end
+    end
+
+    print("  |cFFFFFF00Results:|r")
+    print("    Total mounts in game database: " .. tostring(numMounts or "unknown"))
+    print("    |cFF00FF00Mounts you own:|r " .. tostring(collectedCount))
+    print("    |cFF00FF00Mounts you can use:|r " .. tostring(usableCount))
+    print("    |cFFFF8000Faction-restricted mounts:|r " .. tostring(factionRestrictedCount))
+    print("    |cFFFF0000Hidden from your character:|r " .. tostring(hiddenCount))
+    print("  |cFF808080Note: Your mount journal shows usable collected mounts|r")
+
+    -- Show a few collected mounts as examples
+    print("  |cFFFFFF00Sample collected mounts:|r")
+    local sampleCount = 0
+    for i = 1, math.min(numMounts or 0, 200) do -- Check first 200 for samples
+      if sampleCount >= 3 then break end
+
+      local name, spellID, icon, isActive, isUsable, sourceType, isFavorite, isFactionSpecific, faction, shouldHideOnChar, isCollected =
+      C_MountJournal.GetMountInfoByID(i)
+
+      if name and isCollected then
+        sampleCount = sampleCount + 1
+        local statusInfo = ""
+        if isUsable then statusInfo = statusInfo .. " |cFF00FF00Usable|r" end
+        if isFactionSpecific then statusInfo = statusInfo .. " |cFFFF8000Faction|r" end
+        if shouldHideOnChar then statusInfo = statusInfo .. " |cFFFF0000Hidden|r" end
+
+        print(string.format("    %s%s", name, statusInfo))
+      end
+    end
+  elseif args == "testtoy" then
+    print("|cFF16C3F2NoobTacoUI|r Testing toy notification...")
+    PlayNotificationSound("soundToy")
+    if GetSetting("showMessages") then
+      print("|cFF16C3F2NoobTacoUI|r: New toy collected: |cFF00FF00Test Toy|r")
+    end
+  elseif args == "toys" then
+    print("|cFF16C3F2NoobTacoUI|r Toy collection analysis:")
+    
+    -- Get all toy IDs and check which ones we have
+    local collectedCount = 0
+    local usableCount = 0
+    local sampleToys = {}
+    
+    print("  Scanning toy collection...")
+    
+    -- Sample some known toy IDs to test the API
+    local sampleToyIDs = {88375, 86573, 104299, 113670, 128310, 140325, 151016, 163750, 174450, 188692}
+    
+    for _, toyID in ipairs(sampleToyIDs) do
+      local toyName = C_ToyBox.GetToyInfo(toyID)
+      if toyName then
+        local hasToy = PlayerHasToy(toyID)
+        local isUsable = C_ToyBox.IsToyUsable(toyID)
+        
+        if hasToy then
+          collectedCount = collectedCount + 1
+          if #sampleToys < 3 then
+            table.insert(sampleToys, {name = toyName, usable = isUsable})
+          end
+        end
+        if isUsable then
+          usableCount = usableCount + 1
+        end
+      end
+    end
+    
+    -- Try to get total toy count from C_ToyBox if available
+    local totalToys = "unknown"
+    if C_ToyBox.GetNumToys then
+      totalToys = tostring(C_ToyBox.GetNumToys())
+    end
+    
+    print("  |cFFFFFF00Results (sample check):|r")
+    print("    Total toys in sample: " .. tostring(#sampleToyIDs))
+    print("    |cFF00FF00Sample toys you own:|r " .. tostring(collectedCount))
+    print("    |cFF00FF00Sample toys usable:|r " .. tostring(usableCount))
+    print("  |cFF808080Note: This is a limited sample of toy IDs|r")
+    
+    -- Show collected toy samples
+    if #sampleToys > 0 then
+      print("  |cFFFFFF00Sample collected toys:|r")
+      for _, toy in ipairs(sampleToys) do
+        local statusInfo = toy.usable and " |cFF00FF00Usable|r" or " |cFFFF0000Not Usable|r"
+        print(string.format("    %s%s", toy.name, statusInfo))
+      end
+    end
   elseif args == "status" then
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications Status:")
     print("  Enabled: " .. (GetSetting("enabled") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
@@ -362,6 +511,10 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
   else
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications commands:")
     print("  |cFFFFFF00/ntmcollection test|r - Test all notification sounds")
+    print("  |cFFFFFF00/ntmcollection testmount|r - Test mount notification specifically")
+    print("  |cFFFFFF00/ntmcollection mounts|r - Show mount collection debug info")
+    print("  |cFFFFFF00/ntmcollection testtoy|r - Test toy notification specifically")
+    print("  |cFFFFFF00/ntmcollection toys|r - Show toy collection debug info")
     print("  |cFFFFFF00/ntmcollection status|r - Show current settings")
   end
 end
