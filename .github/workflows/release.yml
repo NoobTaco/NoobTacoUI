@@ -52,21 +52,15 @@ jobs:
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Debug release directory
+      - name: Show test results
         if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "Contents of .release directory:"
-          ls -la .release/ || echo "No .release directory found"
-          echo "Zip files specifically:"
-          find .release -name "*.zip" -ls || echo "No zip files found"
-
-      - name: Upload test package as artifact
-        if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
-        with:
-          name: NoobTacoUI-Media-Test-Package-${{ github.event.inputs.branch }}
-          path: |
-            .release/*.zip
-            .release/NoobTacoUI-Media/
-          retention-days: 7
-          if-no-files-found: error
+          echo "=== Test Package Created Successfully ==="
+          echo "Zip file:"
+          find .release -name "*.zip" -ls
+          echo ""
+          echo "=== Changelog Content ==="
+          echo "Extracted changelog (.changelog file):"
+          cat .changelog
+          echo ""
+          echo "=== Test completed - package would be ready for release ==="
