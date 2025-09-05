@@ -57,16 +57,27 @@ jobs:
         run: |
           echo "=== Copying artifacts before any cleanup ==="
           mkdir -p ./artifacts
+          
+          # Copy the zip file specifically
           if [ -d ".release" ]; then
-            echo "Found .release directory, copying contents..."
-            cp -r .release/* ./artifacts/ 2>/dev/null || echo "No files to copy from .release"
+            echo "Found .release directory, copying zip files..."
+            find .release -name "*.zip" -exec cp {} ./artifacts/ \;
+            echo "Contents of .release directory:"
             ls -la .release/
+          else
+            echo "No .release directory found"
           fi
+          
+          # Copy the changelog file
           if [ -f ".changelog" ]; then
             echo "Found .changelog file, copying..."
-            cp .changelog ./artifacts/
+            cp .changelog ./artifacts/changelog.txt
+            echo "Changelog copied as changelog.txt"
+          else
+            echo "No .changelog file found"
           fi
-          echo "=== Artifacts directory contents ==="
+          
+          echo "=== Final artifacts directory contents ==="
           ls -la ./artifacts/
 
       - name: Show test results
