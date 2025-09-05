@@ -65,6 +65,7 @@ LSM:Register("sound", "NT_Group", [[Interface\AddOns\NoobTacoUI-Media\Media\Audi
 LSM:Register("sound", "NT_Mount", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_mount.ogg]])
 LSM:Register("sound", "NT_NPC", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_sd_npc.ogg]])
 LSM:Register("sound", "NT_InfussionOfLight", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_InfussionOfLight.ogg]])
+LSM:Register("sound", "NT_Collection", [[Interface\AddOns\NoobTacoUI-Media\Media\Audio\nt_InfussionOfLight.ogg]])
 
 -- Status Bar Textures - Nord Theme
 LSM:Register("statusbar", "NT_Nord00", [[Interface\AddOns\NoobTacoUI-Media\Media\Textures\NT_nord0.tga]])

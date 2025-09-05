@@ -288,7 +288,52 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
   end
 end)
 
--- Example module registration (expand as needed)
+-- Collection Notifications module configuration
+local function CreateCollectionNotificationsConfig()
+  if not addon.CollectionNotifications then return end
+  
+  local yOffset = -60
+  local function CreateCheckbox(parent, text, setting)
+    local checkbox = CreateStyledCheckbox(parent, text, "CollectionNotifications." .. setting)
+    checkbox:SetPoint("TOPLEFT", Description, "BOTTOMLEFT", 0, yOffset)
+    yOffset = yOffset - 25
+    
+    -- Register callback to update the collection notification settings
+    CallbackRegistry:RegisterSettingCallback("CollectionNotifications." .. setting, function(value)
+      addon.CollectionNotifications.SetSetting(setting, value)
+      if setting == "enabled" then
+        if value then
+          addon.CollectionNotifications.RegisterEvents()
+        else
+          addon.CollectionNotifications.UnregisterEvents()
+        end
+      end
+    end)
+    
+    return checkbox
+  end
+  
+  -- Create checkboxes for all collection notification types
+  CreateCheckbox(RightPanel, "Enable Collection Notifications", "enabled")
+  CreateCheckbox(RightPanel, "New Pet Notifications", "newPet")
+  CreateCheckbox(RightPanel, "New Mount Notifications", "newMount")
+  CreateCheckbox(RightPanel, "New Toy Notifications", "newToy")
+  CreateCheckbox(RightPanel, "Achievement Notifications", "newAchievement")
+  CreateCheckbox(RightPanel, "Transmog Notifications", "newTransmog")
+  CreateCheckbox(RightPanel, "Title Notifications", "newTitle")
+  CreateCheckbox(RightPanel, "Show Chat Messages", "showMessages")
+end
+
+-- Module registrations
+RegisterModule({
+  name = "Collection Notifications",
+  dbKey = "CollectionNotifications",
+  description = "Play audio notifications when you collect new pets, mounts, toys, achievements, transmog appearances, and titles. Configure which types of collections trigger notifications and customize the sounds played for each type.",
+  configFunc = CreateCollectionNotificationsConfig,
+  categoryID = 2, -- Audio category
+  uiOrder = 50,
+})
+
 RegisterModule({
   name = "Enhanced Audio",
   dbKey = "EnhancedAudio",

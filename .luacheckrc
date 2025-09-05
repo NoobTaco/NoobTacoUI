@@ -11,6 +11,7 @@ globals = {
   "LibStub",
   -- Slash command globals (pattern: SLASH_COMMANDNAME# and SlashCmdList)
   "SLASH_NTMVERSION1", "SLASH_NTMVERSION2",
+  "SLASH_NTMCOLLECTION1", "SLASH_NTMCOLLECTION2",
   "SlashCmdList", -- Slash command handler table (writable)
   -- Configuration menu globals
   "NoobTacoDB",
@@ -25,6 +26,9 @@ read_globals = {
   "Settings",                 -- New settings system
   "Interface", "AddOns",      -- Path components used in file paths
   "print", "string", "table", -- Standard Lua functions available in WoW
+  -- Collection-related API functions
+  "C_PetJournal", "C_MountJournal", "C_ToyBox", "GetAchievementInfo",
+  "PlaySoundFile", "C_Timer",
   -- Add other WoW API functions here as needed
 }
 

@@ -59,6 +59,7 @@ SlashCmdList["NTMVERSION"] = function(msg)
     print("  |cFFFFFF00/ntm v|r - Display addon version (shortest)")
     print("  |cFFFFFF00/ntm config|r - Open configuration menu")
     print("  |cFFFFFF00/ntm cfg|r - Open configuration menu (short)")
+    print("  |cFFFFFF00/ntmcollection|r - Collection notification commands")
   else
     print("|cFFFF0000Unknown command:|r " .. args)
     print("Type |cFFFFFF00/ntm|r for available commands")
