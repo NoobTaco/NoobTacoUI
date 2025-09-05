@@ -23,22 +23,34 @@ local defaultSettings = {
 
 -- Initialize settings if they don't exist
 local function InitializeSettings()
+  if not NoobTacoDB then
+    NoobTacoDB = {}
+  end
+
   if not NoobTacoDB.CollectionNotifications then
     NoobTacoDB.CollectionNotifications = {}
+    print("|cFF16C3F2NoobTacoUI-Media|r: Creating new CollectionNotifications settings table")
   end
 
   -- Set defaults for any missing values
+  local changedSettings = {}
   for key, value in pairs(defaultSettings) do
     if NoobTacoDB.CollectionNotifications[key] == nil then
       NoobTacoDB.CollectionNotifications[key] = value
+      table.insert(changedSettings, key)
     end
+  end
+
+  if #changedSettings > 0 then
+    print("|cFF16C3F2NoobTacoUI-Media|r: Initialized default values for: " .. table.concat(changedSettings, ", "))
   end
 end
 
 -- Helper function to get setting value
 local function GetSetting(key)
   InitializeSettings()
-  return NoobTacoDB.CollectionNotifications[key]
+  local value = NoobTacoDB.CollectionNotifications[key]
+  return value
 end
 
 -- Helper function to set setting value

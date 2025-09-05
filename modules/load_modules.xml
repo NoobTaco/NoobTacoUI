@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="ConfigMenu.lua"/>
 	<Script file="version.lua"/>
 	<Script file="CollectionNotifications.lua"/>
+	<Script file="ConfigMenu.lua"/>
 </Ui>
