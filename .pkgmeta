@@ -13,8 +13,11 @@ ignore:
     - WORKFLOW_FIX.md
     - Makefile
     - check-lua.sh
+    - release.sh
+    - test-version.sh
     - "*.git*"
     - "*.md"
+    - "*.sh"
 
 plain-copy:
     - Media
