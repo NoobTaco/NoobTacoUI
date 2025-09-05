@@ -219,56 +219,48 @@ end
 -- local function OnAchievementEarned(self, event, achievementID)
 
 -- Transmog collection notification
-local function OnTransmogCollected(self, event, ...)
-  -- Debug message to test if event is triggering with all parameters
-  local args = {...}
-  print(string.format(
-    "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog event triggered! Event: %s, ArgCount: %d",
-    tostring(event), #args))
+-- Uses the proper TRANSMOG_COLLECTION_SOURCE_ADDED event (thanks to All the Things addon for the reference!)
+local function OnTransmogCollected(self, event, sourceID)
+  -- Debug: Always print when the event fires
+  print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: %s fired! SourceID: %s", event, tostring(sourceID)))
   
-  -- Print all arguments to see what we actually get
-  for i, arg in ipairs(args) do
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Arg[%d] = %s (type: %s)", 
-      i, tostring(arg), type(arg)))
+  if not GetSetting("newTransmog") then
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notifications disabled"))
+    return
   end
 
-  if GetSetting("newTransmog") then
-    -- Try to get source info if we have parameters
-    local itemName = nil
-    local sourceID = args[1] -- First argument might be sourceID
-    local appearanceID = args[2] -- Second argument might be appearanceID
+  if sourceID and type(sourceID) == "number" then
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Processing sourceID: %s", tostring(sourceID)))
     
-    -- Try different parameter combinations
-    if sourceID and C_TransmogCollection and C_TransmogCollection.GetSourceInfo then
-      local sourceInfo = C_TransmogCollection.GetSourceInfo(sourceID)
-      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Source info lookup - SourceID: %s, Found: %s", 
-        tostring(sourceID), tostring(sourceInfo and "yes" or "no")))
-      
-      if sourceInfo and sourceInfo.itemID and sourceInfo.itemID > 0 then
-        itemName = GetItemInfo(sourceInfo.itemID)
-        print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Item lookup - ItemID: %s, Name: %s", 
-          tostring(sourceInfo.itemID), tostring(itemName or "nil")))
-      end
+    -- Get source information
+    local sourceInfo = nil
+    if C_TransmogCollection and C_TransmogCollection.GetSourceInfo then
+      sourceInfo = C_TransmogCollection.GetSourceInfo(sourceID)
+      print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: SourceInfo found: %s, isCollected: %s", 
+        tostring(sourceInfo and "yes" or "no"), 
+        tostring(sourceInfo and sourceInfo.isCollected or "nil")))
     end
-
+    
+    -- Play the notification sound
     PlayNotificationSound("soundTransmog")
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Played transmog sound notification"))
+    
     if GetSetting("showMessages") then
       local displayText = "New transmog appearance collected!"
-      if itemName then
-        displayText = string.format("New transmog collected: |cFF00FF00%s|r", itemName)
-      elseif sourceID or appearanceID then
-        displayText = string.format("New transmog appearance collected (Source: %s, Appearance: %s)", 
-          tostring(sourceID or "nil"), tostring(appearanceID or "nil"))
+      
+      -- Try to get item name
+      if sourceInfo and sourceInfo.itemID and sourceInfo.itemID > 0 then
+        local itemName = C_Item.GetItemNameByID(sourceInfo.itemID)
+        if itemName then
+          displayText = string.format("New transmog collected: |cFF00FF00%s|r", itemName)
+        end
       end
+      
       print(string.format("|cFF16C3F2NoobTacoUI|r: %s", displayText))
     end
-
-    print(string.format(
-      "|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification sent - SourceID: %s, AppearanceID: %s, ItemName: %s",
-      tostring(sourceID), tostring(appearanceID), tostring(itemName or "Unknown")))
+    
   else
-    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog notification disabled. Enabled: %s",
-      tostring(GetSetting("newTransmog"))))
+    print(string.format("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Invalid sourceID: %s (type: %s)", tostring(sourceID), type(sourceID)))
   end
 end
 
@@ -296,7 +288,7 @@ local function RegisterEvents()
 
     -- Transmog events
     if GetSetting("newTransmog") then
-      CollectionNotifications:RegisterEvent("TRANSMOG_COLLECTION_UPDATED")
+      CollectionNotifications:RegisterEvent("TRANSMOG_COLLECTION_SOURCE_ADDED")
     end
 
     -- Note: Achievement and title notifications removed - default WoW toasts work well
@@ -315,16 +307,22 @@ CollectionNotifications:SetScript("OnEvent", function(self, event, ...)
     OnNewMount(self, event, ...)
   elseif event == "NEW_TOY_ADDED" then
     OnNewToy(self, event, ...)
-  elseif event == "TRANSMOG_COLLECTION_UPDATED" then
+  elseif event == "TRANSMOG_COLLECTION_SOURCE_ADDED" then
     OnTransmogCollected(self, event, ...)
   end
   -- Note: Achievement and title events removed - default WoW toasts work well
 end)
 
+-- Initialize transmog tracking
+local function InitializeTransmogCount()
+  print("|cFFFF8000[DEBUG]|r |cFF16C3F2NoobTacoUI|r: Transmog event tracking initialized")
+end
+
 -- Initialize on addon loaded
 local function OnAddonLoaded(self, event, loadedAddonName)
   if loadedAddonName == addonName then
     InitializeSettings()
+    InitializeTransmogCount()
     RegisterEvents()
 
     -- Register callback for settings changes
@@ -364,7 +362,32 @@ SLASH_NTMCOLLECTION2 = "/ntmcol"
 SlashCmdList["NTMCOLLECTION"] = function(msg)
   local args = string.lower(msg or "")
 
-  if args == "test" then
+  if args == "debug" or args == "status" then
+    print("|cFF16C3F2NoobTacoUI|r Collection Notifications Debug Status:")
+    print(string.format("  Enabled: %s", tostring(GetSetting("enabled"))))
+    print(string.format("  New Transmog: %s", tostring(GetSetting("newTransmog"))))
+    print(string.format("  Show Messages: %s", tostring(GetSetting("showMessages"))))
+    print(string.format("  Sound Transmog: %s", tostring(GetSetting("soundTransmog"))))
+    print(string.format("  Transmog event: TRANSMOG_COLLECTION_SOURCE_ADDED"))
+    
+    -- Test transmog event registration
+    local registered = false
+    if CollectionNotifications.IsEventRegistered then
+      registered = CollectionNotifications:IsEventRegistered("TRANSMOG_COLLECTION_SOURCE_ADDED")
+    end
+    print(string.format("  TRANSMOG_COLLECTION_SOURCE_ADDED registered: %s", tostring(registered)))
+    
+  elseif args == "testtransmog" then
+    print("|cFF16C3F2NoobTacoUI|r Testing transmog notification...")
+    PlayNotificationSound("soundTransmog")
+    if GetSetting("showMessages") then
+      print("|cFF16C3F2NoobTacoUI|r: New transmog collected: |cFF00FF00Test Transmog Item|r")
+    end
+  elseif args == "resettransmog" then
+    print("|cFF16C3F2NoobTacoUI|r Resetting transmog count...")
+    InitializeTransmogCount()
+    print("|cFF16C3F2NoobTacoUI|r Transmog count reset complete.")
+  elseif args == "test" then
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications: Testing all sounds...")
     PlayNotificationSound("soundPet")
     C_Timer.After(1, function() PlayNotificationSound("soundMount") end)
@@ -491,37 +514,31 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
         print(string.format("    %s%s", toy.name, statusInfo))
       end
     end
-  elseif args == "testtransmog" then
-    print("|cFF16C3F2NoobTacoUI|r Testing transmog notification...")
-    PlayNotificationSound("soundTransmog")
-    if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New transmog collected: |cFF00FF00Test Appearance|r (Chest)")
-    end
   elseif args == "transmog" then
     print("|cFF16C3F2NoobTacoUI|r Transmog collection analysis:")
-    
+
     -- Test basic transmog API availability
     print("  Checking transmog API availability...")
-    
+
     if C_TransmogCollection then
       print("    |cFF00FF00C_TransmogCollection|r - Available")
-      
+
       -- Check what functions are available
       local availableFunctions = {}
       local functionNames = {
         "GetSourceInfo",
-        "PlayerHasTransmog", 
+        "PlayerHasTransmog",
         "PlayerHasTransmogBySourceID",
         "GetSourcesOfAppearance",
         "GetAllSourcesOfAppearance"
       }
-      
+
       for _, funcName in ipairs(functionNames) do
         if C_TransmogCollection[funcName] then
           table.insert(availableFunctions, funcName)
         end
       end
-      
+
       if #availableFunctions > 0 then
         print("    Available functions:")
         for _, funcName in ipairs(availableFunctions) do
@@ -533,7 +550,7 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     else
       print("    |cFFFF0000C_TransmogCollection|r - Not available")
     end
-    
+
     -- Check transmog sets API
     if C_TransmogSets then
       print("    |cFF00FF00C_TransmogSets|r - Available")
@@ -545,24 +562,24 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     else
       print("    |cFFFF0000C_TransmogSets|r - Not available")
     end
-    
+
     -- Simple test with known items instead of appearance IDs
     print("  |cFFFFFF00Testing with sample items:|r")
     local sampleItems = {
       2589, -- Linen Cloth (basic item)
-      25, -- Worn Shortsword
+      25,   -- Worn Shortsword
       6948, -- Hearthstone
       1396, -- Elven Chain Vest
       2447, -- Peacebloom
     }
-    
+
     local foundItems = 0
     for _, itemID in ipairs(sampleItems) do
-      local itemName = GetItemInfo(itemID)
+      local itemName = C_Item.GetItemNameByID(itemID)
       if itemName then
         foundItems = foundItems + 1
         print(string.format("    Item %d: %s", itemID, itemName))
-        
+
         -- Try to get source info if the API is available
         if C_TransmogCollection and C_TransmogCollection.GetSourceInfo then
           -- Note: This may not work for all items as not all items have transmog sources
@@ -573,7 +590,7 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
         end
       end
     end
-    
+
     print("  |cFF808080Note: Transmog API varies by WoW version - some functions may not be available|r")
   elseif args == "status" then
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications Status:")
