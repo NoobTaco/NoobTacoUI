@@ -25,6 +25,15 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
       -- Do not nil the old table to avoid affecting other addons; just stop using it here
     end
 
+    -- Initialize General Settings if needed
+    if not NoobTacoUIMediaDB.GeneralSettings then
+      NoobTacoUIMediaDB.GeneralSettings = {
+        showMinimapButton = true,
+        enableAddonCompartment = true,
+      }
+      print("|cFF16C3F2NoobTacoUI-Media|r: Initialized General Settings")
+    end
+
     -- Initialize Collection Notifications settings if needed with full defaults
     if not NoobTacoUIMediaDB.CollectionNotifications then
       NoobTacoUIMediaDB.CollectionNotifications = {
@@ -71,6 +80,37 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
   end
 end)
 
+-- Global functions for AddonCompartment integration
+function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
+  if buttonName == "LeftButton" then
+    addon.ShowConfigMenu()
+  elseif buttonName == "RightButton" then
+    -- Toggle collection notifications
+    local enabled = NoobTacoUIMediaDB.CollectionNotifications and NoobTacoUIMediaDB.CollectionNotifications.enabled
+    if enabled then
+      NoobTacoUIMediaDB.CollectionNotifications.enabled = false
+      print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFBF616ADisabled|r")
+    else
+      NoobTacoUIMediaDB.CollectionNotifications.enabled = true
+      print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFA3BE8CEnabled|r")
+    end
+  end
+end
+
+function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
+  GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
+  GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+  GameTooltip:AddLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
+  GameTooltip:AddLine(" ", 1, 1, 1)
+  GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+  GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+  GameTooltip:Show()
+end
+
+function NoobTacoUIMedia_OnAddonCompartmentLeave(addonName, menuButtonFrame)
+  GameTooltip:Hide()
+end
+
 -- Simple callback registry for settings changes
 if not addon.CallbackRegistry then
   addon.CallbackRegistry = {
@@ -101,6 +141,13 @@ local function GetDBValue(key)
       NoobTacoUIMediaDB.CollectionNotifications = {}
     end
     return NoobTacoUIMediaDB.CollectionNotifications.enabled
+  elseif key:find("GeneralSettings%.") then
+    -- Handle general settings
+    local settingKey = key:gsub("GeneralSettings%.", "")
+    if not NoobTacoUIMediaDB.GeneralSettings then
+      NoobTacoUIMediaDB.GeneralSettings = {}
+    end
+    return NoobTacoUIMediaDB.GeneralSettings[settingKey]
   end
   return NoobTacoUIMediaDB[key]
 end
@@ -112,6 +159,13 @@ local function SetDBValue(key, value)
       NoobTacoUIMediaDB.CollectionNotifications = {}
     end
     NoobTacoUIMediaDB.CollectionNotifications.enabled = value
+  elseif key:find("GeneralSettings%.") then
+    -- Handle general settings
+    local settingKey = key:gsub("GeneralSettings%.", "")
+    if not NoobTacoUIMediaDB.GeneralSettings then
+      NoobTacoUIMediaDB.GeneralSettings = {}
+    end
+    NoobTacoUIMediaDB.GeneralSettings[settingKey] = value
   else
     NoobTacoUIMediaDB[key] = value
   end
@@ -125,6 +179,111 @@ end
 -- Expose to addon namespace
 addon.GetDBValue = GetDBValue
 addon.SetDBValue = SetDBValue
+
+-- Minimap button system
+local minimapButton = nil
+
+local function CreateMinimapButton()
+  if minimapButton or not Minimap then return end
+
+  minimapButton = CreateFrame("Button", "NoobTacoUIMediaMinimapButton", Minimap)
+  minimapButton:SetSize(32, 32)
+  minimapButton:SetFrameStrata("MEDIUM")
+  minimapButton:SetFrameLevel(8)
+
+  -- Circular background using WoW's minimap button texture
+  minimapButton.bg = minimapButton:CreateTexture(nil, "BACKGROUND")
+  minimapButton.bg:SetSize(20, 20)
+  minimapButton.bg:SetPoint("TOPLEFT", 7, -5)
+  minimapButton.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+  minimapButton.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord2))
+  
+  -- Icon texture (using our addon logo)
+  minimapButton.icon = minimapButton:CreateTexture(nil, "ARTWORK")
+  minimapButton.icon:SetSize(14, 14)  -- Slightly smaller to fit within border better
+  minimapButton.icon:SetPoint("TOPLEFT", 9, -7)
+  minimapButton.icon:SetTexture("Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\logo.tga")
+  minimapButton.icon:SetVertexColor(1, 1, 1, 1)  -- Keep logo in original colors
+  
+  -- Border overlay with proper minimap button border
+  minimapButton.border = minimapButton:CreateTexture(nil, "OVERLAY")
+  minimapButton.border:SetSize(52, 52)
+  minimapButton.border:SetPoint("TOPLEFT")
+  minimapButton.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+  minimapButton.border:SetVertexColor(1, 1, 1, 1)  -- Keep border in original colors
+  
+  -- Hover effects
+  minimapButton:SetScript("OnEnter", function(self)
+    self.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord3))
+    -- Keep logo colors original, just brighten the background
+
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+    GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+    GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    GameTooltip:Show()
+  end)
+
+  minimapButton:SetScript("OnLeave", function(self)
+    self.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord2))
+    -- Keep logo colors original
+    GameTooltip:Hide()
+  end)
+
+  -- Click handlers
+  minimapButton:SetScript("OnClick", function(self, button)
+    if button == "LeftButton" then
+      addon.ShowConfigMenu()
+    elseif button == "RightButton" then
+      -- Toggle collection notifications
+      local enabled = NoobTacoUIMediaDB.CollectionNotifications and NoobTacoUIMediaDB.CollectionNotifications.enabled
+      if enabled then
+        NoobTacoUIMediaDB.CollectionNotifications.enabled = false
+        print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFBF616ADisabled|r")
+      else
+        NoobTacoUIMediaDB.CollectionNotifications.enabled = true
+        print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFA3BE8CEnabled|r")
+      end
+    end
+  end)
+
+  minimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+  -- Position around minimap (top-right area)
+  local angle = math.rad(45) -- 45 degrees from top
+  local radius = 80
+  local x = radius * math.cos(angle)
+  local y = radius * math.sin(angle)
+  minimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
+
+  minimapButton:Show()
+  print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button created and positioned")
+end
+
+local function UpdateMinimapButtonVisibility()
+  local showButton = GetDBValue("GeneralSettings.showMinimapButton")
+  if showButton == nil then showButton = true end -- Default to true
+
+  if showButton then
+    CreateMinimapButton()
+    if minimapButton then minimapButton:Show() end
+  else
+    if minimapButton then minimapButton:Hide() end
+  end
+end
+
+-- AddonCompartment support for WoW's new addon drawer
+local addonCompartmentRegistered = false
+
+local function SetupAddonCompartment()
+  if not AddonCompartmentFrame or addonCompartmentRegistered then return end
+  
+  addonCompartmentRegistered = true
+  
+  -- TOC file handles the registration with AddonCompartmentFunc entries
+  -- This function just marks that we've set up the integration
+  print("|cFF16C3F2NoobTacoUI-Media|r: Addon compartment integration ready")
+end
 
 -- Wait for UIAssets to be loaded
 if not addon.UIAssets then
@@ -560,7 +719,7 @@ aboutButton:SetScript("OnClick", function(self)
     local scrollFrame = CreateNordScrollFrame(content.aboutPanel)
     scrollFrame:SetPoint("TOPLEFT", content.aboutPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
     scrollFrame:SetPoint("BOTTOMRIGHT", content.aboutPanel, "BOTTOMRIGHT", -PADDING, PADDING)
-    
+
     -- Get the scrollable content area
     local scrollChild = scrollFrame.scrollChild
     scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus thinner scrollbar (was 20)
@@ -1185,12 +1344,168 @@ table.insert(categories, audioButton)
 -- General settings button (moved to third position)
 local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.Settings)
 generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
+generalButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
+  end
+
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
+
+  -- Show general panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
+
+  if not content.generalPanel then
+    content.generalPanel = CreateEnhancedSettingsPanel(
+      content,
+      "General Settings",
+      "Configure general addon behavior and interface options"
+    )
+
+    -- Create scrollable content for the panel
+    local scrollFrame = CreateNordScrollFrame(content.generalPanel)
+    scrollFrame:SetPoint("TOPLEFT", content.generalPanel, "TOPLEFT", PADDING, -60)
+    scrollFrame:SetPoint("BOTTOMRIGHT", content.generalPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+
+    local scrollChild = scrollFrame.scrollChild
+
+    -- Settings container
+    local settingsContainer = CreateFrame("Frame", nil, scrollChild)
+    settingsContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
+    settingsContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -12, 0) -- Account for scrollbar
+    settingsContainer:SetHeight(200)
+
+    -- Apply subtle Nord1 background
+    local bgTexture = settingsContainer:CreateTexture(nil, "BACKGROUND")
+    bgTexture:SetAllPoints()
+    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    bgTexture:SetAlpha(0.3)
+
+    local yOffset = -20
+    local checkboxRefs = {}
+
+    -- Interface section header
+    local interfaceHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    interfaceHeader:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    interfaceHeader:SetText("Interface Options")
+    interfaceHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord13))
+    yOffset = yOffset - 35
+
+    -- Minimap Button Toggle
+    local minimapCheckbox = addon.UIUtils:CreateThemedCheckbox(settingsContainer, 18)
+    minimapCheckbox:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    checkboxRefs.minimap = minimapCheckbox
+
+    -- Minimap checkbox label
+    local minimapLabel = settingsContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    minimapLabel:SetPoint("LEFT", minimapCheckbox, "RIGHT", 8, 0)
+    minimapLabel:SetText("Show Minimap Button")
+    minimapLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+    -- Set initial state
+    local showMinimap = GetDBValue("GeneralSettings.showMinimapButton")
+    if showMinimap == nil then showMinimap = true end
+    minimapCheckbox:SetChecked(showMinimap)
+
+    minimapCheckbox:SetScript("OnClick", function(self)
+      local newValue = self:GetChecked()
+      SetDBValue("GeneralSettings.showMinimapButton", newValue)
+      UpdateMinimapButtonVisibility()
+
+      if newValue then
+        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button |cFFA3BE8CEnabled|r")
+      else
+        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button |cFFBF616ADisabled|r")
+      end
+    end)
+    yOffset = yOffset - 35
+
+    -- Addon Compartment Toggle (if available)
+    if AddonCompartmentFrame then
+      local compartmentCheckbox = addon.UIUtils:CreateThemedCheckbox(settingsContainer, 18)
+      compartmentCheckbox:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset)
+      checkboxRefs.compartment = compartmentCheckbox
+
+      -- Compartment checkbox label
+      local compartmentLabel = settingsContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      compartmentLabel:SetPoint("LEFT", compartmentCheckbox, "RIGHT", 8, 0)
+      compartmentLabel:SetText("Enable Addon Drawer Integration")
+      compartmentLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+      -- Set initial state
+      local enableCompartment = GetDBValue("GeneralSettings.enableAddonCompartment")
+      if enableCompartment == nil then enableCompartment = true end
+      compartmentCheckbox:SetChecked(enableCompartment)
+
+      compartmentCheckbox:SetScript("OnClick", function(self)
+        local newValue = self:GetChecked()
+        SetDBValue("GeneralSettings.enableAddonCompartment", newValue)
+
+        if newValue then
+          SetupAddonCompartment()
+          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFA3BE8CEnabled|r")
+        else
+          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r")
+        end
+      end)
+      yOffset = yOffset - 35
+    end
+
+    -- Help text
+    local helpText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    helpText:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset - 10)
+    helpText:SetPoint("RIGHT", settingsContainer, "RIGHT", -INNER_PADDING, 0)
+    helpText:SetJustifyH("LEFT")
+    helpText:SetJustifyV("TOP")
+    helpText:SetSpacing(3)
+    helpText:SetText(
+      "|cFF5E81ACMinimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle.\n\n" ..
+      "|cFF5E81ACAddon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu."
+    )
+    helpText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    yOffset = yOffset - 80
+
+    -- Update container height based on content
+    settingsContainer:SetHeight(math.abs(yOffset) + 40)
+
+    -- Update scroll area
+    scrollFrame.UpdateScrollThumb()
+
+    -- Store checkbox references for refresh function
+    content.generalPanel.RefreshCheckboxes = function()
+      if checkboxRefs.minimap then
+        local showMinimap = GetDBValue("GeneralSettings.showMinimapButton")
+        if showMinimap == nil then showMinimap = true end
+        checkboxRefs.minimap:SetChecked(showMinimap)
+      end
+
+      if checkboxRefs.compartment then
+        local enableCompartment = GetDBValue("GeneralSettings.enableAddonCompartment")
+        if enableCompartment == nil then enableCompartment = true end
+        checkboxRefs.compartment:SetChecked(enableCompartment)
+      end
+    end
+  end
+
+  -- Refresh UI values before showing
+  if content.generalPanel.RefreshCheckboxes then
+    content.generalPanel.RefreshCheckboxes()
+  end
+
+  content.generalPanel:Show()
+  content.currentPanel = content.generalPanel
+end)
+
 table.insert(categories, generalButton)
 
 -- Select first category by default (changed to About)
 if aboutButton then
   aboutButton:GetScript("OnClick")(aboutButton)
-end-- Expose the enhanced frame
+end -- Expose the enhanced frame
 addon.EnhancedConfigFrame = EnhancedConfigFrame
 
 -- Function to show config
@@ -1206,8 +1521,44 @@ addon.ShowConfigMenu = function()
   if content.currentPanel == content.audioPanel then
     if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
     if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
+  elseif content.currentPanel == content.generalPanel then
+    if content.generalPanel.RefreshCheckboxes then content.generalPanel.RefreshCheckboxes() end
   end
 end
+
+-- Initialize minimap button and addon compartment
+local function InitializeGeneralSettings()
+  -- Wait for minimap to be available
+  if not Minimap then
+    C_Timer.After(0.5, InitializeGeneralSettings)
+    return
+  end
+
+  -- Initialize minimap button visibility
+  UpdateMinimapButtonVisibility()
+
+  -- Initialize addon compartment if enabled
+  local enableCompartment = GetDBValue("GeneralSettings.enableAddonCompartment")
+  if enableCompartment == nil then enableCompartment = true end
+  if enableCompartment then
+    SetupAddonCompartment()
+  end
+end
+
+-- Initialize after a short delay to ensure all systems are ready
+local initFrame = CreateFrame("Frame")
+initFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+initFrame:RegisterEvent("ADDON_LOADED")
+initFrame:SetScript("OnEvent", function(self, event, arg1)
+  if event == "ADDON_LOADED" and arg1 == addonName then
+    -- Initialize immediately when our addon loads
+    C_Timer.After(0.1, InitializeGeneralSettings)
+  elseif event == "PLAYER_ENTERING_WORLD" then
+    -- Fallback initialization
+    C_Timer.After(1, InitializeGeneralSettings)
+    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+  end
+end)
 
 -- Expose for compatibility
 addon.ShowEnhancedConfig = addon.ShowConfigMenu
@@ -1236,6 +1587,37 @@ SlashCmdList["NTCC"] = function()
   end
 end
 
+-- Manual minimap button toggle command for testing
+SLASH_NTMINIMAP1 = "/ntminimap"
+SlashCmdList["NTMINIMAP"] = function(arg)
+  if arg == "show" then
+    CreateMinimapButton()
+    print("|cFF16C3F2NoobTacoUI-Media|r: Forcing minimap button creation")
+  elseif arg == "hide" then
+    if minimapButton then
+      minimapButton:Hide()
+      print("|cFF16C3F2NoobTacoUI-Media|r: Hiding minimap button")
+    end
+  elseif arg == "toggle" then
+    if minimapButton and minimapButton:IsVisible() then
+      minimapButton:Hide()
+      print("|cFF16C3F2NoobTacoUI-Media|r: Hiding minimap button")
+    else
+      CreateMinimapButton()
+      print("|cFF16C3F2NoobTacoUI-Media|r: Showing minimap button")
+    end
+  elseif arg == "refresh" then
+    if minimapButton then
+      minimapButton:Hide()
+      minimapButton = nil
+    end
+    CreateMinimapButton()
+    print("|cFF16C3F2NoobTacoUI-Media|r: Refreshed minimap button")
+  else
+    print("|cFF16C3F2NoobTacoUI-Media|r: Use /ntminimap show|hide|toggle|refresh")
+  end
+end
+
 -- Debug command for troubleshooting settings
 SLASH_NTDEBUG1 = "/ntdebug"
 SlashCmdList["NTDEBUG"] = function()
@@ -1244,9 +1626,17 @@ SlashCmdList["NTDEBUG"] = function()
 
   if NoobTacoUIMediaDB then
     print("CollectionNotifications table exists: " .. tostring(NoobTacoUIMediaDB.CollectionNotifications ~= nil))
+    print("GeneralSettings table exists: " .. tostring(NoobTacoUIMediaDB.GeneralSettings ~= nil))
+
+    if NoobTacoUIMediaDB.GeneralSettings then
+      print("Current General settings:")
+      for key, value in pairs(NoobTacoUIMediaDB.GeneralSettings) do
+        print("  " .. key .. " = " .. tostring(value))
+      end
+    end
 
     if NoobTacoUIMediaDB.CollectionNotifications then
-      print("Current settings:")
+      print("Current Collection Notification settings:")
       for key, value in pairs(NoobTacoUIMediaDB.CollectionNotifications) do
         print("  " .. key .. " = " .. tostring(value))
       end
@@ -1274,6 +1664,14 @@ SlashCmdList["NTDEBUG"] = function()
     print("Module GetSetting function: " .. tostring(addon.CollectionNotifications.GetSetting ~= nil))
     print("Module SetSetting function: " .. tostring(addon.CollectionNotifications.SetSetting ~= nil))
   end
+
+  print("UI System status:")
+  print("  Minimap button exists: " .. tostring(minimapButton ~= nil))
+  if minimapButton then
+    print("  Minimap button visible: " .. tostring(minimapButton:IsVisible()))
+  end
+  print("  Minimap exists: " .. tostring(Minimap ~= nil))
+  print("  AddonCompartmentFrame exists: " .. tostring(AddonCompartmentFrame ~= nil))
 end
 
 -- Force refresh dropdowns (for debugging)

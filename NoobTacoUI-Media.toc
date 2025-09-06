@@ -8,6 +8,9 @@
 ## DefaultState: enabled
 ## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga
 ## SavedVariables: NoobTacoUIMediaDB
+## AddonCompartmentFunc: NoobTacoUIMedia_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: NoobTacoUIMedia_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: NoobTacoUIMedia_OnAddonCompartmentLeave
 ## Category-enUS: UI Overhaul
 ## Category-deDE: UI-Überholung
 ## Category-esES: Renovación de la UI
