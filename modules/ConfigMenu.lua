@@ -371,6 +371,147 @@ local function CreateEnhancedSettingsPanel(parent, title, description)
   return panel
 end
 
+-- Create enhanced Nord-themed scroll frame (modular and reusable)
+local function CreateNordScrollFrame(parent)
+  -- Main scroll frame container
+  local scrollFrame = CreateFrame("ScrollFrame", nil, parent)
+  
+  -- Create the scrollable content area
+  local scrollChild = CreateFrame("Frame", nil, scrollFrame)
+  scrollFrame:SetScrollChild(scrollChild)
+  
+  -- Custom Nord-themed scrollbar track
+  local scrollTrack = CreateFrame("Frame", nil, scrollFrame)
+  scrollTrack:SetWidth(8) -- Made half as thin (was 16)
+  scrollTrack:SetPoint("TOPRIGHT", scrollFrame, "TOPRIGHT", 0, 0)
+  scrollTrack:SetPoint("BOTTOMRIGHT", scrollFrame, "BOTTOMRIGHT", 0, 0)
+  
+  -- Scrollbar track background (darker)
+  scrollTrack.bg = scrollTrack:CreateTexture(nil, "BACKGROUND")
+  scrollTrack.bg:SetAllPoints()
+  scrollTrack.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord0)) -- Darker (was Nord1)
+  
+  -- Custom Nord-themed scrollbar thumb
+  local scrollThumb = CreateFrame("Button", nil, scrollTrack)
+  scrollThumb:SetWidth(6) -- Made proportionally thinner (was 12)
+  scrollThumb:SetHeight(20)
+  scrollThumb:SetPoint("TOP", scrollTrack, "TOP", 0, -1)
+  
+  -- Scrollbar thumb styling (darker)
+  scrollThumb.bg = scrollThumb:CreateTexture(nil, "BACKGROUND")
+  scrollThumb.bg:SetAllPoints()
+  scrollThumb.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2)) -- Darker (was Nord4)
+  
+  scrollThumb.highlight = scrollThumb:CreateTexture(nil, "HIGHLIGHT")
+  scrollThumb.highlight:SetAllPoints()
+  scrollThumb.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+  scrollThumb.highlight:SetAlpha(0.3)
+  
+  -- Scrollbar up button
+  local scrollUp = CreateFrame("Button", nil, scrollTrack)
+  scrollUp:SetSize(8, 8) -- Made proportionally smaller (was 16x16)
+  scrollUp:SetPoint("TOP", scrollTrack, "TOP", 0, 0)
+  scrollUp.bg = scrollUp:CreateTexture(nil, "BACKGROUND")
+  scrollUp.bg:SetAllPoints()
+  scrollUp.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1)) -- Slightly darker (was Nord2)
+  
+  -- Scrollbar down button
+  local scrollDown = CreateFrame("Button", nil, scrollTrack)
+  scrollDown:SetSize(8, 8) -- Made proportionally smaller (was 16x16)
+  scrollDown:SetPoint("BOTTOM", scrollTrack, "BOTTOM", 0, 0)
+  scrollDown.bg = scrollDown:CreateTexture(nil, "BACKGROUND")
+  scrollDown.bg:SetAllPoints()
+  scrollDown.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1)) -- Slightly darker (was Nord2)
+  
+  -- Scroll functionality
+  local function UpdateScrollThumb()
+    local scrollRange = scrollFrame:GetVerticalScrollRange()
+    local scrollValue = scrollFrame:GetVerticalScroll()
+    local trackHeight = scrollTrack:GetHeight() - 16 -- Account for smaller up/down buttons (was 32)
+    
+    if scrollRange > 0 then
+      scrollTrack:Show()
+      local thumbHeight = math.max(20, trackHeight * (scrollFrame:GetHeight() / (scrollFrame:GetHeight() + scrollRange)))
+      local thumbPosition = (scrollValue / scrollRange) * (trackHeight - thumbHeight)
+      
+      scrollThumb:SetHeight(thumbHeight)
+      scrollThumb:ClearAllPoints()
+      scrollThumb:SetPoint("TOP", scrollTrack, "TOP", 0, -8 - thumbPosition) -- Adjusted for smaller buttons (was -16)
+    else
+      scrollTrack:Hide()
+    end
+  end
+  
+  -- Mouse wheel scrolling
+  scrollFrame:EnableMouseWheel(true)
+  scrollFrame:SetScript("OnMouseWheel", function(self, delta)
+    local scrollValue = self:GetVerticalScroll()
+    local scrollRange = self:GetVerticalScrollRange()
+    local newValue = math.max(0, math.min(scrollRange, scrollValue - (delta * 20)))
+    self:SetVerticalScroll(newValue)
+    UpdateScrollThumb()
+  end)
+  
+  -- Scrollbar button functionality
+  scrollUp:SetScript("OnClick", function()
+    local scrollValue = scrollFrame:GetVerticalScroll()
+    scrollFrame:SetVerticalScroll(math.max(0, scrollValue - 20))
+    UpdateScrollThumb()
+  end)
+  
+  scrollDown:SetScript("OnClick", function()
+    local scrollValue = scrollFrame:GetVerticalScroll()
+    local scrollRange = scrollFrame:GetVerticalScrollRange()
+    scrollFrame:SetVerticalScroll(math.min(scrollRange, scrollValue + 20))
+    UpdateScrollThumb()
+  end)
+  
+  -- Thumb dragging functionality
+  local isDragging = false
+  local startY, startScroll
+  
+  scrollThumb:SetScript("OnMouseDown", function(self, button)
+    if button == "LeftButton" then
+      isDragging = true
+      startY = select(2, GetCursorPosition()) / UIParent:GetEffectiveScale()
+      startScroll = scrollFrame:GetVerticalScroll()
+      self:SetScript("OnUpdate", function()
+        if isDragging then
+          local currentY = select(2, GetCursorPosition()) / UIParent:GetEffectiveScale()
+          local deltaY = startY - currentY
+          local scrollRange = scrollFrame:GetVerticalScrollRange()
+          local trackHeight = scrollTrack:GetHeight() - 16 -- Account for smaller buttons (was 32)
+          local scrollDelta = (deltaY / trackHeight) * scrollRange
+          
+          local newScroll = math.max(0, math.min(scrollRange, startScroll + scrollDelta))
+          scrollFrame:SetVerticalScroll(newScroll)
+          UpdateScrollThumb()
+        end
+      end)
+    end
+  end)
+  
+  scrollThumb:SetScript("OnMouseUp", function(self, button)
+    if button == "LeftButton" then
+      isDragging = false
+      self:SetScript("OnUpdate", nil)
+    end
+  end)
+  
+  -- Update scroll thumb when content changes
+  scrollFrame:SetScript("OnScrollRangeChanged", UpdateScrollThumb)
+  scrollFrame:SetScript("OnVerticalScroll", UpdateScrollThumb)
+  
+  -- Store references for easy access
+  scrollFrame.scrollChild = scrollChild
+  scrollFrame.UpdateScrollThumb = UpdateScrollThumb
+  
+  -- Initial setup
+  C_Timer.After(0.1, UpdateScrollThumb)
+  
+  return scrollFrame
+end
+
 -- Create the enhanced config frame
 local EnhancedConfigFrame = CreateEnhancedConfigFrame()
 local header = CreateEnhancedHeader(EnhancedConfigFrame)
@@ -426,19 +567,19 @@ audioButton:SetScript("OnClick", function(self)
     collectionContainer:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", -8, -12)
     collectionContainer:SetPoint("TOPRIGHT", content.audioPanel, "TOPRIGHT", -8, -12)
     collectionContainer:SetHeight(250) -- Increased height to accommodate chat messages section
-    
+
     -- Apply subtle Nord1 background with slight transparency
     local bgTexture = collectionContainer:CreateTexture(nil, "BACKGROUND")
     bgTexture:SetAllPoints()
     bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
     bgTexture:SetAlpha(0.3)
-    
+
     -- Add a subtle border using Nord3
     local borderTexture = collectionContainer:CreateTexture(nil, "BORDER")
     borderTexture:SetAllPoints()
     borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
     borderTexture:SetAlpha(0.4)
-    
+
     -- Create inset for the border effect
     local insetTexture = collectionContainer:CreateTexture(nil, "ARTWORK")
     insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
@@ -446,7 +587,7 @@ audioButton:SetScript("OnClick", function(self)
     insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
     insetTexture:SetAlpha(0.3)
 
-    local yOffset = -20 -- Start with more padding inside container
+    local yOffset = -20                 -- Start with more padding inside container
     local configurableElements = {}
     local soundDropdowns = {}           -- Store references to dropdowns for refreshing
     local checkboxRefs = { types = {} } -- Store references to checkboxes for refreshing
@@ -497,7 +638,7 @@ audioButton:SetScript("OnClick", function(self)
     enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 12, 0)
     enableLabel:SetText("Enable Collection Notifications")
     enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord6)) -- Brighter text for main option
-    
+
     -- Add a subtle divider after the main toggle
     local mainDivider = addon.UIUtils:CreateDivider(collectionContainer, "HORIZONTAL", 1)
     mainDivider:SetPoint("TOPLEFT", enableCheckbox, "BOTTOMLEFT", -8, -12)
@@ -520,13 +661,13 @@ audioButton:SetScript("OnClick", function(self)
       rowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
       rowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
       rowFrame:SetHeight(28)
-      
+
       -- Subtle row background
       local rowBg = rowFrame:CreateTexture(nil, "BACKGROUND")
       rowBg:SetAllPoints()
       rowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
       rowBg:SetAlpha(0.2)
-      
+
       -- Row hover effect
       rowFrame:SetScript("OnEnter", function(self)
         rowBg:SetAlpha(0.4)
@@ -553,7 +694,7 @@ audioButton:SetScript("OnClick", function(self)
 
       -- Sound dropdown - positioned to align with other dropdowns on same line (right-justified)
       local soundDropdown = addon.UIUtils:CreateSoundDropdown(rowFrame, 140, 24) -- Slightly wider
-      soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0) -- Right-aligned with offset for test button -- Fixed position for alignment
+      soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0)                 -- Right-aligned with offset for test button -- Fixed position for alignment
 
       -- Set current value from saved settings
       local currentSound = GetCollectionSetting(typeData.sound)
@@ -600,7 +741,7 @@ audioButton:SetScript("OnClick", function(self)
       -- Test button for each type - positioned to align with other test buttons on same line (right-justified)
       local testButton = addon.UIUtils:CreateSoundTestButton(rowFrame, 24)
       testButton:SetPoint("RIGHT", rowFrame, "RIGHT", -8, 0) -- Right-aligned with padding
-      testButton:SetSound(soundDropdown:GetValue()) -- Use the validated sound from dropdown
+      testButton:SetSound(soundDropdown:GetValue())          -- Use the validated sound from dropdown
 
       -- Store dropdown reference for refreshing
       soundDropdowns[typeData.sound] = soundDropdown
@@ -614,7 +755,7 @@ audioButton:SetScript("OnClick", function(self)
       typeCheckbox:SetScript("OnClick", function(self)
         local checked = self:GetChecked() and true or false
         SetCollectionSetting(typeData.key, checked)
-        
+
         -- Update individual row state
         local rowElementsForType = rowElements[typeData.key]
         if rowElementsForType then
@@ -654,10 +795,10 @@ audioButton:SetScript("OnClick", function(self)
 
       -- Store elements for per-row enable/disable functionality
       rowElements[typeData.key] = {
-        { element = typeLabel, type = "fontstring" },
+        { element = typeLabel,     type = "fontstring" },
         { element = soundDropdown, type = "dropdown" },
-        { element = testButton, type = "testbutton" },
-        { element = rowFrame, type = "frame" }
+        { element = testButton,    type = "testbutton" },
+        { element = rowFrame,      type = "frame" }
       }
 
       -- Store elements for enable/disable functionality
@@ -667,14 +808,14 @@ audioButton:SetScript("OnClick", function(self)
       table.insert(configurableElements, { element = testButton, type = "testbutton" })
       table.insert(configurableElements, { element = rowFrame, type = "frame" }) -- Include row frame
 
-      yOffset = yOffset - 32 -- Consistent spacing between rows
+      yOffset = yOffset - 32                                                     -- Consistent spacing between rows
     end
 
     -- Initialize per-row states based on current settings
     for _, typeData in ipairs(collectionTypes) do
       local isEnabled = GetCollectionSetting(typeData.key)
       local rowElementsForType = rowElements[typeData.key]
-      
+
       if rowElementsForType then
         for _, elementData in ipairs(rowElementsForType) do
           local element = elementData.element
@@ -711,19 +852,19 @@ audioButton:SetScript("OnClick", function(self)
 
     -- Show Chat Messages Toggle with improved styling
     yOffset = yOffset - 15 -- Additional spacing before chat toggle
-    
+
     -- Create chat toggle row
     local chatRowFrame = CreateFrame("Frame", nil, collectionContainer)
     chatRowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
     chatRowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
     chatRowFrame:SetHeight(28)
-    
+
     -- Chat row background with accent color
     local chatRowBg = chatRowFrame:CreateTexture(nil, "BACKGROUND")
     chatRowBg:SetAllPoints()
     chatRowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8)) -- Different accent color
     chatRowBg:SetAlpha(0.15)
-    
+
     -- Chat row hover effect
     chatRowFrame:SetScript("OnEnter", function(self)
       chatRowBg:SetAlpha(0.3)
@@ -731,7 +872,7 @@ audioButton:SetScript("OnClick", function(self)
     chatRowFrame:SetScript("OnLeave", function(self)
       chatRowBg:SetAlpha(0.15)
     end)
-    
+
     local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(chatRowFrame, 18)
     chatCheckbox:SetPoint("LEFT", chatRowFrame, "LEFT", 8, 0)
 
@@ -795,13 +936,13 @@ audioButton:SetScript("OnClick", function(self)
           end
         end
       end
-      
+
       -- Update individual rows based on both master state AND individual checkbox state
       for _, typeData in ipairs(collectionTypes) do
         local individualEnabled = GetCollectionSetting(typeData.key)
         local finalEnabled = enabled and individualEnabled -- Both must be true
         local rowElementsForType = rowElements[typeData.key]
-        
+
         if rowElementsForType then
           for _, elementData in ipairs(rowElementsForType) do
             local element = elementData.element
@@ -931,32 +1072,113 @@ aboutButton:SetScript("OnClick", function(self)
     content.aboutPanel = CreateEnhancedSettingsPanel(
       content,
       "About NoobTacoUI-Media",
-      "Media assets and shared resources for NoobTacoUI addon suite."
+      "Shared media assets and enhanced UI components for the NoobTacoUI addon suite."
     )
 
+    -- Create custom Nord-themed scroll frame
+    local scrollFrame = CreateNordScrollFrame(content.aboutPanel)
+    scrollFrame:SetPoint("TOPLEFT", content.aboutPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
+    scrollFrame:SetPoint("BOTTOMRIGHT", content.aboutPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+    
+    -- Get the scrollable content area
+    local scrollChild = scrollFrame.scrollChild
+    scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus thinner scrollbar (was 20)
+
+    -- Logo
+    local logo = scrollChild:CreateTexture(nil, "ARTWORK")
+    logo:SetTexture(addon.UIAssets.Logo)
+    logo:SetSize(64, 64)
+    logo:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
+
+    -- Main content container (positioned next to logo)
+    local contentFrame = CreateFrame("Frame", nil, scrollChild)
+    contentFrame:SetPoint("TOPLEFT", logo, "TOPRIGHT", SECTION_SPACING, 0)
+    contentFrame:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+    contentFrame:SetHeight(200)
+
     -- Version info
-    local versionText = content.aboutPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    versionText:SetPoint("TOPLEFT", content.aboutPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    local versionText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, 0)
     versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
       C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.1.3"))
     versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
     -- Author info
-    local authorText = content.aboutPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    authorText:SetPoint("TOPLEFT", versionText, "BOTTOMLEFT", 0, -8)
+    local authorText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    authorText:SetPoint("TOPLEFT", versionText, "BOTTOMLEFT", 0, -4)
     authorText:SetText("Created by NoobTaco")
-    authorText:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+    authorText:SetTextColor(unpack(addon.UIAssets.Colors.Nord13))
+
+    -- Subtitle
+    local subtitleText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    subtitleText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 0, -INNER_PADDING)
+    subtitleText:SetText("Media Asset Library")
+    subtitleText:SetTextColor(unpack(addon.UIAssets.Colors.Nord14))
 
     -- Description
-    local descText = content.aboutPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    descText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 0, -SECTION_SPACING)
-    descText:SetPoint("RIGHT", content.aboutPanel, "RIGHT", -PADDING, 0)
+    local descText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    descText:SetPoint("TOPLEFT", subtitleText, "BOTTOMLEFT", 0, -8)
+    descText:SetPoint("RIGHT", contentFrame, "RIGHT", 0, 0)
     descText:SetJustifyH("LEFT")
     descText:SetJustifyV("TOP")
     descText:SetSpacing(3)
     descText:SetText(
-      "This addon provides shared media assets including fonts, textures, and audio files for use across the NoobTacoUI addon suite. It also includes configuration interfaces and utility functions for managing media assets.")
+      "This addon provides a comprehensive library of shared media assets including fonts, textures, and audio files. It serves as the foundation for the NoobTacoUI addon suite, offering consistent styling and media resources across all components.\n\n" ..
+      "Features include configuration interfaces, audio notification systems, and a curated collection of Nord-themed visual assets designed for modern World of Warcraft UI enhancement.")
     descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+    -- Features section (positioned below the description content)
+    local featuresHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    featuresHeader:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    featuresHeader:SetText("Key Features")
+    featuresHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+    -- Features list
+    local featuresList = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    featuresList:SetPoint("TOPLEFT", featuresHeader, "BOTTOMLEFT", 0, -8)
+    featuresList:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+    featuresList:SetJustifyH("LEFT")
+    featuresList:SetJustifyV("TOP")
+    featuresList:SetSpacing(3)
+    featuresList:SetText(
+      "• Collection notification system with customizable audio alerts\n" ..
+      "• Nord-themed texture library for consistent UI styling\n" ..
+      "• Curated font collection optimized for readability\n" ..
+      "• Enhanced configuration interface with modern design\n" ..
+      "• SharedMedia integration for cross-addon compatibility\n" ..
+      "• Lightweight and performance-optimized architecture")
+    featuresList:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+    -- Support section
+    local supportHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    supportHeader:SetPoint("TOPLEFT", featuresList, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    supportHeader:SetText("Support & Community")
+    supportHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+    local supportText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    supportText:SetPoint("TOPLEFT", supportHeader, "BOTTOMLEFT", 0, -8)
+    supportText:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+    supportText:SetJustifyH("LEFT")
+    supportText:SetJustifyV("TOP")
+    supportText:SetSpacing(3)
+    supportText:SetText(
+      "For support, updates, and community discussions, visit the NoobTacoUI project repository. " ..
+      "Bug reports and feature requests are welcome and help improve the addon for everyone.")
+    supportText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+    -- Set the scroll child height dynamically based on content
+    local function UpdateScrollChildHeight()
+      local totalHeight = 0
+      -- Calculate height from logo bottom or support text bottom, whichever is lower
+      local logoBottom = -(logo:GetBottom() or 0) + (scrollChild:GetTop() or 0)
+      local supportBottom = -(supportText:GetBottom() or 0) + (scrollChild:GetTop() or 0)
+      totalHeight = math.max(logoBottom, supportBottom) + SECTION_SPACING
+      scrollChild:SetHeight(totalHeight)
+      scrollFrame.UpdateScrollThumb()
+    end
+
+    -- Update height after a frame to ensure all text is rendered
+    C_Timer.After(0.1, UpdateScrollChildHeight)
   end
 
   content.aboutPanel:Show()

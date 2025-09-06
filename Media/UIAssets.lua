@@ -5,6 +5,9 @@ local addonName, addon = ...
 
 -- Asset paths for easy management
 addon.UIAssets = {
+  -- Logo and branding
+  Logo = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\logo",
+
   -- Background textures using your Nord theme
   Background = {
     Main = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord0",
