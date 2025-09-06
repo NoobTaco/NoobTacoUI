@@ -4,6 +4,103 @@
 local addonName, addon = ...
 local CreateFrame = CreateFrame
 
+-- Version detection for feature availability
+local function GetWoWVersion()
+  local version, build, date, tocVersion = GetBuildInfo()
+  return version, build, date, tocVersion
+end
+
+local function IsClassicEra()
+  local version = GetWoWVersion()
+  return version and (version:match("^1%.") or version:match("^11%d%d%d"))
+end
+
+local function IsWrath()
+  local version = GetWoWVersion()
+  return version and version:match("^3%.")
+end
+
+local function IsCata()
+  local version = GetWoWVersion()
+  return version and version:match("^4%.")
+end
+
+local function IsMoP()
+  local version = GetWoWVersion()
+  return version and version:match("^5%.")
+end
+
+local function IsWoD()
+  local version = GetWoWVersion()
+  return version and version:match("^6%.")
+end
+
+local function IsLegion()
+  local version = GetWoWVersion()
+  return version and version:match("^7%.")
+end
+
+local function IsBfA()
+  local version = GetWoWVersion()
+  return version and version:match("^8%.")
+end
+
+local function IsShadowlands()
+  local version = GetWoWVersion()
+  return version and version:match("^9%.")
+end
+
+local function IsDragonflight()
+  local version = GetWoWVersion()
+  return version and version:match("^10%.")
+end
+
+local function IsRetail()
+  return not IsClassicEra() and not IsWrath() and not IsCata() and not IsMoP() and not IsWoD() and not IsLegion() and
+      not IsBfA() and not IsShadowlands()
+end
+
+-- Feature availability based on version
+local function AreCollectionsAvailable()
+  -- Collections availability by expansion:
+  -- Classic Era (1.x): No collections
+  -- Wrath (3.x): Mounts and pets exist but no collection UI
+  -- Cata (4.x): Limited collections, some UI improvements
+  -- MoP (5.x): Pet battles introduced, mount collection improved
+  -- WoD (6.x): Toy collection introduced, heirloom collection
+  -- Legion (7.x): Appearance collection (transmog) fully implemented
+  -- BfA (8.x): Modern collection system
+  -- Shadowlands+ (9.x+): Full modern collections
+
+  -- For now, we'll enable collections for MoP+ since it has pet battles and mount collections
+  -- This can be refined based on testing
+  return IsMoP() or IsWoD() or IsLegion() or IsBfA() or IsShadowlands() or IsDragonflight() or IsRetail()
+end
+
+local function GetExpansionName()
+  if IsClassicEra() then
+    return "Classic Era"
+  elseif IsWrath() then
+    return "Wrath of the Lich King"
+  elseif IsCata() then
+    return "Cataclysm"
+  elseif IsMoP() then
+    return "Mists of Pandaria"
+  elseif IsWoD() then
+    return "Warlords of Draenor"
+  elseif IsLegion() then
+    return "Legion"
+  elseif IsBfA() then
+    return "Battle for Azeroth"
+  elseif IsShadowlands() then
+    return "Shadowlands"
+  elseif IsDragonflight() then
+    return "Dragonflight"
+  else
+    return "Current Retail"
+  end
+end
+
 -- Initialize database if needed (account-wide)
 NoobTacoUIMediaDB = NoobTacoUIMediaDB or {}
 
@@ -30,53 +127,60 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
       NoobTacoUIMediaDB.GeneralSettings = {
         showMinimapButton = true,
         enableAddonCompartment = true,
+        minimapButtonAngle = 225, -- Default angle in degrees (bottom-left position)
       }
-      print("|cFF16C3F2NoobTacoUI-Media|r: Initialized General Settings")
+    end
+
+    -- Ensure minimapButtonAngle exists for existing databases
+    if NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle == nil then
+      NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle = 225
     end
 
     -- Initialize Collection Notifications settings if needed with full defaults
-    if not NoobTacoUIMediaDB.CollectionNotifications then
-      NoobTacoUIMediaDB.CollectionNotifications = {
-        enabled = true,
-        newPet = true,
-        newMount = true,
-        newToy = true,
-        newTransmog = true,
-        showMessages = true,
-        soundPet = "NT_InfussionOfLight",
-        soundMount = "NT_Mount",
-        soundToy = "NT_Chest",
-        soundTransmog = "NT_Chest",
-      }
-      print("|cFF16C3F2NoobTacoUI-Media|r: Initialized Collection Notifications settings")
-    else
-      -- Ensure all required fields exist (for version upgrades)
-      local defaults = {
-        enabled = true,
-        newPet = true,
-        newMount = true,
-        newToy = true,
-        newTransmog = true,
-        showMessages = true,
-        soundPet = "NT_InfussionOfLight",
-        soundMount = "NT_Mount",
-        soundToy = "NT_Chest",
-        soundTransmog = "NT_Chest",
-      }
+    -- Only initialize for versions that support collections
+    if AreCollectionsAvailable() then
+      if not NoobTacoUIMediaDB.CollectionNotifications then
+        NoobTacoUIMediaDB.CollectionNotifications = {
+          enabled = true,
+          newPet = true,
+          newMount = true,
+          newToy = true,
+          newTransmog = true,
+          showMessages = true,
+          soundPet = "NT_InfussionOfLight",
+          soundMount = "NT_Mount",
+          soundToy = "NT_Chest",
+          soundTransmog = "NT_Chest",
+        }
+      else
+        -- Ensure all required fields exist (for version upgrades)
+        local defaults = {
+          enabled = true,
+          newPet = true,
+          newMount = true,
+          newToy = true,
+          newTransmog = true,
+          showMessages = true,
+          soundPet = "NT_InfussionOfLight",
+          soundMount = "NT_Mount",
+          soundToy = "NT_Chest",
+          soundTransmog = "NT_Chest",
+        }
 
-      for key, defaultValue in pairs(defaults) do
-        if NoobTacoUIMediaDB.CollectionNotifications[key] == nil then
-          NoobTacoUIMediaDB.CollectionNotifications[key] = defaultValue
+        for key, defaultValue in pairs(defaults) do
+          if NoobTacoUIMediaDB.CollectionNotifications[key] == nil then
+            NoobTacoUIMediaDB.CollectionNotifications[key] = defaultValue
+          end
         end
       end
+    else
+      -- Collections not available in this version (silent)
     end
 
     self:UnregisterEvent("ADDON_LOADED")
   elseif event == "PLAYER_LOGOUT" then
     -- Force save the database on logout (shouldn't be needed but adds safety)
-    if NoobTacoUIMediaDB and NoobTacoUIMediaDB.CollectionNotifications then
-      print("|cFF16C3F2NoobTacoUI-Media|r: Saving Collection Notifications settings...")
-    end
+    -- Silent save, no chat spam
   end
 end)
 
@@ -98,8 +202,8 @@ function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
 
   if buttonName == "LeftButton" then
     addon.ShowConfigMenu()
-  elseif buttonName == "RightButton" then
-    -- Toggle collection notifications
+  elseif buttonName == "RightButton" and AreCollectionsAvailable() then
+    -- Toggle collection notifications (only available in retail)
     local enabled = NoobTacoUIMediaDB.CollectionNotifications and NoobTacoUIMediaDB.CollectionNotifications.enabled
     if enabled then
       NoobTacoUIMediaDB.CollectionNotifications.enabled = false
@@ -108,6 +212,8 @@ function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
       NoobTacoUIMediaDB.CollectionNotifications.enabled = true
       print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFA3BE8CEnabled|r")
     end
+  elseif buttonName == "RightButton" and not AreCollectionsAvailable() then
+    print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications not available in " .. GetExpansionName())
   end
 end
 
@@ -131,7 +237,9 @@ function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
     GameTooltip:AddLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
   else
     GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    if AreCollectionsAvailable() then
+      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    end
   end
 
   GameTooltip:Show()
@@ -213,6 +321,42 @@ addon.SetDBValue = SetDBValue
 -- Minimap button system
 local minimapButton = nil
 
+-- Helper function to position minimap button around the minimap
+local function PositionMinimapButton(angle)
+  if not minimapButton then return end
+
+  local radius = 80
+  local radians = math.rad(angle or 45)
+  local x = radius * math.cos(radians)
+  local y = radius * math.sin(radians)
+
+  minimapButton:ClearAllPoints()
+  minimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
+end
+
+-- Helper function to calculate angle from minimap button position
+local function GetAngleFromPosition()
+  if not minimapButton then return 45 end
+
+  local centerX, centerY = Minimap:GetCenter()
+  local buttonX, buttonY = minimapButton:GetCenter()
+
+  if not centerX or not centerY or not buttonX or not buttonY then
+    return 45
+  end
+
+  local dx = buttonX - centerX
+  local dy = buttonY - centerY
+  local angle = math.deg(math.atan2(dy, dx))
+
+  -- Normalize angle to 0-360 range
+  if angle < 0 then
+    angle = angle + 360
+  end
+
+  return angle
+end
+
 local function CreateMinimapButton()
   if minimapButton or not Minimap then return end
 
@@ -250,7 +394,10 @@ local function CreateMinimapButton()
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
     GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
     GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    if AreCollectionsAvailable() then
+      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    end
+    GameTooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
     GameTooltip:Show()
   end)
 
@@ -260,12 +407,60 @@ local function CreateMinimapButton()
     GameTooltip:Hide()
   end)
 
+  -- Drag functionality
+  minimapButton:SetMovable(true)
+  minimapButton:EnableMouse(true)
+  minimapButton:RegisterForDrag("LeftButton")
+
+  local isDragging = false
+
+  minimapButton:SetScript("OnDragStart", function(self)
+    -- Only start dragging if we're not clicking for the normal click function
+    isDragging = true
+    self:StartMoving()
+
+    -- Update tooltip to show drag instructions
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+    GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+    GameTooltip:AddLine("Drag to reposition", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("Release to save position", 0.7, 0.7, 0.7)
+    GameTooltip:Show()
+  end)
+
+  minimapButton:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+
+    if isDragging then
+      -- Calculate and save the new angle
+      local newAngle = GetAngleFromPosition()
+      NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle = newAngle
+
+      -- Reposition to clean angle (snaps to calculated position)
+      PositionMinimapButton(newAngle)
+
+      -- Position saved silently, no chat spam
+
+      -- Reset tooltip
+      GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+      GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+      GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+      GameTooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
+      GameTooltip:Show()
+    end
+
+    isDragging = false
+  end)
+
   -- Click handlers
   minimapButton:SetScript("OnClick", function(self, button)
+    -- Don't process clicks if we were dragging
+    if isDragging then return end
+
     if button == "LeftButton" then
       addon.ShowConfigMenu()
-    elseif button == "RightButton" then
-      -- Toggle collection notifications
+    elseif button == "RightButton" and AreCollectionsAvailable() then
+      -- Toggle collection notifications (only available in retail)
       local enabled = NoobTacoUIMediaDB.CollectionNotifications and NoobTacoUIMediaDB.CollectionNotifications.enabled
       if enabled then
         NoobTacoUIMediaDB.CollectionNotifications.enabled = false
@@ -274,23 +469,22 @@ local function CreateMinimapButton()
         NoobTacoUIMediaDB.CollectionNotifications.enabled = true
         print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFA3BE8CEnabled|r")
       end
+    elseif button == "RightButton" and not AreCollectionsAvailable() then
+      print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications not available in " .. GetExpansionName())
     end
   end)
 
   minimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
-  -- Position around minimap (top-right area)
-  local angle = math.rad(45) -- 45 degrees from top
-  local radius = 80
-  local x = radius * math.cos(angle)
-  local y = radius * math.sin(angle)
-  minimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
+  -- Position using stored angle or default
+  local savedAngle = NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle or 225
+  PositionMinimapButton(savedAngle)
 
   minimapButton:Show()
-  print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button created and positioned")
+  -- Silent creation, no chat spam
 end
 
-local function UpdateMinimapButtonVisibility()
+local function UpdateMinimapButtonVisibility(showMessages)
   local showButton = GetDBValue("GeneralSettings.showMinimapButton")
   if showButton == nil then showButton = true end -- Default to true
 
@@ -298,12 +492,16 @@ local function UpdateMinimapButtonVisibility()
     CreateMinimapButton()
     if minimapButton then
       minimapButton:Show()
-      print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button shown")
+      if showMessages then
+        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button shown")
+      end
     end
   else
     if minimapButton then
       minimapButton:Hide()
-      print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button hidden")
+      if showMessages then
+        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button hidden")
+      end
     end
   end
 end
@@ -353,6 +551,31 @@ local function CreateEnhancedConfigFrame()
   frame:SetClampedToScreen(true)
   frame:SetFrameStrata("DIALOG")
   frame:Hide()
+
+  -- Enable keyboard input for ESC key handling
+  frame:EnableKeyboard(true)
+  frame:SetPropagateKeyboardInput(true)
+
+  -- ESC key handler to close the config menu
+  frame:SetScript("OnKeyDown", function(self, key)
+    if key == "ESCAPE" then
+      self:Hide()
+      -- Stop the key from propagating to other frames
+      self:SetPropagateKeyboardInput(false)
+      -- Re-enable propagation for next time
+      C_Timer.After(0, function()
+        if self:IsVisible() then
+          self:SetPropagateKeyboardInput(true)
+        end
+      end)
+    end
+  end)
+
+  -- Disable keyboard input when frame is hidden
+  frame:SetScript("OnHide", function(self)
+    self:EnableKeyboard(false)
+    self:SetPropagateKeyboardInput(true)
+  end)
 
   -- Enhanced background with gradient
   frame.Background:SetTexture(addon.UIAssets.Background.Main)
@@ -798,9 +1021,18 @@ aboutButton:SetScript("OnClick", function(self)
     descText:SetJustifyH("LEFT")
     descText:SetJustifyV("TOP")
     descText:SetSpacing(3)
-    descText:SetText(
-      "This addon provides a comprehensive library of shared media assets including fonts, textures, and audio files. It serves as the foundation for the NoobTacoUI addon suite, offering consistent styling and media resources across all components.\n\n" ..
-      "Features include configuration interfaces, audio notification systems, and a curated collection of Nord-themed visual assets designed for modern World of Warcraft UI enhancement.")
+
+    local baseDescription =
+        "This addon provides a comprehensive library of shared media assets including fonts, textures, and audio files. It serves as the foundation for the NoobTacoUI addon suite, offering consistent styling and media resources across all components.\n\n" ..
+        "Features include configuration interfaces, audio notification systems, and a curated collection of Nord-themed visual assets designed for modern World of Warcraft UI enhancement."
+
+    local versionInfo = ""
+    if not AreCollectionsAvailable() then
+      versionInfo = "\n\n|cFFD08770Version Note:|r You are running " .. GetExpansionName() ..
+          ". Collection Notifications are not available and require MoP (5.x) or later for full functionality."
+    end
+
+    descText:SetText(baseDescription .. versionInfo)
     descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
     -- Features section (positioned below the description content)
@@ -863,246 +1095,306 @@ end)
 
 table.insert(categories, aboutButton)
 
--- Audio settings button (moved to second position)
-local audioButton = CreateEnhancedCategoryButton(sidebar, "Audio Settings", addon.UIAssets.Icons.Audio)
-audioButton:SetPoint("TOPLEFT", aboutButton, "BOTTOMLEFT", 0, -4)
-audioButton:SetScript("OnClick", function(self)
-  -- Clear previous selection
-  if currentCategory then
-    currentCategory:SetSelected(false)
-  end
-
-  -- Set new selection
-  self:SetSelected(true)
-  currentCategory = self
-
-  -- Show audio settings panel
-  if content.currentPanel then
-    content.currentPanel:Hide()
-  end
-
-  if not content.audioPanel then
-    content.audioPanel = CreateEnhancedSettingsPanel(
-      content,
-      "Audio Configuration",
-      "Configure audio notifications, custom sounds, and sound effects used throughout NoobTacoUI-Media."
-    )
-
-    -- Add collection notifications section
-    local collectionHeader = addon.UIUtils:CreateCategoryHeader(content.audioPanel, "Collection Notifications")
-    collectionHeader:SetPoint("TOPLEFT", content.audioPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
-    -- Use same color as selected button for consistency and better readability
-    collectionHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
-
-    -- Create a subtle background container for the collection options
-    local collectionContainer = addon.UIUtils:CreateThemedFrame(content.audioPanel, "Frame")
-    collectionContainer:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", -8, -12)
-    collectionContainer:SetPoint("TOPRIGHT", content.audioPanel, "TOPRIGHT", -8, -12)
-    collectionContainer:SetHeight(250) -- Increased height to accommodate chat messages section
-
-    -- Apply subtle Nord1 background with slight transparency
-    local bgTexture = collectionContainer:CreateTexture(nil, "BACKGROUND")
-    bgTexture:SetAllPoints()
-    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-    bgTexture:SetAlpha(0.3)
-
-    -- Add a subtle border using Nord3
-    local borderTexture = collectionContainer:CreateTexture(nil, "BORDER")
-    borderTexture:SetAllPoints()
-    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-    borderTexture:SetAlpha(0.4)
-
-    -- Create inset for the border effect
-    local insetTexture = collectionContainer:CreateTexture(nil, "ARTWORK")
-    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
-    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
-    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-    insetTexture:SetAlpha(0.3)
-
-    local yOffset = -20                 -- Start with more padding inside container
-    local configurableElements = {}
-    local soundDropdowns = {}           -- Store references to dropdowns for refreshing
-    local checkboxRefs = { types = {} } -- Store references to checkboxes for refreshing
-    local rowElements = {}              -- Store elements for each row for per-row disable functionality
-
-    -- Helper functions to use CollectionNotifications module functions
-    local function GetCollectionSetting(key)
-      local value
-      if addon.CollectionNotifications and addon.CollectionNotifications.GetSetting then
-        value = addon.CollectionNotifications.GetSetting(key)
-      else
-        -- Fallback to direct access if module not loaded yet
-        if not NoobTacoUIMediaDB.CollectionNotifications then
-          NoobTacoUIMediaDB.CollectionNotifications = {}
-        end
-        value = NoobTacoUIMediaDB.CollectionNotifications[key]
-      end
-      return value
+-- Audio settings button (only show if collections are available)
+local audioButton
+if AreCollectionsAvailable() then
+  audioButton = CreateEnhancedCategoryButton(sidebar, "Audio Settings", addon.UIAssets.Icons.Audio)
+  audioButton:SetPoint("TOPLEFT", aboutButton, "BOTTOMLEFT", 0, -4)
+  audioButton:SetScript("OnClick", function(self)
+    -- Clear previous selection
+    if currentCategory then
+      currentCategory:SetSelected(false)
     end
 
-    local function SetCollectionSetting(key, value)
-      if addon.CollectionNotifications and addon.CollectionNotifications.SetSetting then
-        -- Coerce checkbox values to explicit booleans
-        if value == nil then value = false end
-        if value == 1 then value = true end
-        addon.CollectionNotifications.SetSetting(key, value)
-      else
-        -- Fallback to direct access if module not loaded yet
-        if not NoobTacoUIMediaDB.CollectionNotifications then
-          NoobTacoUIMediaDB.CollectionNotifications = {}
-        end
-        if value == nil then value = false end
-        if value == 1 then value = true end
-        NoobTacoUIMediaDB.CollectionNotifications[key] = value
-        if addon.CallbackRegistry then
-          addon.CallbackRegistry:Trigger("CollectionNotifications." .. key, value)
-        end
-      end
+    -- Set new selection
+    self:SetSelected(true)
+    currentCategory = self
+
+    -- Show audio settings panel
+    if content.currentPanel then
+      content.currentPanel:Hide()
     end
 
-    -- Global Enable Toggle with improved styling
-    local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(collectionContainer, 22) -- Slightly larger
-    enableCheckbox:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 16, yOffset)
-    enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
-    checkboxRefs.enable = enableCheckbox
+    if not content.audioPanel then
+      content.audioPanel = CreateEnhancedSettingsPanel(
+        content,
+        "Audio Configuration",
+        "Configure audio notifications, custom sounds, and sound effects used throughout NoobTacoUI-Media."
+      )
 
-    local enableLabel = collectionContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 12, 0)
-    enableLabel:SetText("Enable Collection Notifications")
-    enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord6)) -- Brighter text for main option
+      -- Add collection notifications section
+      local collectionHeader = addon.UIUtils:CreateCategoryHeader(content.audioPanel, "Collection Notifications")
+      collectionHeader:SetPoint("TOPLEFT", content.audioPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+      -- Use same color as selected button for consistency and better readability
+      collectionHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
-    -- Add a subtle divider after the main toggle
-    local mainDivider = addon.UIUtils:CreateDivider(collectionContainer, "HORIZONTAL", 1)
-    mainDivider:SetPoint("TOPLEFT", enableCheckbox, "BOTTOMLEFT", -8, -12)
-    mainDivider:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -16, -12)
-    mainDivider:SetAlpha(0.3)
+      -- Create a subtle background container for the collection options
+      local collectionContainer = addon.UIUtils:CreateThemedFrame(content.audioPanel, "Frame")
+      collectionContainer:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", -8, -12)
+      collectionContainer:SetPoint("TOPRIGHT", content.audioPanel, "TOPRIGHT", -8, -12)
+      collectionContainer:SetHeight(250) -- Increased height to accommodate chat messages section
 
-    yOffset = yOffset - 45 -- More space after main toggle
+      -- Apply subtle Nord1 background with slight transparency
+      local bgTexture = collectionContainer:CreateTexture(nil, "BACKGROUND")
+      bgTexture:SetAllPoints()
+      bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+      bgTexture:SetAlpha(0.3)
 
-    -- Collection Type Toggles with Sound Dropdowns and Test Buttons
-    local collectionTypes = {
-      { key = "newPet",      label = "Pet Collections",      sound = "soundPet",      default = true },
-      { key = "newMount",    label = "Mount Collections",    sound = "soundMount",    default = true },
-      { key = "newToy",      label = "Toy Collections",      sound = "soundToy",      default = true },
-      { key = "newTransmog", label = "Transmog Collections", sound = "soundTransmog", default = true }
-    }
+      -- Add a subtle border using Nord3
+      local borderTexture = collectionContainer:CreateTexture(nil, "BORDER")
+      borderTexture:SetAllPoints()
+      borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
+      borderTexture:SetAlpha(0.4)
 
-    for _, typeData in ipairs(collectionTypes) do
-      -- Create a subtle row background for hover effects and better grouping
-      local rowFrame = CreateFrame("Frame", nil, collectionContainer)
-      rowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
-      rowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
-      rowFrame:SetHeight(28)
+      -- Create inset for the border effect
+      local insetTexture = collectionContainer:CreateTexture(nil, "ARTWORK")
+      insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
+      insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
+      insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+      insetTexture:SetAlpha(0.3)
 
-      -- Subtle row background
-      local rowBg = rowFrame:CreateTexture(nil, "BACKGROUND")
-      rowBg:SetAllPoints()
-      rowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
-      rowBg:SetAlpha(0.2)
+      local yOffset = -20                 -- Start with more padding inside container
+      local configurableElements = {}
+      local soundDropdowns = {}           -- Store references to dropdowns for refreshing
+      local checkboxRefs = { types = {} } -- Store references to checkboxes for refreshing
+      local rowElements = {}              -- Store elements for each row for per-row disable functionality
 
-      -- Row hover effect
-      rowFrame:SetScript("OnEnter", function(self)
-        rowBg:SetAlpha(0.4)
-      end)
-      rowFrame:SetScript("OnLeave", function(self)
+      -- Helper functions to use CollectionNotifications module functions
+      local function GetCollectionSetting(key)
+        local value
+        if addon.CollectionNotifications and addon.CollectionNotifications.GetSetting then
+          value = addon.CollectionNotifications.GetSetting(key)
+        else
+          -- Fallback to direct access if module not loaded yet
+          if not NoobTacoUIMediaDB.CollectionNotifications then
+            NoobTacoUIMediaDB.CollectionNotifications = {}
+          end
+          value = NoobTacoUIMediaDB.CollectionNotifications[key]
+        end
+        return value
+      end
+
+      local function SetCollectionSetting(key, value)
+        if addon.CollectionNotifications and addon.CollectionNotifications.SetSetting then
+          -- Coerce checkbox values to explicit booleans
+          if value == nil then value = false end
+          if value == 1 then value = true end
+          addon.CollectionNotifications.SetSetting(key, value)
+        else
+          -- Fallback to direct access if module not loaded yet
+          if not NoobTacoUIMediaDB.CollectionNotifications then
+            NoobTacoUIMediaDB.CollectionNotifications = {}
+          end
+          if value == nil then value = false end
+          if value == 1 then value = true end
+          NoobTacoUIMediaDB.CollectionNotifications[key] = value
+          if addon.CallbackRegistry then
+            addon.CallbackRegistry:Trigger("CollectionNotifications." .. key, value)
+          end
+        end
+      end
+
+      -- Global Enable Toggle with improved styling
+      local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(collectionContainer, 22) -- Slightly larger
+      enableCheckbox:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 16, yOffset)
+      enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
+      checkboxRefs.enable = enableCheckbox
+
+      local enableLabel = collectionContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+      enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 12, 0)
+      enableLabel:SetText("Enable Collection Notifications")
+      enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord6)) -- Brighter text for main option
+
+      -- Add a subtle divider after the main toggle
+      local mainDivider = addon.UIUtils:CreateDivider(collectionContainer, "HORIZONTAL", 1)
+      mainDivider:SetPoint("TOPLEFT", enableCheckbox, "BOTTOMLEFT", -8, -12)
+      mainDivider:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -16, -12)
+      mainDivider:SetAlpha(0.3)
+
+      yOffset = yOffset - 45 -- More space after main toggle
+
+      -- Collection Type Toggles with Sound Dropdowns and Test Buttons
+      local collectionTypes = {
+        { key = "newPet",      label = "Pet Collections",      sound = "soundPet",      default = true },
+        { key = "newMount",    label = "Mount Collections",    sound = "soundMount",    default = true },
+        { key = "newToy",      label = "Toy Collections",      sound = "soundToy",      default = true },
+        { key = "newTransmog", label = "Transmog Collections", sound = "soundTransmog", default = true }
+      }
+
+      for _, typeData in ipairs(collectionTypes) do
+        -- Create a subtle row background for hover effects and better grouping
+        local rowFrame = CreateFrame("Frame", nil, collectionContainer)
+        rowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
+        rowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
+        rowFrame:SetHeight(28)
+
+        -- Subtle row background
+        local rowBg = rowFrame:CreateTexture(nil, "BACKGROUND")
+        rowBg:SetAllPoints()
+        rowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
         rowBg:SetAlpha(0.2)
-      end)
 
-      local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(rowFrame, 18)
-      typeCheckbox:SetPoint("LEFT", rowFrame, "LEFT", 8, 0)
+        -- Row hover effect
+        rowFrame:SetScript("OnEnter", function(self)
+          rowBg:SetAlpha(0.4)
+        end)
+        rowFrame:SetScript("OnLeave", function(self)
+          rowBg:SetAlpha(0.2)
+        end)
 
-      -- Set default if not set
-      if GetCollectionSetting(typeData.key) == nil then
-        SetCollectionSetting(typeData.key, typeData.default)
-      end
-      typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
-      checkboxRefs.types[typeData.key] = typeCheckbox
+        local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(rowFrame, 18)
+        typeCheckbox:SetPoint("LEFT", rowFrame, "LEFT", 8, 0)
 
-      local typeLabel = rowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-      typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 12, 0)
-      typeLabel:SetText(typeData.label)
-      typeLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-      typeLabel:SetJustifyH("LEFT") -- Left-justify the label text
+        -- Set default if not set
+        if GetCollectionSetting(typeData.key) == nil then
+          SetCollectionSetting(typeData.key, typeData.default)
+        end
+        typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
+        checkboxRefs.types[typeData.key] = typeCheckbox
 
-      -- Sound dropdown - positioned to align with other dropdowns on same line (right-justified)
-      local soundDropdown = addon.UIUtils:CreateSoundDropdown(rowFrame, 140, 24) -- Slightly wider
-      soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0)                 -- Right-aligned with offset for test button -- Fixed position for alignment
+        local typeLabel = rowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 12, 0)
+        typeLabel:SetText(typeData.label)
+        typeLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+        typeLabel:SetJustifyH("LEFT") -- Left-justify the label text
 
-      -- Set current value from saved settings
-      local currentSound = GetCollectionSetting(typeData.sound)
-      local validSound = currentSound
+        -- Sound dropdown - positioned to align with other dropdowns on same line (right-justified)
+        local soundDropdown = addon.UIUtils:CreateSoundDropdown(rowFrame, 140, 24) -- Slightly wider
+        soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0)                 -- Right-aligned with offset for test button -- Fixed position for alignment
 
-      -- Validate that the saved sound still exists in LibSharedMedia
-      if currentSound then
-        local LSM = LibStub("LibSharedMedia-3.0")
-        local soundList = LSM:List("sound")
-        local soundExists = false
+        -- Set current value from saved settings
+        local currentSound = GetCollectionSetting(typeData.sound)
+        local validSound = currentSound
 
-        if soundList then
-          for _, soundName in ipairs(soundList) do
-            if soundName == currentSound then
-              soundExists = true
-              break
+        -- Validate that the saved sound still exists in LibSharedMedia
+        if currentSound then
+          local LSM = LibStub("LibSharedMedia-3.0")
+          local soundList = LSM:List("sound")
+          local soundExists = false
+
+          if soundList then
+            for _, soundName in ipairs(soundList) do
+              if soundName == currentSound then
+                soundExists = true
+                break
+              end
             end
+          end
+
+          -- If saved sound doesn't exist, fall back to default
+          if not soundExists then
+            print("|cFF16C3F2NoobTacoUI-Media|r: Saved sound '" .. currentSound .. "' no longer available, using default")
+            validSound = false
           end
         end
 
-        -- If saved sound doesn't exist, fall back to default
-        if not soundExists then
-          print("|cFF16C3F2NoobTacoUI-Media|r: Saved sound '" .. currentSound .. "' no longer available, using default")
-          validSound = false
+        if validSound then
+          soundDropdown:SetValue(validSound, true) -- Skip callback during initialization
+        else
+          -- Set default based on type
+          local defaultSound = "NT_Pet"
+          if typeData.sound == "soundMount" then
+            defaultSound = "NT_Mount_Collection"
+          elseif typeData.sound == "soundToy" then
+            defaultSound = "NT_Toy_Collection"
+          elseif typeData.sound == "soundTransmog" then
+            defaultSound = "NT_Transmog"
+          end
+          soundDropdown:SetValue(defaultSound, true) -- Skip callback during initialization
+          SetCollectionSetting(typeData.sound, defaultSound)
         end
-      end
 
-      if validSound then
-        soundDropdown:SetValue(validSound, true) -- Skip callback during initialization
-      else
-        -- Set default based on type
-        local defaultSound = "NT_Pet"
-        if typeData.sound == "soundMount" then
-          defaultSound = "NT_Mount_Collection"
-        elseif typeData.sound == "soundToy" then
-          defaultSound = "NT_Toy_Collection"
-        elseif typeData.sound == "soundTransmog" then
-          defaultSound = "NT_Transmog"
+        -- Test button for each type - positioned to align with other test buttons on same line (right-justified)
+        local testButton = addon.UIUtils:CreateSoundTestButton(rowFrame, 24)
+        testButton:SetPoint("RIGHT", rowFrame, "RIGHT", -8, 0) -- Right-aligned with padding
+        testButton:SetSound(soundDropdown:GetValue())          -- Use the validated sound from dropdown
+
+        -- Store dropdown reference for refreshing
+        soundDropdowns[typeData.sound] = soundDropdown
+
+        -- Callback when sound changes - updates both settings and test button
+        soundDropdown.OnValueChanged = function(self, value)
+          SetCollectionSetting(typeData.sound, value)
+          testButton:SetSound(value)
         end
-        soundDropdown:SetValue(defaultSound, true) -- Skip callback during initialization
-        SetCollectionSetting(typeData.sound, defaultSound)
+
+        typeCheckbox:SetScript("OnClick", function(self)
+          local checked = self:GetChecked() and true or false
+          SetCollectionSetting(typeData.key, checked)
+
+          -- Update individual row state
+          local rowElementsForType = rowElements[typeData.key]
+          if rowElementsForType then
+            for _, elementData in ipairs(rowElementsForType) do
+              local element = elementData.element
+              local elementType = elementData.type
+
+              if elementType == "fontstring" then
+                if checked then
+                  element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+                else
+                  element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
+                end
+              elseif elementType == "dropdown" or elementType == "testbutton" then
+                if checked then
+                  if element.Enable then
+                    element:Enable()
+                  end
+                  element:SetAlpha(1.0)
+                else
+                  if element.Disable then
+                    element:Disable()
+                  end
+                  element:SetAlpha(0.5)
+                end
+              elseif elementType == "frame" then
+                -- Update row background opacity
+                if checked then
+                  element:SetAlpha(1.0)
+                else
+                  element:SetAlpha(0.3)
+                end
+              end
+            end
+          end
+        end)
+
+        -- Store elements for per-row enable/disable functionality
+        rowElements[typeData.key] = {
+          { element = typeLabel,     type = "fontstring" },
+          { element = soundDropdown, type = "dropdown" },
+          { element = testButton,    type = "testbutton" },
+          { element = rowFrame,      type = "frame" }
+        }
+
+        -- Store elements for enable/disable functionality
+        table.insert(configurableElements, { element = typeLabel, type = "fontstring" })
+        table.insert(configurableElements, { element = typeCheckbox, type = "button" })
+        table.insert(configurableElements, { element = soundDropdown, type = "dropdown" })
+        table.insert(configurableElements, { element = testButton, type = "testbutton" })
+        table.insert(configurableElements, { element = rowFrame, type = "frame" }) -- Include row frame
+
+        yOffset = yOffset - 32                                                     -- Consistent spacing between rows
       end
 
-      -- Test button for each type - positioned to align with other test buttons on same line (right-justified)
-      local testButton = addon.UIUtils:CreateSoundTestButton(rowFrame, 24)
-      testButton:SetPoint("RIGHT", rowFrame, "RIGHT", -8, 0) -- Right-aligned with padding
-      testButton:SetSound(soundDropdown:GetValue())          -- Use the validated sound from dropdown
-
-      -- Store dropdown reference for refreshing
-      soundDropdowns[typeData.sound] = soundDropdown
-
-      -- Callback when sound changes - updates both settings and test button
-      soundDropdown.OnValueChanged = function(self, value)
-        SetCollectionSetting(typeData.sound, value)
-        testButton:SetSound(value)
-      end
-
-      typeCheckbox:SetScript("OnClick", function(self)
-        local checked = self:GetChecked() and true or false
-        SetCollectionSetting(typeData.key, checked)
-
-        -- Update individual row state
+      -- Initialize per-row states based on current settings
+      for _, typeData in ipairs(collectionTypes) do
+        local isEnabled = GetCollectionSetting(typeData.key)
         local rowElementsForType = rowElements[typeData.key]
+
         if rowElementsForType then
           for _, elementData in ipairs(rowElementsForType) do
             local element = elementData.element
             local elementType = elementData.type
 
             if elementType == "fontstring" then
-              if checked then
+              if isEnabled then
                 element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
               else
                 element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
               end
             elseif elementType == "dropdown" or elementType == "testbutton" then
-              if checked then
+              if isEnabled then
                 if element.Enable then
                   element:Enable()
                 end
@@ -1114,8 +1406,7 @@ audioButton:SetScript("OnClick", function(self)
                 element:SetAlpha(0.5)
               end
             elseif elementType == "frame" then
-              -- Update row background opacity
-              if checked then
+              if isEnabled then
                 element:SetAlpha(1.0)
               else
                 element:SetAlpha(0.3)
@@ -1123,44 +1414,71 @@ audioButton:SetScript("OnClick", function(self)
             end
           end
         end
+      end
+
+      -- Show Chat Messages Toggle with improved styling
+      yOffset = yOffset - 15 -- Additional spacing before chat toggle
+
+      -- Create chat toggle row
+      local chatRowFrame = CreateFrame("Frame", nil, collectionContainer)
+      chatRowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
+      chatRowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
+      chatRowFrame:SetHeight(28)
+
+      -- Chat row background with accent color
+      local chatRowBg = chatRowFrame:CreateTexture(nil, "BACKGROUND")
+      chatRowBg:SetAllPoints()
+      chatRowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8)) -- Different accent color
+      chatRowBg:SetAlpha(0.15)
+
+      -- Chat row hover effect
+      chatRowFrame:SetScript("OnEnter", function(self)
+        chatRowBg:SetAlpha(0.3)
+      end)
+      chatRowFrame:SetScript("OnLeave", function(self)
+        chatRowBg:SetAlpha(0.15)
       end)
 
-      -- Store elements for per-row enable/disable functionality
-      rowElements[typeData.key] = {
-        { element = typeLabel,     type = "fontstring" },
-        { element = soundDropdown, type = "dropdown" },
-        { element = testButton,    type = "testbutton" },
-        { element = rowFrame,      type = "frame" }
-      }
+      local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(chatRowFrame, 18)
+      chatCheckbox:SetPoint("LEFT", chatRowFrame, "LEFT", 8, 0)
 
-      -- Store elements for enable/disable functionality
-      table.insert(configurableElements, { element = typeLabel, type = "fontstring" })
-      table.insert(configurableElements, { element = typeCheckbox, type = "button" })
-      table.insert(configurableElements, { element = soundDropdown, type = "dropdown" })
-      table.insert(configurableElements, { element = testButton, type = "testbutton" })
-      table.insert(configurableElements, { element = rowFrame, type = "frame" }) -- Include row frame
+      -- Set default if not set
+      if GetCollectionSetting("showMessages") == nil then
+        SetCollectionSetting("showMessages", true)
+      end
+      chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
+      checkboxRefs.chat = chatCheckbox
 
-      yOffset = yOffset - 32                                                     -- Consistent spacing between rows
-    end
+      local chatLabel = chatRowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 12, 0)
+      chatLabel:SetText("Show Chat Messages")
+      chatLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
-    -- Initialize per-row states based on current settings
-    for _, typeData in ipairs(collectionTypes) do
-      local isEnabled = GetCollectionSetting(typeData.key)
-      local rowElementsForType = rowElements[typeData.key]
+      chatCheckbox:SetScript("OnClick", function(self)
+        local checked = self:GetChecked() and true or false
+        SetCollectionSetting("showMessages", checked)
+      end)
 
-      if rowElementsForType then
-        for _, elementData in ipairs(rowElementsForType) do
+      -- Add chat elements to configurable list
+      table.insert(configurableElements, { element = chatLabel, type = "fontstring" })
+      table.insert(configurableElements, { element = chatCheckbox, type = "button" })
+      table.insert(configurableElements, { element = chatRowFrame, type = "frame" }) -- Include chat row frame
+
+      -- Function to update elements state based on master toggle
+      local function UpdateElementsState(enabled)
+        -- Update non-row elements (chat messages, etc.)
+        for _, elementData in ipairs(configurableElements) do
           local element = elementData.element
           local elementType = elementData.type
 
           if elementType == "fontstring" then
-            if isEnabled then
+            if enabled then
               element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
             else
               element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
             end
-          elseif elementType == "dropdown" or elementType == "testbutton" then
-            if isEnabled then
+          elseif elementType == "button" then
+            if enabled then
               if element.Enable then
                 element:Enable()
               end
@@ -1171,215 +1489,138 @@ audioButton:SetScript("OnClick", function(self)
               end
               element:SetAlpha(0.5)
             end
-          elseif elementType == "frame" then
-            if isEnabled then
-              element:SetAlpha(1.0)
+          elseif elementType == "dropdown" or elementType == "testbutton" then
+            -- Handle custom dropdown and test button elements
+            if enabled then
+              if element.Enable then
+                element:Enable()
+              end
             else
-              element:SetAlpha(0.3)
-            end
-          end
-        end
-      end
-    end
-
-    -- Show Chat Messages Toggle with improved styling
-    yOffset = yOffset - 15 -- Additional spacing before chat toggle
-
-    -- Create chat toggle row
-    local chatRowFrame = CreateFrame("Frame", nil, collectionContainer)
-    chatRowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
-    chatRowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
-    chatRowFrame:SetHeight(28)
-
-    -- Chat row background with accent color
-    local chatRowBg = chatRowFrame:CreateTexture(nil, "BACKGROUND")
-    chatRowBg:SetAllPoints()
-    chatRowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8)) -- Different accent color
-    chatRowBg:SetAlpha(0.15)
-
-    -- Chat row hover effect
-    chatRowFrame:SetScript("OnEnter", function(self)
-      chatRowBg:SetAlpha(0.3)
-    end)
-    chatRowFrame:SetScript("OnLeave", function(self)
-      chatRowBg:SetAlpha(0.15)
-    end)
-
-    local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(chatRowFrame, 18)
-    chatCheckbox:SetPoint("LEFT", chatRowFrame, "LEFT", 8, 0)
-
-    -- Set default if not set
-    if GetCollectionSetting("showMessages") == nil then
-      SetCollectionSetting("showMessages", true)
-    end
-    chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
-    checkboxRefs.chat = chatCheckbox
-
-    local chatLabel = chatRowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 12, 0)
-    chatLabel:SetText("Show Chat Messages")
-    chatLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-
-    chatCheckbox:SetScript("OnClick", function(self)
-      local checked = self:GetChecked() and true or false
-      SetCollectionSetting("showMessages", checked)
-    end)
-
-    -- Add chat elements to configurable list
-    table.insert(configurableElements, { element = chatLabel, type = "fontstring" })
-    table.insert(configurableElements, { element = chatCheckbox, type = "button" })
-    table.insert(configurableElements, { element = chatRowFrame, type = "frame" }) -- Include chat row frame
-
-    -- Function to update elements state based on master toggle
-    local function UpdateElementsState(enabled)
-      -- Update non-row elements (chat messages, etc.)
-      for _, elementData in ipairs(configurableElements) do
-        local element = elementData.element
-        local elementType = elementData.type
-
-        if elementType == "fontstring" then
-          if enabled then
-            element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-          else
-            element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
-          end
-        elseif elementType == "button" then
-          if enabled then
-            if element.Enable then
-              element:Enable()
-            end
-            element:SetAlpha(1.0)
-          else
-            if element.Disable then
-              element:Disable()
-            end
-            element:SetAlpha(0.5)
-          end
-        elseif elementType == "dropdown" or elementType == "testbutton" then
-          -- Handle custom dropdown and test button elements
-          if enabled then
-            if element.Enable then
-              element:Enable()
-            end
-          else
-            if element.Disable then
-              element:Disable()
-            end
-          end
-        end
-      end
-
-      -- Update individual rows based on both master state AND individual checkbox state
-      for _, typeData in ipairs(collectionTypes) do
-        local individualEnabled = GetCollectionSetting(typeData.key)
-        local finalEnabled = enabled and individualEnabled -- Both must be true
-        local rowElementsForType = rowElements[typeData.key]
-
-        if rowElementsForType then
-          for _, elementData in ipairs(rowElementsForType) do
-            local element = elementData.element
-            local elementType = elementData.type
-
-            if elementType == "fontstring" then
-              if finalEnabled then
-                element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-              else
-                element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
+              if element.Disable then
+                element:Disable()
               end
-            elseif elementType == "dropdown" or elementType == "testbutton" then
-              if finalEnabled then
-                if element.Enable then
-                  element:Enable()
+            end
+          end
+        end
+
+        -- Update individual rows based on both master state AND individual checkbox state
+        for _, typeData in ipairs(collectionTypes) do
+          local individualEnabled = GetCollectionSetting(typeData.key)
+          local finalEnabled = enabled and individualEnabled -- Both must be true
+          local rowElementsForType = rowElements[typeData.key]
+
+          if rowElementsForType then
+            for _, elementData in ipairs(rowElementsForType) do
+              local element = elementData.element
+              local elementType = elementData.type
+
+              if elementType == "fontstring" then
+                if finalEnabled then
+                  element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+                else
+                  element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
                 end
-                element:SetAlpha(1.0)
-              else
-                if element.Disable then
-                  element:Disable()
+              elseif elementType == "dropdown" or elementType == "testbutton" then
+                if finalEnabled then
+                  if element.Enable then
+                    element:Enable()
+                  end
+                  element:SetAlpha(1.0)
+                else
+                  if element.Disable then
+                    element:Disable()
+                  end
+                  element:SetAlpha(0.5)
                 end
-                element:SetAlpha(0.5)
-              end
-            elseif elementType == "frame" then
-              if finalEnabled then
-                element:SetAlpha(1.0)
-              else
-                element:SetAlpha(0.3)
+              elseif elementType == "frame" then
+                if finalEnabled then
+                  element:SetAlpha(1.0)
+                else
+                  element:SetAlpha(0.3)
+                end
               end
             end
           end
         end
       end
-    end
 
-    -- Global enable checkbox functionality
-    enableCheckbox:SetScript("OnClick", function(self)
-      local enabled = self:GetChecked() and true or false
-      SetCollectionSetting("enabled", enabled)
-      UpdateElementsState(enabled)
-    end)
+      -- Global enable checkbox functionality
+      enableCheckbox:SetScript("OnClick", function(self)
+        local enabled = self:GetChecked() and true or false
+        SetCollectionSetting("enabled", enabled)
+        UpdateElementsState(enabled)
+      end)
 
-    -- Apply initial state
-    UpdateElementsState(GetCollectionSetting("enabled") ~= false)
+      -- Apply initial state
+      UpdateElementsState(GetCollectionSetting("enabled") ~= false)
 
-    -- Function to refresh dropdown values
-    local function RefreshSoundDropdowns()
-      for soundKey, dropdown in pairs(soundDropdowns) do
-        local currentSound = GetCollectionSetting(soundKey)
-        if currentSound then
-          dropdown:SetValue(currentSound, true) -- true to skip OnValueChanged callback
+      -- Function to refresh dropdown values
+      local function RefreshSoundDropdowns()
+        for soundKey, dropdown in pairs(soundDropdowns) do
+          local currentSound = GetCollectionSetting(soundKey)
+          if currentSound then
+            dropdown:SetValue(currentSound, true) -- true to skip OnValueChanged callback
+          end
+        end
+      end
+
+      -- Function to refresh checkbox values
+      local function RefreshCheckboxes()
+        local enabledValue = GetCollectionSetting("enabled") ~= false
+        if checkboxRefs.enable then
+          checkboxRefs.enable:SetChecked(enabledValue)
+        end
+        if checkboxRefs.chat then
+          checkboxRefs.chat:SetChecked(GetCollectionSetting("showMessages") and true or false)
+        end
+        for key, cb in pairs(checkboxRefs.types) do
+          cb:SetChecked(GetCollectionSetting(key) and true or false)
+        end
+        -- Ensure dependent controls enable/disable reflects current master state
+        if UpdateElementsState then
+          UpdateElementsState(enabledValue)
+        end
+      end
+
+      -- Store refresh functions for external access
+      content.audioPanel.RefreshDropdowns = RefreshSoundDropdowns
+      content.audioPanel.RefreshCheckboxes = RefreshCheckboxes
+
+      -- Live sync: update UI when settings change
+      if addon.CallbackRegistry and addon.CallbackRegistry.RegisterCallback then
+        local keys = { "enabled", "showMessages", "newPet", "newMount", "newToy", "newTransmog", "soundPet", "soundMount",
+          "soundToy", "soundTransmog" }
+        for _, key in ipairs(keys) do
+          addon.CallbackRegistry:RegisterCallback("CollectionNotifications." .. key, function()
+            if content.currentPanel == content.audioPanel then
+              if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
+              if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
+            end
+          end)
         end
       end
     end
 
-    -- Function to refresh checkbox values
-    local function RefreshCheckboxes()
-      local enabledValue = GetCollectionSetting("enabled") ~= false
-      if checkboxRefs.enable then
-        checkboxRefs.enable:SetChecked(enabledValue)
-      end
-      if checkboxRefs.chat then
-        checkboxRefs.chat:SetChecked(GetCollectionSetting("showMessages") and true or false)
-      end
-      for key, cb in pairs(checkboxRefs.types) do
-        cb:SetChecked(GetCollectionSetting(key) and true or false)
-      end
-      -- Ensure dependent controls enable/disable reflects current master state
-      if UpdateElementsState then
-        UpdateElementsState(enabledValue)
-      end
-    end
+    -- Refresh UI values before showing
+    if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
+    if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
 
-    -- Store refresh functions for external access
-    content.audioPanel.RefreshDropdowns = RefreshSoundDropdowns
-    content.audioPanel.RefreshCheckboxes = RefreshCheckboxes
+    content.audioPanel:Show()
+    content.currentPanel = content.audioPanel
+  end)
 
-    -- Live sync: update UI when settings change
-    if addon.CallbackRegistry and addon.CallbackRegistry.RegisterCallback then
-      local keys = { "enabled", "showMessages", "newPet", "newMount", "newToy", "newTransmog", "soundPet", "soundMount",
-        "soundToy", "soundTransmog" }
-      for _, key in ipairs(keys) do
-        addon.CallbackRegistry:RegisterCallback("CollectionNotifications." .. key, function()
-          if content.currentPanel == content.audioPanel then
-            if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
-            if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
-          end
-        end)
-      end
-    end
-  end
+  table.insert(categories, audioButton)
+end
 
-  -- Refresh UI values before showing
-  if content.audioPanel.RefreshDropdowns then content.audioPanel.RefreshDropdowns() end
-  if content.audioPanel.RefreshCheckboxes then content.audioPanel.RefreshCheckboxes() end
-
-  content.audioPanel:Show()
-  content.currentPanel = content.audioPanel
-end)
-
-table.insert(categories, audioButton)
-
--- General settings button (moved to third position)
+-- General settings button
 local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.Settings)
-generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
+if AreCollectionsAvailable() then
+  -- Position below audio button if collections are available
+  generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
+else
+  -- Position below about button if collections are not available
+  generalButton:SetPoint("TOPLEFT", aboutButton, "BOTTOMLEFT", 0, -4)
+end
 generalButton:SetScript("OnClick", function(self)
   -- Clear previous selection
   if currentCategory then
@@ -1396,10 +1637,17 @@ generalButton:SetScript("OnClick", function(self)
   end
 
   if not content.generalPanel then
+    local panelDescription = "Configure general addon behavior and interface options"
+    if not AreCollectionsAvailable() then
+      panelDescription = panelDescription ..
+          "\n\n|cFFD08770Note:|r Collection Notifications are not available in " .. GetExpansionName() ..
+          " - this feature requires MoP (5.x) or later"
+    end
+
     content.generalPanel = CreateEnhancedSettingsPanel(
       content,
       "General Settings",
-      "Configure general addon behavior and interface options"
+      panelDescription
     )
 
     -- Create scrollable content for the panel
@@ -1472,7 +1720,7 @@ generalButton:SetScript("OnClick", function(self)
     minimapCheckbox:SetScript("OnClick", function(self)
       local newValue = self:GetChecked()
       SetGeneralSetting("showMinimapButton", newValue)
-      UpdateMinimapButtonVisibility()
+      UpdateMinimapButtonVisibility(true) -- Show messages when user toggles
 
       -- The UpdateMinimapButtonVisibility function will provide feedback
     end)
@@ -1503,7 +1751,7 @@ generalButton:SetScript("OnClick", function(self)
           print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFA3BE8CEnabled|r")
         else
           print(
-          "|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
+            "|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
         end
       end)
       yOffset = yOffset - 35
@@ -1568,6 +1816,9 @@ addon.EnhancedConfigFrame = EnhancedConfigFrame
 addon.ShowConfigMenu = function()
   EnhancedConfigFrame:Show()
 
+  -- Enable keyboard focus for ESC key handling
+  EnhancedConfigFrame:EnableKeyboard(true)
+
   -- Default to About panel if no panel is currently selected
   if not content.currentPanel and aboutButton and aboutButton.GetScript and aboutButton:GetScript("OnClick") then
     aboutButton:GetScript("OnClick")(aboutButton)
@@ -1591,7 +1842,7 @@ local function InitializeGeneralSettings()
   end
 
   -- Initialize minimap button visibility
-  UpdateMinimapButtonVisibility()
+  UpdateMinimapButtonVisibility(false) -- Silent at startup
 
   -- Addon compartment is always registered via TOC file
   -- The compartment functions check the enableAddonCompartment setting
@@ -1627,6 +1878,12 @@ end
 -- Collection Notifications shortcut
 SLASH_NTCC1 = "/ntcc"
 SlashCmdList["NTCC"] = function()
+  if not AreCollectionsAvailable() then
+    print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications not available in " .. GetExpansionName())
+    print("This feature requires MoP (5.x) or later")
+    return
+  end
+
   addon.ShowConfigMenu()
   -- Auto-select audio category if possible
   if audioButton and audioButton.GetScript and audioButton:GetScript("OnClick") then
@@ -1665,8 +1922,22 @@ SlashCmdList["NTMINIMAP"] = function(arg)
     end
     CreateMinimapButton()
     print("|cFF16C3F2NoobTacoUI-Media|r: Refreshed minimap button")
+  elseif arg == "reset" then
+    -- Reset button position to default
+    NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle = 225
+    if minimapButton then
+      PositionMinimapButton(225)
+      print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button position reset to default (bottom-left)")
+    else
+      print("|cFF16C3F2NoobTacoUI-Media|r: Position reset - create button to see effect")
+    end
   else
-    print("|cFF16C3F2NoobTacoUI-Media|r: Use /ntminimap show|hide|toggle|refresh")
+    print("|cFF16C3F2NoobTacoUI-Media|r: Use /ntminimap show|hide|toggle|refresh|reset")
+    print("  |cFF5E81ACshow|r - Force create minimap button")
+    print("  |cFF5E81AChide|r - Hide minimap button")
+    print("  |cFF5E81ACtoggle|r - Toggle button visibility")
+    print("  |cFF5E81ACrefresh|r - Recreate button")
+    print("  |cFF5E81ACreset|r - Reset button position to default")
   end
 end
 
