@@ -266,9 +266,15 @@ local function UpdateMinimapButtonVisibility()
 
   if showButton then
     CreateMinimapButton()
-    if minimapButton then minimapButton:Show() end
+    if minimapButton then 
+      minimapButton:Show() 
+      print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button shown")
+    end
   else
-    if minimapButton then minimapButton:Hide() end
+    if minimapButton then 
+      minimapButton:Hide()
+      print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button hidden")
+    end
   end
 end
 
@@ -1373,104 +1379,124 @@ generalButton:SetScript("OnClick", function(self)
 
     local scrollChild = scrollFrame.scrollChild
 
-    -- Settings container
-    local settingsContainer = CreateFrame("Frame", nil, scrollChild)
-    settingsContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
-    settingsContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -12, 0) -- Account for scrollbar
-    settingsContainer:SetHeight(200)
+    -- Add minimap & interface section
+    local interfaceHeader = addon.UIUtils:CreateCategoryHeader(content.generalPanel, "Minimap & Interface")
+    interfaceHeader:SetPoint("TOPLEFT", content.generalPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    -- Use same color as selected button for consistency and better readability
+    interfaceHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
-    -- Apply subtle Nord1 background
-    local bgTexture = settingsContainer:CreateTexture(nil, "BACKGROUND")
+    -- Create a subtle background container for the interface options
+    local interfaceContainer = addon.UIUtils:CreateThemedFrame(content.generalPanel, "Frame")
+    interfaceContainer:SetPoint("TOPLEFT", interfaceHeader, "BOTTOMLEFT", -8, -12)
+    interfaceContainer:SetPoint("TOPRIGHT", content.generalPanel, "TOPRIGHT", -8, -12)
+    interfaceContainer:SetHeight(150) -- Appropriate height for two checkboxes
+
+    -- Apply subtle Nord1 background with slight transparency
+    local bgTexture = interfaceContainer:CreateTexture(nil, "BACKGROUND")
     bgTexture:SetAllPoints()
     bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
     bgTexture:SetAlpha(0.3)
 
-    local yOffset = -20
+    -- Add a subtle border using Nord3
+    local borderTexture = interfaceContainer:CreateTexture(nil, "BORDER")
+    borderTexture:SetAllPoints()
+    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
+    borderTexture:SetAlpha(0.4)
+
+    -- Create inset for the border effect
+    local insetTexture = interfaceContainer:CreateTexture(nil, "ARTWORK")
+    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
+    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
+    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    insetTexture:SetAlpha(0.3)
+
+    local yOffset = -20                 -- Start with more padding inside container
     local checkboxRefs = {}
 
-    -- Interface section header
-    local interfaceHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    interfaceHeader:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    interfaceHeader:SetText("Interface Options")
-    interfaceHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord13))
-    yOffset = yOffset - 35
+    -- Helper functions for general settings
+    local function GetGeneralSetting(key)
+      local value = GetDBValue("GeneralSettings." .. key)
+      return value
+    end
+
+    local function SetGeneralSetting(key, value)
+      SetDBValue("GeneralSettings." .. key, value)
+    end
 
     -- Minimap Button Toggle
-    local minimapCheckbox = addon.UIUtils:CreateThemedCheckbox(settingsContainer, 18)
-    minimapCheckbox:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    local minimapCheckbox = addon.UIUtils:CreateThemedCheckbox(interfaceContainer, 18)
+    minimapCheckbox:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset)
     checkboxRefs.minimap = minimapCheckbox
 
     -- Minimap checkbox label
-    local minimapLabel = settingsContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local minimapLabel = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     minimapLabel:SetPoint("LEFT", minimapCheckbox, "RIGHT", 8, 0)
     minimapLabel:SetText("Show Minimap Button")
     minimapLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
     -- Set initial state
-    local showMinimap = GetDBValue("GeneralSettings.showMinimapButton")
+    local showMinimap = GetGeneralSetting("showMinimapButton")
     if showMinimap == nil then showMinimap = true end
     minimapCheckbox:SetChecked(showMinimap)
 
     minimapCheckbox:SetScript("OnClick", function(self)
       local newValue = self:GetChecked()
-      SetDBValue("GeneralSettings.showMinimapButton", newValue)
+      SetGeneralSetting("showMinimapButton", newValue)
       UpdateMinimapButtonVisibility()
 
-      if newValue then
-        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button |cFFA3BE8CEnabled|r")
-      else
-        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button |cFFBF616ADisabled|r")
-      end
+      -- The UpdateMinimapButtonVisibility function will provide feedback
     end)
     yOffset = yOffset - 35
 
     -- Addon Compartment Toggle (if available)
     if AddonCompartmentFrame then
-      local compartmentCheckbox = addon.UIUtils:CreateThemedCheckbox(settingsContainer, 18)
-      compartmentCheckbox:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset)
+      local compartmentCheckbox = addon.UIUtils:CreateThemedCheckbox(interfaceContainer, 18)
+      compartmentCheckbox:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset)
       checkboxRefs.compartment = compartmentCheckbox
 
       -- Compartment checkbox label
-      local compartmentLabel = settingsContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      local compartmentLabel = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
       compartmentLabel:SetPoint("LEFT", compartmentCheckbox, "RIGHT", 8, 0)
       compartmentLabel:SetText("Enable Addon Drawer Integration")
       compartmentLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
       -- Set initial state
-      local enableCompartment = GetDBValue("GeneralSettings.enableAddonCompartment")
+      local enableCompartment = GetGeneralSetting("enableAddonCompartment")
       if enableCompartment == nil then enableCompartment = true end
       compartmentCheckbox:SetChecked(enableCompartment)
 
       compartmentCheckbox:SetScript("OnClick", function(self)
         local newValue = self:GetChecked()
-        SetDBValue("GeneralSettings.enableAddonCompartment", newValue)
+        SetGeneralSetting("enableAddonCompartment", newValue)
 
         if newValue then
           SetupAddonCompartment()
           print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFA3BE8CEnabled|r")
         else
-          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r")
+          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - |cFFEBCB8BType /reload to remove from drawer|r")
         end
       end)
       yOffset = yOffset - 35
     end
 
-    -- Help text
-    local helpText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    helpText:SetPoint("TOPLEFT", settingsContainer, "TOPLEFT", INNER_PADDING, yOffset - 10)
-    helpText:SetPoint("RIGHT", settingsContainer, "RIGHT", -INNER_PADDING, 0)
+    -- Help text section
+    local helpHeader = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    helpHeader:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset - 10)
+    helpHeader:SetText("Interface Options")
+    helpHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+    yOffset = yOffset - 30
+
+    local helpText = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    helpText:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    helpText:SetPoint("RIGHT", interfaceContainer, "RIGHT", -INNER_PADDING, 0)
     helpText:SetJustifyH("LEFT")
     helpText:SetJustifyV("TOP")
     helpText:SetSpacing(3)
     helpText:SetText(
-      "|cFF5E81ACMinimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle.\n\n" ..
-      "|cFF5E81ACAddon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu."
+      "|cFF5E81ACMinimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle. Changes take effect immediately.\n\n" ..
+      "|cFF5E81ACAddon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu. |cFFEBCB8BDisabling requires /reload to remove from drawer.|r"
     )
     helpText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 80
-
-    -- Update container height based on content
-    settingsContainer:SetHeight(math.abs(yOffset) + 40)
 
     -- Update scroll area
     scrollFrame.UpdateScrollThumb()
@@ -1478,13 +1504,13 @@ generalButton:SetScript("OnClick", function(self)
     -- Store checkbox references for refresh function
     content.generalPanel.RefreshCheckboxes = function()
       if checkboxRefs.minimap then
-        local showMinimap = GetDBValue("GeneralSettings.showMinimapButton")
+        local showMinimap = GetGeneralSetting("showMinimapButton")
         if showMinimap == nil then showMinimap = true end
         checkboxRefs.minimap:SetChecked(showMinimap)
       end
 
       if checkboxRefs.compartment then
-        local enableCompartment = GetDBValue("GeneralSettings.enableAddonCompartment")
+        local enableCompartment = GetGeneralSetting("enableAddonCompartment")
         if enableCompartment == nil then enableCompartment = true end
         checkboxRefs.compartment:SetChecked(enableCompartment)
       end
