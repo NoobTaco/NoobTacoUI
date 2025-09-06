@@ -14,7 +14,7 @@ globals = {
   "NoobTacoUIMediaDB",
   -- Addon Compartment Functions
   "NoobTacoUIMedia_OnAddonCompartmentClick",
-  "NoobTacoUIMedia_OnAddonCompartmentEnter", 
+  "NoobTacoUIMedia_OnAddonCompartmentEnter",
   "NoobTacoUIMedia_OnAddonCompartmentLeave",
   -- Slash command globals (pattern: SLASH_COMMANDNAME# and SlashCmdList)
   "SLASH_NTMVERSION1", "SLASH_NTMVERSION2",
