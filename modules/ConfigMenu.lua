@@ -90,12 +90,12 @@ function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
       enableCompartment = setting
     end
   end
-  
+
   if not enableCompartment then
     print("|cFF16C3F2NoobTacoUI-Media|r: |cFFBF616AAddon drawer integration is disabled|r - Enable in General Settings")
     return
   end
-  
+
   if buttonName == "LeftButton" then
     addon.ShowConfigMenu()
   elseif buttonName == "RightButton" then
@@ -120,12 +120,12 @@ function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
       enableCompartment = setting
     end
   end
-  
+
   GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
   GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
   GameTooltip:AddLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
   GameTooltip:AddLine(" ", 1, 1, 1)
-  
+
   if not enableCompartment then
     GameTooltip:AddLine("|cFFBF616AAddon drawer integration is disabled|r", 1, 0.7, 0.7)
     GameTooltip:AddLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
@@ -133,7 +133,7 @@ function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
     GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
     GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
   end
-  
+
   GameTooltip:Show()
 end
 
@@ -1502,7 +1502,8 @@ generalButton:SetScript("OnClick", function(self)
         if newValue then
           print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFA3BE8CEnabled|r")
         else
-          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
+          print(
+          "|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
         end
       end)
       yOffset = yOffset - 35
