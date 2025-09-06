@@ -30,7 +30,7 @@ local function InitializeSettings()
   local legacy = rawget(_G, "NoobTacoDB")
   if legacy and type(legacy) == "table" and type(legacy.CollectionNotifications) == "table" then
     NoobTacoUIMediaDB.CollectionNotifications = NoobTacoUIMediaDB.CollectionNotifications or
-    legacy.CollectionNotifications
+        legacy.CollectionNotifications
   end
 
   if not NoobTacoUIMediaDB.CollectionNotifications then
@@ -71,13 +71,17 @@ local function InitializeSettings()
   if not db.soundDefaultsMigratedV2 then
     local migrated = {}
     if db.soundPet == "NT_InfussionOfLight" then
-      db.soundPet = "NT_Pet"; table.insert(migrated, "Pet") end
+      db.soundPet = "NT_Pet"; table.insert(migrated, "Pet")
+    end
     if db.soundMount == "NT_Mount" then
-      db.soundMount = "NT_Mount_Collection"; table.insert(migrated, "Mount") end
+      db.soundMount = "NT_Mount_Collection"; table.insert(migrated, "Mount")
+    end
     if db.soundToy == "NT_Chest" then
-      db.soundToy = "NT_Toy_Collection"; table.insert(migrated, "Toy") end
+      db.soundToy = "NT_Toy_Collection"; table.insert(migrated, "Toy")
+    end
     if db.soundTransmog == "NT_Chest" then
-      db.soundTransmog = "NT_Transmog"; table.insert(migrated, "Transmog") end
+      db.soundTransmog = "NT_Transmog"; table.insert(migrated, "Transmog")
+    end
     db.soundDefaultsMigratedV2 = true
     if #migrated > 0 then
       print("|cFF16C3F2NoobTacoUI-Media|r: Updated collection sound defaults (" .. table.concat(migrated, ", ") .. ")")

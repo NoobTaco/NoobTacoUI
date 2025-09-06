@@ -21,7 +21,7 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
     if legacy and type(legacy) == "table" then
       _G.NoobTacoUIMediaDB = _G.NoobTacoUIMediaDB or {}
       _G.NoobTacoUIMediaDB.CollectionNotifications = _G.NoobTacoUIMediaDB.CollectionNotifications or
-      legacy.CollectionNotifications
+          legacy.CollectionNotifications
       -- Do not nil the old table to avoid affecting other addons; just stop using it here
     end
 
@@ -418,11 +418,39 @@ audioButton:SetScript("OnClick", function(self)
     -- Add collection notifications section
     local collectionHeader = addon.UIUtils:CreateCategoryHeader(content.audioPanel, "Collection Notifications")
     collectionHeader:SetPoint("TOPLEFT", content.audioPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    -- Use same color as selected button for consistency and better readability
+    collectionHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
-    local yOffset = -INNER_PADDING
+    -- Create a subtle background container for the collection options
+    local collectionContainer = addon.UIUtils:CreateThemedFrame(content.audioPanel, "Frame")
+    collectionContainer:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", -8, -12)
+    collectionContainer:SetPoint("TOPRIGHT", content.audioPanel, "TOPRIGHT", -8, -12)
+    collectionContainer:SetHeight(250) -- Increased height to accommodate chat messages section
+    
+    -- Apply subtle Nord1 background with slight transparency
+    local bgTexture = collectionContainer:CreateTexture(nil, "BACKGROUND")
+    bgTexture:SetAllPoints()
+    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    bgTexture:SetAlpha(0.3)
+    
+    -- Add a subtle border using Nord3
+    local borderTexture = collectionContainer:CreateTexture(nil, "BORDER")
+    borderTexture:SetAllPoints()
+    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
+    borderTexture:SetAlpha(0.4)
+    
+    -- Create inset for the border effect
+    local insetTexture = collectionContainer:CreateTexture(nil, "ARTWORK")
+    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
+    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
+    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    insetTexture:SetAlpha(0.3)
+
+    local yOffset = -20 -- Start with more padding inside container
     local configurableElements = {}
-    local soundDropdowns = {}         -- Store references to dropdowns for refreshing
+    local soundDropdowns = {}           -- Store references to dropdowns for refreshing
     local checkboxRefs = { types = {} } -- Store references to checkboxes for refreshing
+    local rowElements = {}              -- Store elements for each row for per-row disable functionality
 
     -- Helper functions to use CollectionNotifications module functions
     local function GetCollectionSetting(key)
@@ -459,18 +487,24 @@ audioButton:SetScript("OnClick", function(self)
       end
     end
 
-    -- Global Enable Toggle
-    local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 20)
-    enableCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 0, yOffset)
+    -- Global Enable Toggle with improved styling
+    local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(collectionContainer, 22) -- Slightly larger
+    enableCheckbox:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 16, yOffset)
     enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
     checkboxRefs.enable = enableCheckbox
 
-    local enableLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 8, 0)
+    local enableLabel = collectionContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 12, 0)
     enableLabel:SetText("Enable Collection Notifications")
-    enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+    enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord6)) -- Brighter text for main option
+    
+    -- Add a subtle divider after the main toggle
+    local mainDivider = addon.UIUtils:CreateDivider(collectionContainer, "HORIZONTAL", 1)
+    mainDivider:SetPoint("TOPLEFT", enableCheckbox, "BOTTOMLEFT", -8, -12)
+    mainDivider:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -16, -12)
+    mainDivider:SetAlpha(0.3)
 
-    yOffset = yOffset - 35
+    yOffset = yOffset - 45 -- More space after main toggle
 
     -- Collection Type Toggles with Sound Dropdowns and Test Buttons
     local collectionTypes = {
@@ -481,8 +515,28 @@ audioButton:SetScript("OnClick", function(self)
     }
 
     for _, typeData in ipairs(collectionTypes) do
-      local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 18)
-      typeCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 20, yOffset)
+      -- Create a subtle row background for hover effects and better grouping
+      local rowFrame = CreateFrame("Frame", nil, collectionContainer)
+      rowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
+      rowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
+      rowFrame:SetHeight(28)
+      
+      -- Subtle row background
+      local rowBg = rowFrame:CreateTexture(nil, "BACKGROUND")
+      rowBg:SetAllPoints()
+      rowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
+      rowBg:SetAlpha(0.2)
+      
+      -- Row hover effect
+      rowFrame:SetScript("OnEnter", function(self)
+        rowBg:SetAlpha(0.4)
+      end)
+      rowFrame:SetScript("OnLeave", function(self)
+        rowBg:SetAlpha(0.2)
+      end)
+
+      local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(rowFrame, 18)
+      typeCheckbox:SetPoint("LEFT", rowFrame, "LEFT", 8, 0)
 
       -- Set default if not set
       if GetCollectionSetting(typeData.key) == nil then
@@ -491,14 +545,15 @@ audioButton:SetScript("OnClick", function(self)
       typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
       checkboxRefs.types[typeData.key] = typeCheckbox
 
-      local typeLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-      typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 8, 0)
+      local typeLabel = rowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 12, 0)
       typeLabel:SetText(typeData.label)
       typeLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+      typeLabel:SetJustifyH("LEFT") -- Left-justify the label text
 
-      -- Sound dropdown
-      local soundDropdown = addon.UIUtils:CreateSoundDropdown(content.audioPanel, 120, 24)
-      soundDropdown:SetPoint("LEFT", typeLabel, "RIGHT", 80, 0)
+      -- Sound dropdown - positioned to align with other dropdowns on same line (right-justified)
+      local soundDropdown = addon.UIUtils:CreateSoundDropdown(rowFrame, 140, 24) -- Slightly wider
+      soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0) -- Right-aligned with offset for test button -- Fixed position for alignment
 
       -- Set current value from saved settings
       local currentSound = GetCollectionSetting(typeData.sound)
@@ -542,9 +597,9 @@ audioButton:SetScript("OnClick", function(self)
         SetCollectionSetting(typeData.sound, defaultSound)
       end
 
-      -- Test button for each type
-      local testButton = addon.UIUtils:CreateSoundTestButton(content.audioPanel, 24)
-      testButton:SetPoint("LEFT", soundDropdown, "RIGHT", 8, 0)
+      -- Test button for each type - positioned to align with other test buttons on same line (right-justified)
+      local testButton = addon.UIUtils:CreateSoundTestButton(rowFrame, 24)
+      testButton:SetPoint("RIGHT", rowFrame, "RIGHT", -8, 0) -- Right-aligned with padding
       testButton:SetSound(soundDropdown:GetValue()) -- Use the validated sound from dropdown
 
       -- Store dropdown reference for refreshing
@@ -559,21 +614,126 @@ audioButton:SetScript("OnClick", function(self)
       typeCheckbox:SetScript("OnClick", function(self)
         local checked = self:GetChecked() and true or false
         SetCollectionSetting(typeData.key, checked)
+        
+        -- Update individual row state
+        local rowElementsForType = rowElements[typeData.key]
+        if rowElementsForType then
+          for _, elementData in ipairs(rowElementsForType) do
+            local element = elementData.element
+            local elementType = elementData.type
+
+            if elementType == "fontstring" then
+              if checked then
+                element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+              else
+                element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
+              end
+            elseif elementType == "dropdown" or elementType == "testbutton" then
+              if checked then
+                if element.Enable then
+                  element:Enable()
+                end
+                element:SetAlpha(1.0)
+              else
+                if element.Disable then
+                  element:Disable()
+                end
+                element:SetAlpha(0.5)
+              end
+            elseif elementType == "frame" then
+              -- Update row background opacity
+              if checked then
+                element:SetAlpha(1.0)
+              else
+                element:SetAlpha(0.3)
+              end
+            end
+          end
+        end
       end)
+
+      -- Store elements for per-row enable/disable functionality
+      rowElements[typeData.key] = {
+        { element = typeLabel, type = "fontstring" },
+        { element = soundDropdown, type = "dropdown" },
+        { element = testButton, type = "testbutton" },
+        { element = rowFrame, type = "frame" }
+      }
 
       -- Store elements for enable/disable functionality
       table.insert(configurableElements, { element = typeLabel, type = "fontstring" })
       table.insert(configurableElements, { element = typeCheckbox, type = "button" })
       table.insert(configurableElements, { element = soundDropdown, type = "dropdown" })
       table.insert(configurableElements, { element = testButton, type = "testbutton" })
+      table.insert(configurableElements, { element = rowFrame, type = "frame" }) -- Include row frame
 
-      yOffset = yOffset - 30 -- Increased spacing for dropdowns
+      yOffset = yOffset - 32 -- Consistent spacing between rows
     end
 
-    -- Show Chat Messages Toggle
-    yOffset = yOffset - 10 -- Additional spacing before chat toggle
-    local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(content.audioPanel, 18)
-    chatCheckbox:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", 20, yOffset)
+    -- Initialize per-row states based on current settings
+    for _, typeData in ipairs(collectionTypes) do
+      local isEnabled = GetCollectionSetting(typeData.key)
+      local rowElementsForType = rowElements[typeData.key]
+      
+      if rowElementsForType then
+        for _, elementData in ipairs(rowElementsForType) do
+          local element = elementData.element
+          local elementType = elementData.type
+
+          if elementType == "fontstring" then
+            if isEnabled then
+              element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+            else
+              element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
+            end
+          elseif elementType == "dropdown" or elementType == "testbutton" then
+            if isEnabled then
+              if element.Enable then
+                element:Enable()
+              end
+              element:SetAlpha(1.0)
+            else
+              if element.Disable then
+                element:Disable()
+              end
+              element:SetAlpha(0.5)
+            end
+          elseif elementType == "frame" then
+            if isEnabled then
+              element:SetAlpha(1.0)
+            else
+              element:SetAlpha(0.3)
+            end
+          end
+        end
+      end
+    end
+
+    -- Show Chat Messages Toggle with improved styling
+    yOffset = yOffset - 15 -- Additional spacing before chat toggle
+    
+    -- Create chat toggle row
+    local chatRowFrame = CreateFrame("Frame", nil, collectionContainer)
+    chatRowFrame:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 8, yOffset + 4)
+    chatRowFrame:SetPoint("TOPRIGHT", collectionContainer, "TOPRIGHT", -8, yOffset + 4)
+    chatRowFrame:SetHeight(28)
+    
+    -- Chat row background with accent color
+    local chatRowBg = chatRowFrame:CreateTexture(nil, "BACKGROUND")
+    chatRowBg:SetAllPoints()
+    chatRowBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8)) -- Different accent color
+    chatRowBg:SetAlpha(0.15)
+    
+    -- Chat row hover effect
+    chatRowFrame:SetScript("OnEnter", function(self)
+      chatRowBg:SetAlpha(0.3)
+    end)
+    chatRowFrame:SetScript("OnLeave", function(self)
+      chatRowBg:SetAlpha(0.15)
+    end)
+    
+    local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(chatRowFrame, 18)
+    chatCheckbox:SetPoint("LEFT", chatRowFrame, "LEFT", 8, 0)
 
     -- Set default if not set
     if GetCollectionSetting("showMessages") == nil then
@@ -582,8 +742,8 @@ audioButton:SetScript("OnClick", function(self)
     chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
     checkboxRefs.chat = chatCheckbox
 
-    local chatLabel = content.audioPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 8, 0)
+    local chatLabel = chatRowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 12, 0)
     chatLabel:SetText("Show Chat Messages")
     chatLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
@@ -595,9 +755,11 @@ audioButton:SetScript("OnClick", function(self)
     -- Add chat elements to configurable list
     table.insert(configurableElements, { element = chatLabel, type = "fontstring" })
     table.insert(configurableElements, { element = chatCheckbox, type = "button" })
+    table.insert(configurableElements, { element = chatRowFrame, type = "frame" }) -- Include chat row frame
 
     -- Function to update elements state based on master toggle
     local function UpdateElementsState(enabled)
+      -- Update non-row elements (chat messages, etc.)
       for _, elementData in ipairs(configurableElements) do
         local element = elementData.element
         local elementType = elementData.type
@@ -606,7 +768,7 @@ audioButton:SetScript("OnClick", function(self)
           if enabled then
             element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
           else
-            element:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
+            element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
           end
         elseif elementType == "button" then
           if enabled then
@@ -629,6 +791,46 @@ audioButton:SetScript("OnClick", function(self)
           else
             if element.Disable then
               element:Disable()
+            end
+          end
+        end
+      end
+      
+      -- Update individual rows based on both master state AND individual checkbox state
+      for _, typeData in ipairs(collectionTypes) do
+        local individualEnabled = GetCollectionSetting(typeData.key)
+        local finalEnabled = enabled and individualEnabled -- Both must be true
+        local rowElementsForType = rowElements[typeData.key]
+        
+        if rowElementsForType then
+          for _, elementData in ipairs(rowElementsForType) do
+            local element = elementData.element
+            local elementType = elementData.type
+
+            if elementType == "fontstring" then
+              if finalEnabled then
+                element:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+              else
+                element:SetTextColor(unpack(addon.UIAssets.Colors.Nord4)) -- Lighter disabled color
+              end
+            elseif elementType == "dropdown" or elementType == "testbutton" then
+              if finalEnabled then
+                if element.Enable then
+                  element:Enable()
+                end
+                element:SetAlpha(1.0)
+              else
+                if element.Disable then
+                  element:Disable()
+                end
+                element:SetAlpha(0.5)
+              end
+            elseif elementType == "frame" then
+              if finalEnabled then
+                element:SetAlpha(1.0)
+              else
+                element:SetAlpha(0.3)
+              end
             end
           end
         end
