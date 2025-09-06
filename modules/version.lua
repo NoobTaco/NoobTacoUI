@@ -44,7 +44,7 @@ SlashCmdList["NTMVERSION"] = function(msg)
 
   if args == "version" or args == "ver" or args == "v" then
     ShowVersion()
-  elseif args == "config" or args == "cfg" or args == "options" then
+  elseif args == "config" or args == "cfg" or args == "options" or args == "settings" then
     -- Show configuration menu (requires ConfigMenu.lua to be loaded)
     if _G.NoobTacoUIMediaAddon and _G.NoobTacoUIMediaAddon.ShowConfigMenu then
       _G.NoobTacoUIMediaAddon.ShowConfigMenu()
@@ -58,6 +58,7 @@ SlashCmdList["NTMVERSION"] = function(msg)
     print("  |cFFFFFF00/ntm ver|r - Display addon version (short)")
     print("  |cFFFFFF00/ntm v|r - Display addon version (shortest)")
     print("  |cFFFFFF00/ntm config|r - Open configuration menu")
+    print("  |cFFFFFF00/ntm settings|r - Open configuration menu (alias)")
     print("  |cFFFFFF00/ntm cfg|r - Open configuration menu (short)")
     print("  |cFFFFFF00/ntmcollection|r - Collection notification commands")
   else
