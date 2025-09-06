@@ -7,7 +7,6 @@ externals:
 
 ignore:
     - README.md
-    - CHANGELOG.md
     - dev/
     - dev-helper.sh
     - "*.git*"
@@ -20,8 +19,3 @@ plain-copy:
     - modules
 
 enable-toc-creation: yes
-
-# Enable version replacement in all files
-manual-changelog:
-    filename: CHANGELOG.md
-    markup-type: markdown

@@ -7,7 +7,6 @@ on:
     paths-ignore:
       - ".github/**"
       - "README.md"
-      - "CHANGELOG.md"
       - "LICENSE"
       - "*.md"
   pull_request:
@@ -17,7 +16,6 @@ on:
     paths-ignore:
       - ".github/**"
       - "README.md"
-      - "CHANGELOG.md"
       - "LICENSE"
       - "*.md"
 
