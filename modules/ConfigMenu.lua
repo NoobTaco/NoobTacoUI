@@ -375,38 +375,38 @@ end
 local function CreateNordScrollFrame(parent)
   -- Main scroll frame container
   local scrollFrame = CreateFrame("ScrollFrame", nil, parent)
-  
+
   -- Create the scrollable content area
   local scrollChild = CreateFrame("Frame", nil, scrollFrame)
   scrollFrame:SetScrollChild(scrollChild)
-  
+
   -- Custom Nord-themed scrollbar track
   local scrollTrack = CreateFrame("Frame", nil, scrollFrame)
   scrollTrack:SetWidth(8) -- Made half as thin (was 16)
   scrollTrack:SetPoint("TOPRIGHT", scrollFrame, "TOPRIGHT", 0, 0)
   scrollTrack:SetPoint("BOTTOMRIGHT", scrollFrame, "BOTTOMRIGHT", 0, 0)
-  
+
   -- Scrollbar track background (darker)
   scrollTrack.bg = scrollTrack:CreateTexture(nil, "BACKGROUND")
   scrollTrack.bg:SetAllPoints()
   scrollTrack.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord0)) -- Darker (was Nord1)
-  
+
   -- Custom Nord-themed scrollbar thumb
   local scrollThumb = CreateFrame("Button", nil, scrollTrack)
   scrollThumb:SetWidth(6) -- Made proportionally thinner (was 12)
   scrollThumb:SetHeight(20)
   scrollThumb:SetPoint("TOP", scrollTrack, "TOP", 0, -1)
-  
+
   -- Scrollbar thumb styling (darker)
   scrollThumb.bg = scrollThumb:CreateTexture(nil, "BACKGROUND")
   scrollThumb.bg:SetAllPoints()
   scrollThumb.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2)) -- Darker (was Nord4)
-  
+
   scrollThumb.highlight = scrollThumb:CreateTexture(nil, "HIGHLIGHT")
   scrollThumb.highlight:SetAllPoints()
   scrollThumb.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
   scrollThumb.highlight:SetAlpha(0.3)
-  
+
   -- Scrollbar up button
   local scrollUp = CreateFrame("Button", nil, scrollTrack)
   scrollUp:SetSize(8, 8) -- Made proportionally smaller (was 16x16)
@@ -414,7 +414,7 @@ local function CreateNordScrollFrame(parent)
   scrollUp.bg = scrollUp:CreateTexture(nil, "BACKGROUND")
   scrollUp.bg:SetAllPoints()
   scrollUp.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1)) -- Slightly darker (was Nord2)
-  
+
   -- Scrollbar down button
   local scrollDown = CreateFrame("Button", nil, scrollTrack)
   scrollDown:SetSize(8, 8) -- Made proportionally smaller (was 16x16)
@@ -422,18 +422,18 @@ local function CreateNordScrollFrame(parent)
   scrollDown.bg = scrollDown:CreateTexture(nil, "BACKGROUND")
   scrollDown.bg:SetAllPoints()
   scrollDown.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1)) -- Slightly darker (was Nord2)
-  
+
   -- Scroll functionality
   local function UpdateScrollThumb()
     local scrollRange = scrollFrame:GetVerticalScrollRange()
     local scrollValue = scrollFrame:GetVerticalScroll()
     local trackHeight = scrollTrack:GetHeight() - 16 -- Account for smaller up/down buttons (was 32)
-    
+
     if scrollRange > 0 then
       scrollTrack:Show()
       local thumbHeight = math.max(20, trackHeight * (scrollFrame:GetHeight() / (scrollFrame:GetHeight() + scrollRange)))
       local thumbPosition = (scrollValue / scrollRange) * (trackHeight - thumbHeight)
-      
+
       scrollThumb:SetHeight(thumbHeight)
       scrollThumb:ClearAllPoints()
       scrollThumb:SetPoint("TOP", scrollTrack, "TOP", 0, -8 - thumbPosition) -- Adjusted for smaller buttons (was -16)
@@ -441,7 +441,7 @@ local function CreateNordScrollFrame(parent)
       scrollTrack:Hide()
     end
   end
-  
+
   -- Mouse wheel scrolling
   scrollFrame:EnableMouseWheel(true)
   scrollFrame:SetScript("OnMouseWheel", function(self, delta)
@@ -451,25 +451,25 @@ local function CreateNordScrollFrame(parent)
     self:SetVerticalScroll(newValue)
     UpdateScrollThumb()
   end)
-  
+
   -- Scrollbar button functionality
   scrollUp:SetScript("OnClick", function()
     local scrollValue = scrollFrame:GetVerticalScroll()
     scrollFrame:SetVerticalScroll(math.max(0, scrollValue - 20))
     UpdateScrollThumb()
   end)
-  
+
   scrollDown:SetScript("OnClick", function()
     local scrollValue = scrollFrame:GetVerticalScroll()
     local scrollRange = scrollFrame:GetVerticalScrollRange()
     scrollFrame:SetVerticalScroll(math.min(scrollRange, scrollValue + 20))
     UpdateScrollThumb()
   end)
-  
+
   -- Thumb dragging functionality
   local isDragging = false
   local startY, startScroll
-  
+
   scrollThumb:SetScript("OnMouseDown", function(self, button)
     if button == "LeftButton" then
       isDragging = true
@@ -482,7 +482,7 @@ local function CreateNordScrollFrame(parent)
           local scrollRange = scrollFrame:GetVerticalScrollRange()
           local trackHeight = scrollTrack:GetHeight() - 16 -- Account for smaller buttons (was 32)
           local scrollDelta = (deltaY / trackHeight) * scrollRange
-          
+
           local newScroll = math.max(0, math.min(scrollRange, startScroll + scrollDelta))
           scrollFrame:SetVerticalScroll(newScroll)
           UpdateScrollThumb()
@@ -490,25 +490,25 @@ local function CreateNordScrollFrame(parent)
       end)
     end
   end)
-  
+
   scrollThumb:SetScript("OnMouseUp", function(self, button)
     if button == "LeftButton" then
       isDragging = false
       self:SetScript("OnUpdate", nil)
     end
   end)
-  
+
   -- Update scroll thumb when content changes
   scrollFrame:SetScript("OnScrollRangeChanged", UpdateScrollThumb)
   scrollFrame:SetScript("OnVerticalScroll", UpdateScrollThumb)
-  
+
   -- Store references for easy access
   scrollFrame.scrollChild = scrollChild
   scrollFrame.UpdateScrollThumb = UpdateScrollThumb
-  
+
   -- Initial setup
   C_Timer.After(0.1, UpdateScrollThumb)
-  
+
   return scrollFrame
 end
 
@@ -531,9 +531,146 @@ versionFooter:SetAlpha(0.7)
 local categories = {}
 local currentCategory = nil
 
--- Add categories
+-- About button (moved to first position)
+local aboutButton = CreateEnhancedCategoryButton(sidebar, "About", addon.UIAssets.Icons.About)
+aboutButton:SetPoint("TOPLEFT", sidebar, "TOPLEFT", PADDING, -PADDING)
+aboutButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
+  end
+
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
+
+  -- Show about panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
+
+  if not content.aboutPanel then
+    content.aboutPanel = CreateEnhancedSettingsPanel(
+      content,
+      "About NoobTacoUI-Media",
+      "Shared media assets and enhanced UI components for the NoobTacoUI addon suite."
+    )
+
+    -- Create custom Nord-themed scroll frame
+    local scrollFrame = CreateNordScrollFrame(content.aboutPanel)
+    scrollFrame:SetPoint("TOPLEFT", content.aboutPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
+    scrollFrame:SetPoint("BOTTOMRIGHT", content.aboutPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+    
+    -- Get the scrollable content area
+    local scrollChild = scrollFrame.scrollChild
+    scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus thinner scrollbar (was 20)
+
+    -- Logo
+    local logo = scrollChild:CreateTexture(nil, "ARTWORK")
+    logo:SetTexture(addon.UIAssets.Logo)
+    logo:SetSize(64, 64)
+    logo:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
+
+    -- Main content container (positioned next to logo)
+    local contentFrame = CreateFrame("Frame", nil, scrollChild)
+    contentFrame:SetPoint("TOPLEFT", logo, "TOPRIGHT", SECTION_SPACING, 0)
+    contentFrame:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+    contentFrame:SetHeight(200)
+
+    -- Version info
+    local versionText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, 0)
+    versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
+      C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.1.3"))
+    versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+    -- Author info
+    local authorText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    authorText:SetPoint("TOPLEFT", versionText, "BOTTOMLEFT", 0, -4)
+    authorText:SetText("Created by NoobTaco")
+    authorText:SetTextColor(unpack(addon.UIAssets.Colors.Nord13))
+
+    -- Subtitle
+    local subtitleText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    subtitleText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 0, -INNER_PADDING)
+    subtitleText:SetText("Media Asset Library")
+    subtitleText:SetTextColor(unpack(addon.UIAssets.Colors.Nord14))
+
+    -- Description
+    local descText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    descText:SetPoint("TOPLEFT", subtitleText, "BOTTOMLEFT", 0, -8)
+    descText:SetPoint("RIGHT", contentFrame, "RIGHT", 0, 0)
+    descText:SetJustifyH("LEFT")
+    descText:SetJustifyV("TOP")
+    descText:SetSpacing(3)
+    descText:SetText(
+      "This addon provides a comprehensive library of shared media assets including fonts, textures, and audio files. It serves as the foundation for the NoobTacoUI addon suite, offering consistent styling and media resources across all components.\n\n" ..
+      "Features include configuration interfaces, audio notification systems, and a curated collection of Nord-themed visual assets designed for modern World of Warcraft UI enhancement.")
+    descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+    -- Features section (positioned below the description content)
+    local featuresHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    featuresHeader:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    featuresHeader:SetText("Key Features")
+    featuresHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+    -- Features list
+    local featuresList = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    featuresList:SetPoint("TOPLEFT", featuresHeader, "BOTTOMLEFT", 0, -8)
+    featuresList:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+    featuresList:SetJustifyH("LEFT")
+    featuresList:SetJustifyV("TOP")
+    featuresList:SetSpacing(3)
+    featuresList:SetText(
+      "• Collection notification system with customizable audio alerts\n" ..
+      "• Nord-themed texture library for consistent UI styling\n" ..
+      "• Curated font collection optimized for readability\n" ..
+      "• Enhanced configuration interface with modern design\n" ..
+      "• SharedMedia integration for cross-addon compatibility\n" ..
+      "• Lightweight and performance-optimized architecture")
+    featuresList:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+
+    -- Support section
+    local supportHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    supportHeader:SetPoint("TOPLEFT", featuresList, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    supportHeader:SetText("Support & Community")
+    supportHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+    local supportText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    supportText:SetPoint("TOPLEFT", supportHeader, "BOTTOMLEFT", 0, -8)
+    supportText:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+    supportText:SetJustifyH("LEFT")
+    supportText:SetJustifyV("TOP")
+    supportText:SetSpacing(3)
+    supportText:SetText(
+      "For support, updates, and community discussions, visit the NoobTacoUI project repository. " ..
+      "Bug reports and feature requests are welcome and help improve the addon for everyone.")
+    supportText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+    -- Set the scroll child height dynamically based on content
+    local function UpdateScrollChildHeight()
+      local totalHeight = 0
+      -- Calculate height from logo bottom or support text bottom, whichever is lower
+      local logoBottom = -(logo:GetBottom() or 0) + (scrollChild:GetTop() or 0)
+      local supportBottom = -(supportText:GetBottom() or 0) + (scrollChild:GetTop() or 0)
+      totalHeight = math.max(logoBottom, supportBottom) + SECTION_SPACING
+      scrollChild:SetHeight(totalHeight)
+      scrollFrame.UpdateScrollThumb()
+    end
+
+    -- Update height after a frame to ensure all text is rendered
+    C_Timer.After(0.1, UpdateScrollChildHeight)
+  end
+
+  content.aboutPanel:Show()
+  content.currentPanel = content.aboutPanel
+end)
+
+table.insert(categories, aboutButton)
+
+-- Audio settings button (moved to second position)
 local audioButton = CreateEnhancedCategoryButton(sidebar, "Audio Settings", addon.UIAssets.Icons.Audio)
-audioButton:SetPoint("TOPLEFT", sidebar, "TOPLEFT", PADDING, -PADDING)
+audioButton:SetPoint("TOPLEFT", aboutButton, "BOTTOMLEFT", 0, -4)
 audioButton:SetScript("OnClick", function(self)
   -- Clear previous selection
   if currentCategory then
@@ -1045,159 +1182,25 @@ end)
 
 table.insert(categories, audioButton)
 
--- General settings button
+-- General settings button (moved to third position)
 local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.Settings)
 generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
 table.insert(categories, generalButton)
 
--- About button
-local aboutButton = CreateEnhancedCategoryButton(sidebar, "About", addon.UIAssets.Icons.About)
-aboutButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
-aboutButton:SetScript("OnClick", function(self)
-  -- Clear previous selection
-  if currentCategory then
-    currentCategory:SetSelected(false)
-  end
-
-  -- Set new selection
-  self:SetSelected(true)
-  currentCategory = self
-
-  -- Show about panel
-  if content.currentPanel then
-    content.currentPanel:Hide()
-  end
-
-  if not content.aboutPanel then
-    content.aboutPanel = CreateEnhancedSettingsPanel(
-      content,
-      "About NoobTacoUI-Media",
-      "Shared media assets and enhanced UI components for the NoobTacoUI addon suite."
-    )
-
-    -- Create custom Nord-themed scroll frame
-    local scrollFrame = CreateNordScrollFrame(content.aboutPanel)
-    scrollFrame:SetPoint("TOPLEFT", content.aboutPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
-    scrollFrame:SetPoint("BOTTOMRIGHT", content.aboutPanel, "BOTTOMRIGHT", -PADDING, PADDING)
-    
-    -- Get the scrollable content area
-    local scrollChild = scrollFrame.scrollChild
-    scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus thinner scrollbar (was 20)
-
-    -- Logo
-    local logo = scrollChild:CreateTexture(nil, "ARTWORK")
-    logo:SetTexture(addon.UIAssets.Logo)
-    logo:SetSize(64, 64)
-    logo:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
-
-    -- Main content container (positioned next to logo)
-    local contentFrame = CreateFrame("Frame", nil, scrollChild)
-    contentFrame:SetPoint("TOPLEFT", logo, "TOPRIGHT", SECTION_SPACING, 0)
-    contentFrame:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
-    contentFrame:SetHeight(200)
-
-    -- Version info
-    local versionText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, 0)
-    versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
-      C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.1.3"))
-    versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
-
-    -- Author info
-    local authorText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    authorText:SetPoint("TOPLEFT", versionText, "BOTTOMLEFT", 0, -4)
-    authorText:SetText("Created by NoobTaco")
-    authorText:SetTextColor(unpack(addon.UIAssets.Colors.Nord13))
-
-    -- Subtitle
-    local subtitleText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    subtitleText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 0, -INNER_PADDING)
-    subtitleText:SetText("Media Asset Library")
-    subtitleText:SetTextColor(unpack(addon.UIAssets.Colors.Nord14))
-
-    -- Description
-    local descText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    descText:SetPoint("TOPLEFT", subtitleText, "BOTTOMLEFT", 0, -8)
-    descText:SetPoint("RIGHT", contentFrame, "RIGHT", 0, 0)
-    descText:SetJustifyH("LEFT")
-    descText:SetJustifyV("TOP")
-    descText:SetSpacing(3)
-    descText:SetText(
-      "This addon provides a comprehensive library of shared media assets including fonts, textures, and audio files. It serves as the foundation for the NoobTacoUI addon suite, offering consistent styling and media resources across all components.\n\n" ..
-      "Features include configuration interfaces, audio notification systems, and a curated collection of Nord-themed visual assets designed for modern World of Warcraft UI enhancement.")
-    descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-
-    -- Features section (positioned below the description content)
-    local featuresHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    featuresHeader:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -SECTION_SPACING)
-    featuresHeader:SetText("Key Features")
-    featuresHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
-
-    -- Features list
-    local featuresList = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    featuresList:SetPoint("TOPLEFT", featuresHeader, "BOTTOMLEFT", 0, -8)
-    featuresList:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
-    featuresList:SetJustifyH("LEFT")
-    featuresList:SetJustifyV("TOP")
-    featuresList:SetSpacing(3)
-    featuresList:SetText(
-      "• Collection notification system with customizable audio alerts\n" ..
-      "• Nord-themed texture library for consistent UI styling\n" ..
-      "• Curated font collection optimized for readability\n" ..
-      "• Enhanced configuration interface with modern design\n" ..
-      "• SharedMedia integration for cross-addon compatibility\n" ..
-      "• Lightweight and performance-optimized architecture")
-    featuresList:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-
-    -- Support section
-    local supportHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    supportHeader:SetPoint("TOPLEFT", featuresList, "BOTTOMLEFT", 0, -SECTION_SPACING)
-    supportHeader:SetText("Support & Community")
-    supportHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
-
-    local supportText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    supportText:SetPoint("TOPLEFT", supportHeader, "BOTTOMLEFT", 0, -8)
-    supportText:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
-    supportText:SetJustifyH("LEFT")
-    supportText:SetJustifyV("TOP")
-    supportText:SetSpacing(3)
-    supportText:SetText(
-      "For support, updates, and community discussions, visit the NoobTacoUI project repository. " ..
-      "Bug reports and feature requests are welcome and help improve the addon for everyone.")
-    supportText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-
-    -- Set the scroll child height dynamically based on content
-    local function UpdateScrollChildHeight()
-      local totalHeight = 0
-      -- Calculate height from logo bottom or support text bottom, whichever is lower
-      local logoBottom = -(logo:GetBottom() or 0) + (scrollChild:GetTop() or 0)
-      local supportBottom = -(supportText:GetBottom() or 0) + (scrollChild:GetTop() or 0)
-      totalHeight = math.max(logoBottom, supportBottom) + SECTION_SPACING
-      scrollChild:SetHeight(totalHeight)
-      scrollFrame.UpdateScrollThumb()
-    end
-
-    -- Update height after a frame to ensure all text is rendered
-    C_Timer.After(0.1, UpdateScrollChildHeight)
-  end
-
-  content.aboutPanel:Show()
-  content.currentPanel = content.aboutPanel
-end)
-
-table.insert(categories, aboutButton)
-
--- Select first category by default
-if audioButton then
-  audioButton:GetScript("OnClick")(audioButton)
-end
-
--- Expose the enhanced frame
+-- Select first category by default (changed to About)
+if aboutButton then
+  aboutButton:GetScript("OnClick")(aboutButton)
+end-- Expose the enhanced frame
 addon.EnhancedConfigFrame = EnhancedConfigFrame
 
 -- Function to show config
 addon.ShowConfigMenu = function()
   EnhancedConfigFrame:Show()
+
+  -- Default to About panel if no panel is currently selected
+  if not content.currentPanel and aboutButton and aboutButton.GetScript and aboutButton:GetScript("OnClick") then
+    aboutButton:GetScript("OnClick")(aboutButton)
+  end
 
   -- Refresh current panel if it's the audio panel
   if content.currentPanel == content.audioPanel then
