@@ -4,23 +4,20 @@ This directory contains development-related files that are excluded from the pac
 
 ## Structure
 
-- `docs/` - Development documentation files
+- `docs/` - Core technical documentation
 - `scripts/` - Build scripts, test scripts, and development tools
 
-## Recent Development Highlights
+## Documentation
 
-### Enhanced Configuration Menu System
-The addon now features a completely redesigned configuration interface:
-- **Nord Theme Integration**: Professional design with consistent color scheme
-- **Custom Scroll Frames**: Thin, sleek scrollbars that match the theme
-- **Modular UI Components**: Reusable functions for consistent styling
-- **Collection Notifications**: Advanced notification system with audio customization
+The `docs/` folder contains essential technical documentation:
 
-See `docs/ENHANCED_MENU_SYSTEM.md` for complete technical documentation.
+- `ENHANCED_MENU_SYSTEM.md` - Complete guide to the configuration interface
+- `COLLECTION_NOTIFICATIONS_CONFIG.md` - Collection notification system
+- `SOUND_DROPDOWN_IMPLEMENTATION.md` - Audio system implementation
+- `CLASSIC_ERA_SUPPORT.md` - Classic Era compatibility details
+- `RELEASE_NOTES_v1.2.0.md` - Version 1.2.0 changelog
 
-## Usage
-
-### Scripts
+## Development Scripts
 
 All scripts are designed to be run from anywhere and will automatically change to the project root directory.
 
@@ -28,26 +25,27 @@ All scripts are designed to be run from anywhere and will automatically change t
 - `scripts/check-lua.sh` - Run Lua syntax and static analysis checks
 - `scripts/test-version.sh` - Test version display in packaged addon
 
-### Documentation
+## Quick Development Commands
 
-The `docs/` folder contains detailed documentation about:
-
-#### Core Systems
-- `ENHANCED_MENU_SYSTEM.md` - Complete guide to the new configuration interface
-- `COLLECTION_NOTIFICATIONS_CONFIG.md` - Collection notification system
-- `SOUND_DROPDOWN_IMPLEMENTATION.md` - Audio system implementation
-
-#### Development Process
-- Configuration system implementation details
-- UI fixes and enhancements documentation
-- Development workflows and best practices
-- Feature specifications and technical requirements
+Using the helper script:
+```bash
+./dev-helper.sh test      # Run addon tests
+./dev-helper.sh check-lua # Run Lua checks
+./dev-helper.sh build     # Build package
+./dev-helper.sh libs      # Update libraries
+```
 
 ## Development Guidelines
 
 ### UI Development
 - Use `CreateNordScrollFrame()` for all scrollable content
 - Follow Nord color palette defined in `UIAssets.lua`
+- Maintain consistent spacing and typography patterns
+
+### Code Standards
+- All code must pass luacheck validation
+- Follow WoW addon best practices for event handling
+- Use account-wide settings for user preferences
 - Implement consistent spacing with defined constants
 - Ensure responsive design for different UI scales
 

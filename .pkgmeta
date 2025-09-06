@@ -7,12 +7,16 @@ externals:
 
 ignore:
     - README.md
-    - dev/
     - dev-helper.sh
     - "*.git*"
     - "*.sh"
     - release.sh
     - extract-plumber-assets.sh
+    - dev/**
+    - dev/
+    - dev/docs/**
+    - dev/scripts/**
+    - dev/README.md
 
 plain-copy:
     - Media
