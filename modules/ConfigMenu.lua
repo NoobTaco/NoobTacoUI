@@ -532,6 +532,58 @@ if not addon.UIAssets then
   return
 end
 
+-- Font system for consistent Poppins typography with Nord-appropriate weights
+local function GetConfigFont(fontType, size)
+  -- Use UIUtils font functions if available, fallback to direct LSM access
+  if addon.UIUtils and addon.UIUtils.GetUIFont then
+    return addon.UIUtils.GetUIFont(fontType, size)
+  else
+    local LSM = LibStub("LibSharedMedia-3.0")
+    local fontWeight
+    size = size or 12
+
+    -- Fallback font hierarchy
+    if fontType == "header-primary" then
+      fontWeight = "Poppins-Bold"
+      size = size or 16
+    elseif fontType == "header-secondary" then
+      fontWeight = "Poppins-SemiBold"
+      size = size or 15
+    elseif fontType == "label-emphasis" then
+      fontWeight = "Poppins-SemiBold"
+      size = size or 13
+    elseif fontType == "label-standard" then
+      fontWeight = "Poppins-Medium"
+      size = size or 12
+    elseif fontType == "body-text" then
+      fontWeight = "Poppins-Regular"
+      size = size or 12
+    elseif fontType == "small-text" then
+      fontWeight = "Poppins-Regular"
+      size = size or 10
+    elseif fontType == "icon-text" then
+      fontWeight = "Poppins-Medium"
+      size = size or 12
+    else
+      fontWeight = "Poppins-Regular"
+      size = size or 12
+    end
+
+    local fontPath = LSM:Fetch("font", fontWeight)
+    return fontPath, size
+  end
+end
+
+local function ApplyConfigFont(fontString, fontType, size)
+  -- Use UIUtils font functions if available, fallback to direct application
+  if addon.UIUtils and addon.UIUtils.ApplyUIFont then
+    addon.UIUtils.ApplyUIFont(fontString, fontType, size)
+  else
+    local fontPath, fontSize = GetConfigFont(fontType, size)
+    fontString:SetFont(fontPath, fontSize)
+  end
+end
+
 -- Enhanced Layout Constants (Plumber-inspired)
 local FRAME_WIDTH = 720 -- Slightly larger for better proportions
 local FRAME_HEIGHT = 540
@@ -691,7 +743,8 @@ local function CreateEnhancedCategoryButton(parent, text, iconData)
       button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord8))
     else
       -- Text/Unicode icon
-      button.Icon = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      button.Icon = button:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(button.Icon, "icon-text", 12)
       button.Icon:SetPoint("LEFT", button, "LEFT", INNER_PADDING, 0)
       button.Icon:SetText(iconData)
       button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
@@ -699,7 +752,8 @@ local function CreateEnhancedCategoryButton(parent, text, iconData)
   end
 
   -- Text label
-  button.Label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  button.Label = button:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(button.Label, "label-emphasis", 13)
   if iconData then
     button.Label:SetPoint("LEFT", button.Icon, "RIGHT", 8, 0)
   else
@@ -772,7 +826,8 @@ local function CreateEnhancedSettingsPanel(parent, title, description)
   panel.TitleLine:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
 
   -- Description with better formatting
-  panel.Description = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  panel.Description = panel:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(panel.Description, "body-text")
   panel.Description:SetPoint("TOPLEFT", panel.TitleLine, "BOTTOMLEFT", 0, -8)
   panel.Description:SetPoint("RIGHT", panel, "RIGHT", -PADDING, 0)
   panel.Description:SetJustifyH("LEFT")
@@ -937,7 +992,8 @@ local sidebar = CreateEnhancedSidebar(EnhancedConfigFrame, header)
 local content = CreateEnhancedContentArea(EnhancedConfigFrame, header, sidebar)
 
 -- Add version footer to the enhanced frame
-local versionFooter = EnhancedConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+local versionFooter = EnhancedConfigFrame:CreateFontString(nil, "OVERLAY")
+ApplyConfigFont(versionFooter, "small-text")
 versionFooter:SetPoint("BOTTOMRIGHT", EnhancedConfigFrame, "BOTTOMRIGHT", -PADDING, PADDING)
 versionFooter:SetJustifyH("RIGHT")
 versionFooter:SetText("v" .. (C_AddOns and C_AddOns.GetAddOnMetadata and
@@ -996,26 +1052,30 @@ aboutButton:SetScript("OnClick", function(self)
     contentFrame:SetHeight(200)
 
     -- Version info
-    local versionText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local versionText = contentFrame:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(versionText, "header-primary")
     versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, 0)
     versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
       C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.1.3"))
     versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
     -- Author info
-    local authorText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local authorText = contentFrame:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(authorText, "body-text")
     authorText:SetPoint("TOPLEFT", versionText, "BOTTOMLEFT", 0, -4)
     authorText:SetText("Created by NoobTaco")
     authorText:SetTextColor(unpack(addon.UIAssets.Colors.Nord13))
 
     -- Subtitle
-    local subtitleText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local subtitleText = contentFrame:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(subtitleText, "header-secondary")
     subtitleText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 0, -INNER_PADDING)
     subtitleText:SetText("Media Asset Library")
     subtitleText:SetTextColor(unpack(addon.UIAssets.Colors.Nord14))
 
     -- Description
-    local descText = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local descText = contentFrame:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(descText, "body-text")
     descText:SetPoint("TOPLEFT", subtitleText, "BOTTOMLEFT", 0, -8)
     descText:SetPoint("RIGHT", contentFrame, "RIGHT", 0, 0)
     descText:SetJustifyH("LEFT")
@@ -1036,13 +1096,15 @@ aboutButton:SetScript("OnClick", function(self)
     descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
     -- Features section (positioned below the description content)
-    local featuresHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local featuresHeader = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(featuresHeader, "header-secondary")
     featuresHeader:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -SECTION_SPACING)
     featuresHeader:SetText("Key Features")
     featuresHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
     -- Features list
-    local featuresList = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local featuresList = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(featuresList, "body-text")
     featuresList:SetPoint("TOPLEFT", featuresHeader, "BOTTOMLEFT", 0, -8)
     featuresList:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
     featuresList:SetJustifyH("LEFT")
@@ -1058,12 +1120,14 @@ aboutButton:SetScript("OnClick", function(self)
     featuresList:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
     -- Support section
-    local supportHeader = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local supportHeader = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(supportHeader, "header-secondary")
     supportHeader:SetPoint("TOPLEFT", featuresList, "BOTTOMLEFT", 0, -SECTION_SPACING)
     supportHeader:SetText("Support & Community")
     supportHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
-    local supportText = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local supportText = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(supportText, "body-text")
     supportText:SetPoint("TOPLEFT", supportHeader, "BOTTOMLEFT", 0, -8)
     supportText:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
     supportText:SetJustifyH("LEFT")
@@ -1200,7 +1264,8 @@ if AreCollectionsAvailable() then
       enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
       checkboxRefs.enable = enableCheckbox
 
-      local enableLabel = collectionContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+      local enableLabel = collectionContainer:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(enableLabel, "label-emphasis")
       enableLabel:SetPoint("LEFT", enableCheckbox, "RIGHT", 12, 0)
       enableLabel:SetText("Enable Collection Notifications")
       enableLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord6)) -- Brighter text for main option
@@ -1252,7 +1317,8 @@ if AreCollectionsAvailable() then
         typeCheckbox:SetChecked(GetCollectionSetting(typeData.key))
         checkboxRefs.types[typeData.key] = typeCheckbox
 
-        local typeLabel = rowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        local typeLabel = rowFrame:CreateFontString(nil, "OVERLAY")
+        ApplyConfigFont(typeLabel, "label-standard")
         typeLabel:SetPoint("LEFT", typeCheckbox, "RIGHT", 12, 0)
         typeLabel:SetText(typeData.label)
         typeLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
@@ -1449,7 +1515,8 @@ if AreCollectionsAvailable() then
       chatCheckbox:SetChecked(GetCollectionSetting("showMessages"))
       checkboxRefs.chat = chatCheckbox
 
-      local chatLabel = chatRowFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      local chatLabel = chatRowFrame:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(chatLabel, "label-standard")
       chatLabel:SetPoint("LEFT", chatCheckbox, "RIGHT", 12, 0)
       chatLabel:SetText("Show Chat Messages")
       chatLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
@@ -1707,7 +1774,8 @@ generalButton:SetScript("OnClick", function(self)
     checkboxRefs.minimap = minimapCheckbox
 
     -- Minimap checkbox label
-    local minimapLabel = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local minimapLabel = interfaceContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(minimapLabel, "label-standard")
     minimapLabel:SetPoint("LEFT", minimapCheckbox, "RIGHT", 8, 0)
     minimapLabel:SetText("Show Minimap Button")
     minimapLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
@@ -1733,7 +1801,8 @@ generalButton:SetScript("OnClick", function(self)
       checkboxRefs.compartment = compartmentCheckbox
 
       -- Compartment checkbox label
-      local compartmentLabel = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      local compartmentLabel = interfaceContainer:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(compartmentLabel, "label-standard")
       compartmentLabel:SetPoint("LEFT", compartmentCheckbox, "RIGHT", 8, 0)
       compartmentLabel:SetText("Enable Addon Drawer Integration")
       compartmentLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
@@ -1758,13 +1827,15 @@ generalButton:SetScript("OnClick", function(self)
     end
 
     -- Help text section
-    local helpHeader = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local helpHeader = interfaceContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(helpHeader, "header-secondary")
     helpHeader:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset - 10)
     helpHeader:SetText("Interface Options")
     helpHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
     yOffset = yOffset - 30
 
-    local helpText = interfaceContainer:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local helpText = interfaceContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(helpText, "body-text")
     helpText:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset)
     helpText:SetPoint("RIGHT", interfaceContainer, "RIGHT", -INNER_PADDING, 0)
     helpText:SetJustifyH("LEFT")

@@ -68,6 +68,53 @@ addon.UIAssets = {
 -- Utility functions for creating consistent UI elements
 addon.UIUtils = {}
 
+-- Font system for consistent Poppins typography with Nord-appropriate weights
+local function GetUIFont(fontType, size)
+  local LSM = LibStub("LibSharedMedia-3.0")
+  local fontWeight
+  size = size or 12
+
+  -- Nord typography hierarchy with appropriate Poppins weights
+  if fontType == "header-primary" then
+    fontWeight = "Poppins-Bold" -- Primary headers (main titles)
+    size = size or 16
+  elseif fontType == "header-secondary" then
+    fontWeight = "Poppins-SemiBold" -- Secondary headers (section titles)
+    size = size or 15
+  elseif fontType == "label-emphasis" then
+    fontWeight = "Poppins-SemiBold" -- Important labels (toggles, emphasis)
+    size = size or 13
+  elseif fontType == "label-standard" then
+    fontWeight = "Poppins-Medium" -- Standard labels and UI text
+    size = size or 12
+  elseif fontType == "body-text" then
+    fontWeight = "Poppins-Regular" -- Body text, descriptions
+    size = size or 12
+  elseif fontType == "small-text" then
+    fontWeight = "Poppins-Regular" -- Small text, metadata
+    size = size or 10
+  elseif fontType == "icon-text" then
+    fontWeight = "Poppins-Medium" -- Icons and symbols
+    size = size or 12
+  else
+    -- Default fallback
+    fontWeight = "Poppins-Regular"
+    size = size or 12
+  end
+
+  local fontPath = LSM:Fetch("font", fontWeight)
+  return fontPath, size
+end
+
+local function ApplyUIFont(fontString, fontType, size)
+  local fontPath, fontSize = GetUIFont(fontType, size)
+  fontString:SetFont(fontPath, fontSize)
+end
+
+-- Expose to addon namespace
+addon.UIUtils.GetUIFont = GetUIFont
+addon.UIUtils.ApplyUIFont = ApplyUIFont
+
 -- Create a Nord-themed frame with background
 function addon.UIUtils:CreateThemedFrame(parent, frameType, template)
   frameType = frameType or "Frame"
@@ -92,7 +139,8 @@ function addon.UIUtils:CreateThemedButton(parent, text, width, height)
   button.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
 
   -- Text
-  button.Text = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  button.Text = button:CreateFontString(nil, "OVERLAY")
+  ApplyUIFont(button.Text, "label-standard")
   button.Text:SetPoint("CENTER")
   button.Text:SetText(text or "Button")
   button.Text:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
@@ -134,7 +182,8 @@ function addon.UIUtils:CreateIconButton(parent, iconText, size)
   button:SetSize(size or 20, size or 20)
 
   -- Icon text (Unicode character)
-  button.Icon = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  button.Icon = button:CreateFontString(nil, "OVERLAY")
+  ApplyUIFont(button.Icon, "icon-text", size and (size * 0.6) or 12)
   button.Icon:SetPoint("CENTER")
   button.Icon:SetText(iconText or "⚙")
   button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
@@ -188,7 +237,8 @@ end
 
 -- Create a category header with Nord styling
 function addon.UIUtils:CreateCategoryHeader(parent, text)
-  local header = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+  local header = parent:CreateFontString(nil, "OVERLAY")
+  ApplyUIFont(header, "header-secondary")
   header:SetText(text)
   header:SetTextColor(unpack(addon.UIAssets.Colors.Nord8)) -- Blue accent
   header:SetShadowColor(0, 0, 0, 1)
@@ -227,7 +277,8 @@ function addon.UIUtils:CreateSoundDropdown(parent, width, height, mediaType)
   dropdown.selectedText = "Select Sound..."
 
   -- Text display
-  dropdown.Text = dropdown:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  dropdown.Text = dropdown:CreateFontString(nil, "OVERLAY")
+  ApplyUIFont(dropdown.Text, "label-standard", 11)
   dropdown.Text:SetPoint("LEFT", dropdown, "LEFT", 8, 0)
   dropdown.Text:SetSize((width or 150) - 32, 20) -- Set explicit size instead of RIGHT anchor
   dropdown.Text:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
@@ -239,7 +290,8 @@ function addon.UIUtils:CreateSoundDropdown(parent, width, height, mediaType)
   dropdown.Button:SetSize(20, 20)
   dropdown.Button:SetPoint("RIGHT", dropdown, "RIGHT", -4, 0)
 
-  dropdown.Button.Icon = dropdown.Button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  dropdown.Button.Icon = dropdown.Button:CreateFontString(nil, "OVERLAY")
+  ApplyUIFont(dropdown.Button.Icon, "icon-text", 10)
   dropdown.Button.Icon:SetPoint("CENTER")
   dropdown.Button.Icon:SetText("▼")
   dropdown.Button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
@@ -370,7 +422,8 @@ function addon.UIUtils:CreateSoundDropdown(parent, width, height, mediaType)
         item.Background = item:CreateTexture(nil, "BACKGROUND")
         item.Background:SetAllPoints()
 
-        item.Text = item:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        item.Text = item:CreateFontString(nil, "OVERLAY")
+        ApplyUIFont(item.Text, "small-text")
         item.Text:SetPoint("LEFT", item, "LEFT", 4, 0)
         item.Text:SetText(soundName)
 
@@ -530,7 +583,8 @@ function addon.UIUtils:CreateSoundTestButton(parent, size)
   button.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
 
   -- Play icon (triangle)
-  button.Icon = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  button.Icon = button:CreateFontString(nil, "OVERLAY")
+  ApplyUIFont(button.Icon, "icon-text", (size and (size * 0.5) or 12))
   button.Icon:SetPoint("CENTER", 1, 0) -- Slight offset for visual balance
   button.Icon:SetText("▶")
   button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
