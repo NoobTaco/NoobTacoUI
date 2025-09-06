@@ -3,6 +3,49 @@
 
 local addonName, addon = ...
 
+-- Version detection for feature availability
+local function GetWoWVersion()
+  local version, build, date, tocVersion = GetBuildInfo()
+  return version, build, date, tocVersion
+end
+
+local function IsMoP()
+  local version = GetWoWVersion()
+  return version and version:match("^5%.")
+end
+
+local function IsWoD()
+  local version = GetWoWVersion()
+  return version and version:match("^6%.")
+end
+
+local function IsLegion()
+  local version = GetWoWVersion()
+  return version and version:match("^7%.")
+end
+
+local function IsClassicEra()
+  local version = GetWoWVersion()
+  return version and (version:match("^1%.") or version:match("^11%d%d%d"))
+end
+
+local function IsWrath()
+  local version = GetWoWVersion()
+  return version and version:match("^3%.")
+end
+
+local function IsCata()
+  local version = GetWoWVersion()
+  return version and version:match("^4%.")
+end
+
+-- Check if we need texture fallback (only for MoP and potentially other problematic versions)
+local function NeedsTextureFallback()
+  -- Only use texture fallback for MoP specifically
+  -- All other versions (including retail) should use Unicode
+  return IsMoP()
+end
+
 -- Asset paths for easy management
 addon.UIAssets = {
   -- Logo and branding
@@ -285,16 +328,17 @@ function addon.UIUtils:CreateSoundDropdown(parent, width, height, mediaType)
   dropdown.Text:SetJustifyH("LEFT")
   dropdown.Text:SetText(dropdown.selectedText)
 
-  -- Dropdown arrow button
+  -- Dropdown arrow button - use texture approach for reliability across all versions
   dropdown.Button = CreateFrame("Button", nil, dropdown)
   dropdown.Button:SetSize(20, 20)
   dropdown.Button:SetPoint("RIGHT", dropdown, "RIGHT", -4, 0)
 
-  dropdown.Button.Icon = dropdown.Button:CreateFontString(nil, "OVERLAY")
-  ApplyUIFont(dropdown.Button.Icon, "icon-text", 10)
+  -- Use texture-based arrow for maximum compatibility
+  dropdown.Button.Icon = dropdown.Button:CreateTexture(nil, "OVERLAY")
+  dropdown.Button.Icon:SetSize(12, 12)
   dropdown.Button.Icon:SetPoint("CENTER")
-  dropdown.Button.Icon:SetText("▼")
-  dropdown.Button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+  dropdown.Button.Icon:SetTexture("Interface\\Buttons\\Arrow-Down-Up")
+  dropdown.Button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord4))
 
   -- Menu frame for dropdown items
   dropdown.Menu = CreateFrame("Frame", nil, dropdown)
@@ -521,15 +565,15 @@ function addon.UIUtils:CreateSoundDropdown(parent, width, height, mediaType)
     end
   end)
 
-  -- Hover effects for main dropdown
+  -- Hover effects for main dropdown - texture approach
   dropdown:SetScript("OnEnter", function(self)
     self.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-    self.Button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+    self.Button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord6))
   end)
 
   dropdown:SetScript("OnLeave", function(self)
     self.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
-    self.Button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    self.Button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord4))
   end)
 
   dropdown:EnableMouse(true)
@@ -582,22 +626,22 @@ function addon.UIUtils:CreateSoundTestButton(parent, size)
   button.Background:SetAllPoints()
   button.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
 
-  -- Play icon (triangle)
-  button.Icon = button:CreateFontString(nil, "OVERLAY")
-  ApplyUIFont(button.Icon, "icon-text", (size and (size * 0.5) or 12))
+  -- Play icon - use texture approach for reliability across all versions
+  button.Icon = button:CreateTexture(nil, "OVERLAY")
+  button.Icon:SetSize((size and (size * 0.75) or 18), (size and (size * 0.75) or 18))
   button.Icon:SetPoint("CENTER", 1, 0) -- Slight offset for visual balance
-  button.Icon:SetText("▶")
-  button.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+  button.Icon:SetTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
+  button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord0))
 
-  -- Hover effects
+  -- Hover effects - texture approach
   button:SetScript("OnEnter", function(self)
     self.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord10))
-    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+    self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord6))
   end)
 
   button:SetScript("OnLeave", function(self)
     self.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
-    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+    self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord0))
   end)
 
   -- Function to set sound to test
@@ -626,13 +670,13 @@ function addon.UIUtils:CreateSoundTestButton(parent, size)
   -- Track enabled state
   button.isEnabled = true
 
-  -- Add Enable/Disable methods for compatibility
+  -- Add Enable/Disable methods for compatibility - texture approach
   function button:Enable()
     self.isEnabled = true
     self:EnableMouse(true)
     self:SetAlpha(1.0)
     self.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
-    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+    self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord0))
   end
 
   function button:Disable()
@@ -640,7 +684,7 @@ function addon.UIUtils:CreateSoundTestButton(parent, size)
     self:EnableMouse(false)
     self:SetAlpha(0.5)
     self.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-    self.Icon:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
+    self.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord3))
   end
 
   function button:IsEnabled()
