@@ -82,6 +82,20 @@ end)
 
 -- Global functions for AddonCompartment integration
 function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
+  -- Check if addon compartment is enabled in settings
+  local enableCompartment = true -- Default to enabled
+  if NoobTacoUIMediaDB and NoobTacoUIMediaDB.GeneralSettings then
+    local setting = NoobTacoUIMediaDB.GeneralSettings.enableAddonCompartment
+    if setting ~= nil then
+      enableCompartment = setting
+    end
+  end
+  
+  if not enableCompartment then
+    print("|cFF16C3F2NoobTacoUI-Media|r: |cFFBF616AAddon drawer integration is disabled|r - Enable in General Settings")
+    return
+  end
+  
   if buttonName == "LeftButton" then
     addon.ShowConfigMenu()
   elseif buttonName == "RightButton" then
@@ -98,12 +112,28 @@ function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
 end
 
 function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
+  -- Check if addon compartment is enabled in settings
+  local enableCompartment = true -- Default to enabled
+  if NoobTacoUIMediaDB and NoobTacoUIMediaDB.GeneralSettings then
+    local setting = NoobTacoUIMediaDB.GeneralSettings.enableAddonCompartment
+    if setting ~= nil then
+      enableCompartment = setting
+    end
+  end
+  
   GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
   GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
   GameTooltip:AddLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
   GameTooltip:AddLine(" ", 1, 1, 1)
-  GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-  GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+  
+  if not enableCompartment then
+    GameTooltip:AddLine("|cFFBF616AAddon drawer integration is disabled|r", 1, 0.7, 0.7)
+    GameTooltip:AddLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
+  else
+    GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+  end
+  
   GameTooltip:Show()
 end
 
@@ -197,21 +227,21 @@ local function CreateMinimapButton()
   minimapButton.bg:SetPoint("TOPLEFT", 7, -5)
   minimapButton.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
   minimapButton.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord2))
-  
+
   -- Icon texture (using our addon logo)
   minimapButton.icon = minimapButton:CreateTexture(nil, "ARTWORK")
-  minimapButton.icon:SetSize(14, 14)  -- Slightly smaller to fit within border better
+  minimapButton.icon:SetSize(14, 14) -- Slightly smaller to fit within border better
   minimapButton.icon:SetPoint("TOPLEFT", 9, -7)
   minimapButton.icon:SetTexture("Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\logo.tga")
-  minimapButton.icon:SetVertexColor(1, 1, 1, 1)  -- Keep logo in original colors
-  
+  minimapButton.icon:SetVertexColor(1, 1, 1, 1) -- Keep logo in original colors
+
   -- Border overlay with proper minimap button border
   minimapButton.border = minimapButton:CreateTexture(nil, "OVERLAY")
   minimapButton.border:SetSize(52, 52)
   minimapButton.border:SetPoint("TOPLEFT")
   minimapButton.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-  minimapButton.border:SetVertexColor(1, 1, 1, 1)  -- Keep border in original colors
-  
+  minimapButton.border:SetVertexColor(1, 1, 1, 1) -- Keep border in original colors
+
   -- Hover effects
   minimapButton:SetScript("OnEnter", function(self)
     self.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord3))
@@ -266,12 +296,12 @@ local function UpdateMinimapButtonVisibility()
 
   if showButton then
     CreateMinimapButton()
-    if minimapButton then 
-      minimapButton:Show() 
+    if minimapButton then
+      minimapButton:Show()
       print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button shown")
     end
   else
-    if minimapButton then 
+    if minimapButton then
       minimapButton:Hide()
       print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button hidden")
     end
@@ -283,9 +313,9 @@ local addonCompartmentRegistered = false
 
 local function SetupAddonCompartment()
   if not AddonCompartmentFrame or addonCompartmentRegistered then return end
-  
+
   addonCompartmentRegistered = true
-  
+
   -- TOC file handles the registration with AddonCompartmentFunc entries
   -- This function just marks that we've set up the integration
   print("|cFF16C3F2NoobTacoUI-Media|r: Addon compartment integration ready")
@@ -1410,7 +1440,7 @@ generalButton:SetScript("OnClick", function(self)
     insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
     insetTexture:SetAlpha(0.3)
 
-    local yOffset = -20                 -- Start with more padding inside container
+    local yOffset = -20 -- Start with more padding inside container
     local checkboxRefs = {}
 
     -- Helper functions for general settings
@@ -1470,10 +1500,9 @@ generalButton:SetScript("OnClick", function(self)
         SetGeneralSetting("enableAddonCompartment", newValue)
 
         if newValue then
-          SetupAddonCompartment()
           print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFA3BE8CEnabled|r")
         else
-          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - |cFFEBCB8BType /reload to remove from drawer|r")
+          print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
         end
       end)
       yOffset = yOffset - 35
@@ -1494,7 +1523,7 @@ generalButton:SetScript("OnClick", function(self)
     helpText:SetSpacing(3)
     helpText:SetText(
       "|cFF5E81ACMinimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle. Changes take effect immediately.\n\n" ..
-      "|cFF5E81ACAddon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu. |cFFEBCB8BDisabling requires /reload to remove from drawer.|r"
+      "|cFF5E81ACAddon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu. When disabled, the drawer entry will show but be non-functional until re-enabled."
     )
     helpText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
@@ -1563,12 +1592,8 @@ local function InitializeGeneralSettings()
   -- Initialize minimap button visibility
   UpdateMinimapButtonVisibility()
 
-  -- Initialize addon compartment if enabled
-  local enableCompartment = GetDBValue("GeneralSettings.enableAddonCompartment")
-  if enableCompartment == nil then enableCompartment = true end
-  if enableCompartment then
-    SetupAddonCompartment()
-  end
+  -- Addon compartment is always registered via TOC file
+  -- The compartment functions check the enableAddonCompartment setting
 end
 
 -- Initialize after a short delay to ensure all systems are ready
