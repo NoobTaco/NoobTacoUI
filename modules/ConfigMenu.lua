@@ -521,9 +521,9 @@ end
 
 -- Wait for UIAssets to be loaded
 if not addon.UIAssets then
-  local frame = CreateFrame("Frame")
-  frame:RegisterEvent("ADDON_LOADED")
-  frame:SetScript("OnEvent", function(self, event, loadedAddonName)
+  local waitFrame = CreateFrame("Frame")
+  waitFrame:RegisterEvent("ADDON_LOADED")
+  waitFrame:SetScript("OnEvent", function(self, event, loadedAddonName)
     if loadedAddonName == addonName and addon.UIAssets then
       -- Reload this file or trigger initialization
       self:UnregisterEvent("ADDON_LOADED")
