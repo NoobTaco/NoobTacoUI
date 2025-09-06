@@ -1,0 +1,2 @@
+# Requirements for font showcase generator
+Pillow>=9.0.0
