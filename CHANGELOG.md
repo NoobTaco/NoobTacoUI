@@ -244,19 +244,14 @@
     - Pets: NT\_InfussionOfLight (magical theme)  
     - Mounts: NT\_Mount (mount-specific sound)  
     - Toys & Transmog: NT\_Chest (treasure theme)  
-    ## Commands  
-    - /ntconfig - Main configuration menu  
-    - /ntcc - Direct to Collection Notifications  
     - /ntmcollection test - Test all notification sounds  
     Resolves settings persistence issues and provides comprehensive sound customization capabilities.  
-- feat: Enhanced config UI with WoW texture icons and improved UX  
     - Moved collection notification options from popup to main config panel  
     - Added WoW texture icons for menu categories (bell, gear, book)  
     - Created texture-based close button matching WoW UI style  
     - Made config window draggable only via title bar for professional behavior  
     - Removed popup dialog in favor of integrated right-pane settings  
     - Added CreateTextureIconButton and CreateTextureIcon utility functions  
-    - Enhanced category buttons to support both texture and text icons  
     - Improved hover states and Nord color theming throughout  
     - Better visual consistency with WoW's native UI elements  
 - feat: implement Nord-themed config menu with enhanced UX  
@@ -270,7 +265,6 @@
     - Add comprehensive documentation for final implementation  
     The config menu now features professional Nord theming with:  
     - Sidebar navigation with category buttons  
-    - Enhanced typography and consistent spacing  
     - Proper hover effects and visual feedback  
     - Modular panel system for easy expansion  
     - Collection Notifications integration with detailed popup settings  
@@ -280,10 +274,16 @@
     - Added CategoryButtonMixin with expand/collapse functionality  
     - Created Collection Notifications configuration with:  
       * Global enable checkbox in left panel navigation  
-      * Cog wheel settings button for detailed popup configuration  
       * Enable/disable state management with visual feedback  
       * Individual collection type toggles (Pet, Mount, Toy, Transmog)  
       * Audio selection dropdown with test button functionality  
+    ## [v1.3.0-midnight-alpha1] (2025-10-06)
+    ### Midnight Expansion Alpha Build
+    - Initial alpha release for World of Warcraft: Midnight expansion
+    - Added support for Interface 120000 (Midnight alpha client)
+    - All features from v1.2.0 are available for Midnight alpha testing
+    - Marked build as "Alpha" for CurseForge and Wago
+    - Please report any issues encountered in the Midnight alpha client
     - Streamlined to Audio category only as requested  
     - Added proper hover effects, tooltips, and professional styling  
     - Follows modern WoW addon UI patterns with clean, intuitive design  

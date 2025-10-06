@@ -1,9 +1,9 @@
-## Interface: 110200, 110107, 50500, 40402, 11507
+## Interface: 120000, 110200, 110107, 50500, 40402, 11507
 ## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
 ## Author: NoobTaco
-## Version: @project-version@
+## Version: 1.3.0-midnight-alpha1
 ## OptionalDeps: SharedMedia
-## Notes: Fonts, Audio, and Textures for World of Warcraft
+## Notes: Fonts, Audio, and Textures for World of Warcraft (Midnight Alpha Build)
 ## X-License: GPL-3.0-or-later
 ## DefaultState: enabled
 ## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga

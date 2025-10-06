@@ -7,21 +7,13 @@ A comprehensive media addon that provides high-quality fonts, audio files, and s
 ## ✨ What's New in Version 1.2.0
 
 ### Enhanced Configuration Interface
-- **Professional Menu System**: Completely redesigned configuration interface with modern Nord theme
-- **Collection Notifications**: Advanced notification system for mounts, pets, toys, and transmog with customizable audio alerts
-- **Minimap Integration**: Interactive minimap button with configuration access
-- **WoW Addon Compartment**: Full support for the modern addon drawer system
-- **General Settings Panel**: Centralized interface customization options
+## ✨ What's New in Version 1.3.0-midnight-alpha1
 
-### Improved User Experience
-- **Visual Polish**: Enhanced hover states, selection indicators, and custom scrollbars
-- **Smart Detection**: Automatically detects new collection items with optional notifications
-- **Easy Configuration**: Intuitive navigation with clear organization and helpful tooltips
-- **Account-Wide Settings**: Persistent configuration across all characters
+### Midnight Expansion Alpha Build
+- **Alpha Release for Midnight Expansion**: Now supports World of Warcraft: Midnight alpha client (Interface 120000)
+- **All v1.2.0 Features Available**: Enhanced configuration, collection notifications, minimap integration, and more
 
-# Features
-
-## Easy Configuration
+### Enhanced Configuration Interface
 
 Access the configuration interface with any of these commands:
 - **`/ntm config`** - Open the main configuration window
