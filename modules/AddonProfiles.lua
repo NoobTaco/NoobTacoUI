@@ -6,20 +6,20 @@ local addonName, addon = ...
 -- Profile storage table
 addon.AddonProfiles = addon.AddonProfiles or {}
 
--- BetterBlizzardFrames Profile
+-- BetterBlizzFrames Profile
 -- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
 -- Version: 1.0
 -- Last Updated: 2025-11-14
-addon.AddonProfiles.BetterBlizzardFrames = {
-  name = "BetterBlizzardFrames",
-  displayName = "BetterBlizzardFrames",
+addon.AddonProfiles.BetterBlizzFrames = {
+  name = "BetterBlizzFrames",
+  displayName = "BetterBlizzFrames",
   description =
-  "Import a pre-configured profile for BetterBlizzardFrames that complements the NoobTacoUI aesthetic. This profile includes optimized frame styling and positioning.",
+  "Import a pre-configured profile for BetterBlizzFrames that complements the NoobTacoUI aesthetic. This profile includes optimized frame styling and positioning.",
   downloadUrl = "https://www.curseforge.com/wow/addons/betterblizzframes",
   command = "/bbf",
   instructions = {
     "Click the button below to copy the profile string",
-    "Type |cFFEBCB8B/bbf|r in chat to open BetterBlizzardFrames config",
+    "Type |cFFEBCB8B/bbf|r in chat to open BetterBlizzFrames config",
     "Navigate to the |cFFEBCB8BImport Profile|r section",
     "Paste the profile string and import"
   },

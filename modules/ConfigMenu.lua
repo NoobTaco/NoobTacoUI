@@ -1907,12 +1907,23 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     scrollFrame:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
     scrollFrame:SetPoint("BOTTOMRIGHT", content.addonIntegrationPanel, "BOTTOMRIGHT", -PADDING, PADDING)
 
-    -- Get the scrollable content area
-    local scrollChild = scrollFrame.scrollChild
-    scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus scrollbar
+    -- Store references
+    content.addonIntegrationPanel.scrollFrame = scrollFrame
+    content.addonIntegrationPanel.scrollChild = scrollFrame.scrollChild
+    scrollFrame.scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus scrollbar
+  end
 
-    -- Add BetterBlizzardFrames section
-    local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzardFrames")
+  -- Clear existing content
+  local scrollChild = content.addonIntegrationPanel.scrollChild
+  for _, child in ipairs({ scrollChild:GetChildren() }) do
+    child:Hide()
+    child:SetParent(nil)
+  end
+
+  -- Check if BetterBlizzFrames is loaded
+  if C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
+    -- Add BetterBlizzFrames section
+    local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzFrames")
     bbfHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
     -- Use same color as selected button for consistency and better readability
     bbfHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
@@ -1945,9 +1956,9 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     local yOffset = -20 -- Start with more padding inside container
 
     -- Get profile data from AddonProfiles module
-    local profile = addon.GetProfile("BetterBlizzardFrames")
+    local profile = addon.GetProfile("BetterBlizzFrames")
     if not profile then
-      print("|cFFBF616ANoobTacoUI-Media|r: BetterBlizzardFrames profile not found!")
+      print("|cFFBF616ANoobTacoUI-Media|r: BetterBlizzFrames profile not found!")
       return
     end
 
@@ -2034,10 +2045,21 @@ addonIntegrationButton:SetScript("OnClick", function(self)
         end
       end)
     end)
-
-    -- Update scroll area
-    scrollFrame.UpdateScrollThumb()
+  else
+    -- Add message when BetterBlizzFrames is not loaded
+    local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(noAddonText, "body-text")
+    noAddonText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+    noAddonText:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+    noAddonText:SetJustifyH("LEFT")
+    noAddonText:SetJustifyV("TOP")
+    noAddonText:SetText(
+      "BetterBlizzFrames addon not detected. Install and enable it to access profile import functionality.")
+    noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
   end
+
+  -- Update scroll area
+  content.addonIntegrationPanel.scrollFrame.UpdateScrollThumb()
 
   content.addonIntegrationPanel:Show()
   content.currentPanel = content.addonIntegrationPanel
