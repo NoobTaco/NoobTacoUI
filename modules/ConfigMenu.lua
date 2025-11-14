@@ -1877,6 +1877,174 @@ end)
 
 table.insert(categories, generalButton)
 
+-- Addon Integration button
+local addonIntegrationButton = CreateEnhancedCategoryButton(sidebar, "Addon Integration", addon.UIAssets.Icons.Settings)
+addonIntegrationButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
+addonIntegrationButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
+  end
+
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
+
+  -- Show addon integration panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
+
+  if not content.addonIntegrationPanel then
+    content.addonIntegrationPanel = CreateEnhancedSettingsPanel(
+      content,
+      "Addon Integration",
+      "Import optimized profiles and settings for compatible addons to create a cohesive UI experience."
+    )
+
+    -- Create scrollable content for the panel
+    local scrollFrame = CreateNordScrollFrame(content.addonIntegrationPanel)
+    scrollFrame:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
+    scrollFrame:SetPoint("BOTTOMRIGHT", content.addonIntegrationPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+
+    -- Get the scrollable content area
+    local scrollChild = scrollFrame.scrollChild
+    scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus scrollbar
+
+    -- Add BetterBlizzardFrames section
+    local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzardFrames")
+    bbfHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    -- Use same color as selected button for consistency and better readability
+    bbfHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
+
+    -- Create a subtle background container for the BBF options
+    local bbfContainer = addon.UIUtils:CreateThemedFrame(content.addonIntegrationPanel, "Frame")
+    bbfContainer:SetPoint("TOPLEFT", bbfHeader, "BOTTOMLEFT", -8, -12)
+    bbfContainer:SetPoint("TOPRIGHT", content.addonIntegrationPanel, "TOPRIGHT", -8, -12)
+    bbfContainer:SetHeight(220) -- Increased height for better content fit
+
+    -- Apply subtle Nord1 background with slight transparency
+    local bgTexture = bbfContainer:CreateTexture(nil, "BACKGROUND")
+    bgTexture:SetAllPoints()
+    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    bgTexture:SetAlpha(0.3)
+
+    -- Add a subtle border using Nord3
+    local borderTexture = bbfContainer:CreateTexture(nil, "BORDER")
+    borderTexture:SetAllPoints()
+    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
+    borderTexture:SetAlpha(0.4)
+
+    -- Create inset for the border effect
+    local insetTexture = bbfContainer:CreateTexture(nil, "ARTWORK")
+    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
+    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
+    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    insetTexture:SetAlpha(0.3)
+
+    local yOffset = -20 -- Start with more padding inside container
+
+    -- Get profile data from AddonProfiles module
+    local profile = addon.GetProfile("BetterBlizzardFrames")
+    if not profile then
+      print("|cFFBF616ANoobTacoUI-Media|r: BetterBlizzardFrames profile not found!")
+      return
+    end
+
+    -- Description text
+    local bbfDesc = bbfContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(bbfDesc, "body-text")
+    bbfDesc:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    bbfDesc:SetPoint("RIGHT", bbfContainer, "RIGHT", -INNER_PADDING, 0)
+    bbfDesc:SetJustifyH("LEFT")
+    bbfDesc:SetJustifyV("TOP")
+    bbfDesc:SetSpacing(3)
+    bbfDesc:SetText(profile.description)
+    bbfDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    yOffset = yOffset - 50
+
+    -- CurseForge link text
+    local bbfLink = bbfContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(bbfLink, "body-text")
+    bbfLink:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    bbfLink:SetText("|cFF88C0D0Download:|r " .. profile.downloadUrl)
+    bbfLink:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+    yOffset = yOffset - 25
+
+    -- Instructions text
+    local bbfInstructions = bbfContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(bbfInstructions, "body-text")
+    bbfInstructions:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    bbfInstructions:SetPoint("RIGHT", bbfContainer, "RIGHT", -INNER_PADDING, 0)
+    bbfInstructions:SetJustifyH("LEFT")
+    bbfInstructions:SetJustifyV("TOP")
+    bbfInstructions:SetSpacing(2)
+
+    -- Format instructions from profile data
+    local instructionsText = "|cFFA3BE8CInstructions:|r\n"
+    for i, instruction in ipairs(profile.instructions) do
+      instructionsText = instructionsText .. i .. ". " .. instruction .. "\n"
+    end
+    bbfInstructions:SetText(instructionsText)
+    bbfInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    yOffset = yOffset - 70
+
+    -- Copy Profile Button
+    local copyButton = CreateFrame("Button", nil, bbfContainer)
+    copyButton:SetSize(160, 32)
+    copyButton:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
+
+    -- Button background
+    copyButton.bg = copyButton:CreateTexture(nil, "BACKGROUND")
+    copyButton.bg:SetAllPoints()
+    copyButton.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+
+    copyButton.highlight = copyButton:CreateTexture(nil, "HIGHLIGHT")
+    copyButton.highlight:SetAllPoints()
+    copyButton.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
+    copyButton.highlight:SetAlpha(0.3)
+
+    -- Button text
+    copyButton.text = copyButton:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(copyButton.text, "label-emphasis")
+    copyButton.text:SetPoint("CENTER")
+    copyButton.text:SetText("Copy Profile String")
+    copyButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+    -- Button click handler
+    copyButton:SetScript("OnClick", function(self)
+      -- Create a temporary edit box to attempt clipboard copy
+      local tempBox = CreateFrame("EditBox", "NoobTacoTempCopyBox", UIParent)
+      tempBox:SetSize(1, 1)
+      tempBox:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
+      tempBox:SetAutoFocus(false)
+      tempBox:SetMultiLine(false)
+      tempBox:SetFontObject(GameFontNormal)
+      tempBox:SetText(profile.profileString)
+      tempBox:Show()
+      tempBox:SetFocus()
+      tempBox:HighlightText()
+
+      -- Attempt to copy by briefly showing and focusing
+      C_Timer.After(0.05, function()
+        if tempBox:GetText() == profile.profileString then
+          tempBox:Hide()
+          print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string copied to clipboard!")
+          print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
+        end
+      end)
+    end)
+
+    -- Update scroll area
+    scrollFrame.UpdateScrollThumb()
+  end
+
+  content.addonIntegrationPanel:Show()
+  content.currentPanel = content.addonIntegrationPanel
+end)
+
+table.insert(categories, addonIntegrationButton)
+
 -- Select first category by default (changed to About)
 if aboutButton then
   aboutButton:GetScript("OnClick")(aboutButton)
