@@ -18,11 +18,17 @@
 
 #### WoW Addon Compartment Support
 - **Modern Integration**: Full support for WoW's addon drawer system
-- **Dual Functionality**: 
+- **Dual Functionality**:
   - Left-click: Open configuration menu
   - Right-click: Toggle collection notifications on/off
 - **Smart Disable Behavior**: When disabled, shows informative messages
 - **Context-aware Tooltips**: Different tooltips based on enabled/disabled state
+
+#### Addon Integration System 🆕
+- **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles
+- **User-Friendly Dialog**: Scrollable popup with selectable text for easy copying
+- **Profile Management**: Clean interface for addon configuration sharing
+- **Extensible Framework**: Foundation for future addon integrations
 
 ### 🔧 Technical Improvements
 
@@ -41,7 +47,10 @@
 - **Graceful Degradation**: Handles missing dependencies elegantly
 - **User-friendly Messages**: Clear feedback for all operations
 
-### 🛠️ Implementation Details
+#### Midnight Beta Compatibility 🌙
+- **Interface Update**: Full compatibility with WoW Midnight Beta (Interface: 120000)
+- **Future-Proof**: Ready for upcoming WoW expansion features
+- **API Compliance**: Updated for latest WoW API standards### 🛠️ Implementation Details
 
 #### File Changes
 - **modules/ConfigMenu.lua**: +500 lines of new functionality
@@ -100,11 +109,12 @@
 
 ### 🚀 What's Next
 
-This release establishes a solid foundation for interface customization. Future enhancements may include:
-- Additional minimap button positioning options
-- More granular notification controls
-- Integration with other NoobTacoUI addon components
-- Enhanced visual customization options
+This release establishes a solid foundation for interface customization and addon integration. Future enhancements may include:
+- **Addon Integration Expansion**: Additional optimized profiles for popular addons
+- **Enhanced Profile Management**: Advanced import/export capabilities
+- **Additional Minimap Options**: More positioning and customization choices
+- **More Granular Controls**: Expanded notification and interface settings
+- **Integration with Other NoobTacoUI Components**: Unified configuration across the suite
 
 ### 💻 For Developers
 

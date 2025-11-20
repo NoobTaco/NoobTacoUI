@@ -13,6 +13,11 @@ A comprehensive media addon that provides high-quality fonts, audio files, and s
 - **WoW Addon Compartment**: Full support for the modern addon drawer system
 - **General Settings Panel**: Centralized interface customization options
 
+### Addon Integration System 🆕
+- **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles
+- **Profile Management**: Easy copying and importing of addon configurations
+- **Extensible Framework**: Foundation for future addon integrations
+
 ### Improved User Experience
 - **Visual Polish**: Enhanced hover states, selection indicators, and custom scrollbars
 - **Smart Detection**: Automatically detects new collection items with optional notifications
@@ -35,6 +40,11 @@ Access the configuration interface with any of these commands:
 - **Visual Messages**: Optional chat messages with collection notifications
 - **Granular Control**: Enable/disable notifications for specific collection types
 - **Real-time Preview**: Test any audio file before applying
+
+### Addon Integration System 🆕
+- **BetterBlizzFrames**: Import optimized profiles for BetterBlizzFrames addon
+- **Profile Management**: User-friendly dialog for copying and importing addon configurations
+- **Future Expansions**: Framework ready for additional addon integrations
 
 ## Quick Commands
 
@@ -97,12 +107,15 @@ Simply install the addon through your preferred addon manager or manually extrac
 
 ## Compatibility
 
+**🌙 Midnight Beta Ready**: Fully compatible with World of Warcraft Midnight Beta (Interface: 120000)
+
 This addon works with any World of Warcraft addon that uses LibSharedMedia-3.0 for media management, including:
 
 - ElvUI
 - WeakAuras
 - Details!
 - Bartender4
+- BetterBlizzFrames (with integrated profile import)
 - And many more...
 
 # Download & Support
