@@ -16,6 +16,7 @@ on:
 permissions:
   contents: write
 
+# Force workflow update
 jobs:
   release:
     runs-on: ubuntu-latest
