@@ -4,7 +4,18 @@
 
 A comprehensive media addon that provides high-quality fonts, audio files, and status bar textures for World of Warcraft addons. All media is registered with LibSharedMedia-3.0 and will automatically appear in any compatible addon's media selection lists.
 
-## ✨ What's New in Version 1.2.0
+## ✨ What's New in Version 1.3.1-beta
+
+### Addon Integration System 🆕
+- **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles with professional configurations
+- **User-Friendly Profile Dialog**: Scrollable popup with selectable text for easy profile copying and sharing
+- **Profile Management Interface**: Clean, Nord-themed interface for addon configuration management
+- **Extensible Integration Framework**: Foundation for future addon integrations and profile sharing
+
+### Midnight Beta Compatibility 🌙
+- **Interface 120000 Support**: Full compatibility with World of Warcraft Midnight Beta
+- **Future-Proof Architecture**: Ready for upcoming WoW expansion features and API changes
+- **Enhanced API Compliance**: Updated for latest WoW development standards
 
 ### Enhanced Configuration Interface
 - **Professional Menu System**: Completely redesigned configuration interface with modern Nord theme
@@ -12,11 +23,6 @@ A comprehensive media addon that provides high-quality fonts, audio files, and s
 - **Minimap Integration**: Interactive minimap button with configuration access
 - **WoW Addon Compartment**: Full support for the modern addon drawer system
 - **General Settings Panel**: Centralized interface customization options
-
-### Addon Integration System 🆕
-- **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles
-- **Profile Management**: Easy copying and importing of addon configurations
-- **Extensible Framework**: Foundation for future addon integrations
 
 ### Improved User Experience
 - **Visual Polish**: Enhanced hover states, selection indicators, and custom scrollbars
@@ -42,9 +48,10 @@ Access the configuration interface with any of these commands:
 - **Real-time Preview**: Test any audio file before applying
 
 ### Addon Integration System 🆕
-- **BetterBlizzFrames**: Import optimized profiles for BetterBlizzFrames addon
-- **Profile Management**: User-friendly dialog for copying and importing addon configurations
-- **Future Expansions**: Framework ready for additional addon integrations
+- **BetterBlizzFrames Integration**: Import optimized profiles for BetterBlizzFrames addon with professional configurations
+- **Profile Management Dialog**: User-friendly scrollable dialog with selectable text for easy profile copying and sharing
+- **Addon Configuration Sharing**: Clean interface for managing and importing addon configurations
+- **Future Expansions**: Extensible framework ready for additional addon integrations
 
 ## Quick Commands
 
