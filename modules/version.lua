@@ -3,7 +3,7 @@
 -- Version: @project-version@
 
 local addonName = "NoobTacoUI-Media"
-local addonVersion = "v1.2.0" -- Fallback version - should match latest git tag
+local addonVersion = "v1.2.1-beta" -- Fallback version - should match latest git tag
 
 -- Create a frame to handle the slash command
 local versionFrame = CreateFrame("Frame")

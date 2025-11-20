@@ -1,5 +1,81 @@
 # NoobTacoUIMedia
 
+## [v1.2.1-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.2.1-beta) (2025-11-20)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.2.1-beta)
+
+### 🎯 Major Features Added
+
+#### Addon Integration System 🆕
+- **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles
+- **User-Friendly Dialog**: Scrollable popup with selectable text for easy profile copying
+- **Profile Management**: Clean interface for addon configuration sharing
+- **Extensible Framework**: Foundation for future addon integrations
+
+#### Midnight Beta Compatibility 🌙
+- **Interface Update**: Full compatibility with WoW Midnight Beta (Interface: 120000)
+- **Future-Proof**: Ready for upcoming WoW expansion features
+- **API Compliance**: Updated for latest WoW API standards
+
+### 🔧 Technical Improvements
+
+#### Enhanced Configuration Interface
+- **Scrollable Profile Dialog**: Custom Nord-themed scrollable dialog for long profile strings
+- **Improved Copy Mechanism**: User-friendly text selection instead of clipboard tricks
+- **Better Error Handling**: Graceful fallbacks for missing addon dependencies
+
+#### Database Architecture
+- **AddonProfiles Module**: New dedicated module for managing addon profile data
+- **Profile String Storage**: Secure storage of optimized addon configurations
+- **Version Detection**: Smart detection of addon availability and compatibility
+
+### 🎨 User Experience
+
+#### Professional Profile Management
+- **Visual Feedback**: Clear success messages and instructions for profile import
+- **Accessibility**: Proper text selection and copying for all users
+- **Nord Theme Integration**: Consistent styling with existing configuration interface
+
+#### Future-Ready Framework
+- **Modular Design**: Easy addition of new addon integrations
+- **Profile Validation**: Automatic validation of profile data integrity
+- **User Guidance**: Step-by-step instructions for profile import processes
+
+### 📚 Documentation Updates
+
+#### Enhanced User Documentation
+- **Addon Integration Section**: New section explaining addon integration features
+- **Midnight Beta Badge**: Added compatibility indicators throughout documentation
+- **Profile Import Guide**: Step-by-step instructions for using addon integrations
+
+#### Technical Documentation
+- **Implementation Details**: Comprehensive technical guide for addon integrations
+- **API Documentation**: Clear documentation of profile management functions
+- **Future Expansion**: Guidelines for adding new addon integrations
+
+### 🚀 What's Next
+
+This beta release introduces the foundation for addon integration with BetterBlizzFrames as the first implementation. Future enhancements may include:
+- **Additional Addon Profiles**: More optimized profiles for popular addons
+- **Profile Sharing**: Community profile sharing and import features
+- **Advanced Profile Management**: Profile versioning and conflict resolution
+- **Integration with Other NoobTacoUI Components**: Unified configuration across the suite
+
+### 💻 For Developers
+
+#### New Module Architecture
+- **AddonProfiles.lua**: Dedicated module for addon profile management
+- **Profile Data Structure**: Standardized format for addon configuration data
+- **Integration APIs**: Clean APIs for adding new addon integrations
+
+#### Quality Assurance
+- **Syntax Validation**: All code passes Lua syntax checks
+- **Cross-Version Testing**: Tested across multiple WoW versions
+- **Performance Monitoring**: Efficient profile loading and management
+
+---
+
+**Beta Release Notes**: This is a beta release introducing the new addon integration system. The core functionality remains stable, with the new features thoroughly tested. Please report any issues encountered with the BetterBlizzFrames integration or Midnight Beta compatibility.
+
 ## [v1.2.0](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.2.0) (2025-09-06)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.1.3...v1.2.0) [Previous Releases](https://github.com/NoobTaco/NoobTacoUI-Media/releases)
 
