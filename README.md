@@ -48,8 +48,13 @@ Access the configuration interface with any of these commands:
 - **Real-time Preview**: Test any audio file before applying
 
 ### Addon Integration System 🆕
-- **BetterBlizzFrames Integration**: Import optimized profiles for BetterBlizzFrames addon with professional configurations
-- **Platynator Integration**: Import optimized profiles for Platynator addon with professional nameplate configurations
+The addon now includes a powerful integration system that allows you to import optimized profiles for other popular addons. This ensures a cohesive UI experience with professional configurations.
+
+#### Supported Integrations
+- **BetterBlizzFrames** - Import optimized profiles for BetterBlizzFrames
+- **Platynator** - Import optimized nameplate profiles
+
+#### Key Features
 - **Smart Layout**: Collapsible profile list for clean and organized navigation
 - **Profile Management Dialog**: User-friendly scrollable dialog with selectable text for easy profile copying and sharing
 - **Addon Configuration Sharing**: Clean interface for managing and importing addon configurations
