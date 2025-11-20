@@ -1923,9 +1923,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
   -- Check if BetterBlizzFrames is loaded
   local bbfLoaded = C_AddOns.IsAddOnLoaded("BetterBlizzFrames")
   local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator")
-  
-  local currentYOffset = -SECTION_SPACING
-  
+
   if bbfLoaded then
     -- Add BetterBlizzFrames section
     local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzFrames")
@@ -2099,7 +2097,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
       print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
       print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
     end)
-    
+
     currentYOffset = currentYOffset - 260 -- Height of BBF container plus spacing
   end
 
