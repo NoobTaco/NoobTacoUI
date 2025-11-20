@@ -2024,26 +2024,75 @@ addonIntegrationButton:SetScript("OnClick", function(self)
 
     -- Button click handler
     copyButton:SetScript("OnClick", function(self)
-      -- Create a temporary edit box to attempt clipboard copy
-      local tempBox = CreateFrame("EditBox", "NoobTacoTempCopyBox", UIParent)
-      tempBox:SetSize(1, 1)
-      tempBox:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
-      tempBox:SetAutoFocus(false)
-      tempBox:SetMultiLine(false)
-      tempBox:SetFontObject(GameFontNormal)
-      tempBox:SetText(profile.profileString)
-      tempBox:Show()
-      tempBox:SetFocus()
-      tempBox:HighlightText()
+      -- Show a dialog with the profile string for manual copying
+      if not addon.CopyProfileDialog then
+        addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent,
+          "BasicFrameTemplateWithInset")
+        addon.CopyProfileDialog:SetSize(500, 400)
+        addon.CopyProfileDialog:SetPoint("TOP", UIParent, "TOP", 0, -50)
+        addon.CopyProfileDialog.TitleBg:SetHeight(30)
+        addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
+        addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
+        addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
+        addon.CopyProfileDialog.title:SetText("Copy Profile String")
 
-      -- Attempt to copy by briefly showing and focusing
-      C_Timer.After(0.05, function()
-        if tempBox:GetText() == profile.profileString then
-          tempBox:Hide()
-          print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string copied to clipboard!")
-          print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
-        end
-      end)
+        -- Create scrollable content area
+        local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
+        scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
+        scrollFrame:SetPoint("BOTTOMRIGHT", addon.CopyProfileDialog, "BOTTOMRIGHT", -16, 50)
+
+        local scrollChild = scrollFrame.scrollChild
+        scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
+
+        -- Profile text as selectable EditBox
+        addon.CopyProfileDialog.editBox = CreateFrame("EditBox", nil, scrollChild)
+        addon.CopyProfileDialog.editBox:SetMultiLine(true)
+        addon.CopyProfileDialog.editBox:SetFontObject("GameFontNormal")
+        addon.CopyProfileDialog.editBox:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 8, -8)
+        addon.CopyProfileDialog.editBox:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -8)
+        addon.CopyProfileDialog.editBox:SetJustifyH("LEFT")
+        addon.CopyProfileDialog.editBox:SetJustifyV("TOP")
+        addon.CopyProfileDialog.editBox:SetAutoFocus(true)
+        addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
+        addon.CopyProfileDialog.editBox:SetSpacing(2)
+
+        -- Make it read-only but selectable
+        addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self)
+          -- Prevent editing by restoring the original text
+          self:SetText(profile.profileString or "")
+        end)
+        addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
+          self:HighlightText()
+        end)
+
+        -- Background for the editbox
+        local bg = addon.CopyProfileDialog.editBox:CreateTexture(nil, "BACKGROUND")
+        bg:SetAllPoints()
+        bg:SetColorTexture(0, 0, 0, 0.3)
+
+        -- OK Button
+        addon.CopyProfileDialog.okButton = CreateFrame("Button", nil, addon.CopyProfileDialog, "GameMenuButtonTemplate")
+        addon.CopyProfileDialog.okButton:SetSize(80, 22)
+        addon.CopyProfileDialog.okButton:SetPoint("BOTTOM", 0, 15)
+        addon.CopyProfileDialog.okButton:SetText("OK")
+        addon.CopyProfileDialog.okButton:SetScript("OnClick", function()
+          addon.CopyProfileDialog:Hide()
+        end)
+
+        -- Store scroll frame reference
+        addon.CopyProfileDialog.scrollFrame = scrollFrame
+      end
+
+      addon.CopyProfileDialog.editBox:SetText(profile.profileString)
+      -- Update scroll child height based on text
+      local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
+      addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
+        addon.CopyProfileDialog.scrollFrame:GetHeight()))
+      addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
+      addon.CopyProfileDialog:Show()
+
+      print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
+      print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
     end)
   else
     -- Add message when BetterBlizzFrames is not loaded
