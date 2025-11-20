@@ -1801,7 +1801,7 @@ local function CreateCollapsibleAddonSection(parent, title, profile, previousEle
       addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
       addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
       addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
-      addon.CopyProfileDialog.title:SetText("Copy Profile String")
+      -- Title text will be set dynamically
 
       local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
       scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
@@ -1821,9 +1821,14 @@ local function CreateCollapsibleAddonSection(parent, title, profile, previousEle
       addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
       addon.CopyProfileDialog.editBox:SetSpacing(2)
 
-      addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self)
-        self:SetText(profile.profileString or "")
+      -- Prevent manual editing by resetting text if it changes from what we set
+      addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self, userInput)
+        if userInput and addon.CopyProfileDialog.currentString then
+          self:SetText(addon.CopyProfileDialog.currentString)
+          self:HighlightText()
+        end
       end)
+
       addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
         self:HighlightText()
       end)
@@ -1843,7 +1848,11 @@ local function CreateCollapsibleAddonSection(parent, title, profile, previousEle
       addon.CopyProfileDialog.scrollFrame = scrollFrame
     end
 
+    -- Update dialog state for this specific profile
+    addon.CopyProfileDialog.currentString = profile.profileString
+    addon.CopyProfileDialog.title:SetText("Copy " .. profile.displayName .. " Profile")
     addon.CopyProfileDialog.editBox:SetText(profile.profileString)
+    addon.CopyProfileDialog.editBox:HighlightText()
     local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
     addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
       addon.CopyProfileDialog.scrollFrame:GetHeight()))
