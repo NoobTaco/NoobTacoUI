@@ -1936,8 +1936,8 @@ addonIntegrationButton:SetScript("OnClick", function(self)
 
     -- Create a subtle background container for the BBF options
     local bbfContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
-    bbfContainer:SetPoint("TOPLEFT", bbfHeader, "BOTTOMLEFT", -8, -12)
-    bbfContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -12)
+    bbfContainer:SetPoint("TOPLEFT", bbfHeader, "BOTTOMLEFT", 0, -12)
+    bbfContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", 0, -12)
     bbfContainer:SetHeight(280) -- Increased height for better content fit
 
     -- Apply subtle Nord1 background with slight transparency
@@ -2107,8 +2107,8 @@ addonIntegrationButton:SetScript("OnClick", function(self)
 
     -- Create a subtle background container for the Platynator options
     local platynatorContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
-    platynatorContainer:SetPoint("TOPLEFT", platynatorHeader, "BOTTOMLEFT", -8, -12)
-    platynatorContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -12)
+    platynatorContainer:SetPoint("TOPLEFT", platynatorHeader, "BOTTOMLEFT", 0, -12)
+    platynatorContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", 0, -12)
     platynatorContainer:SetHeight(280) -- Same height as BBF for consistency
 
     -- Apply subtle Nord1 background with slight transparency
