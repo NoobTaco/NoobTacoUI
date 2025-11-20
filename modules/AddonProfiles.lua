@@ -30,6 +30,30 @@ addon.AddonProfiles.BetterBlizzFrames = {
   dateCreated = "2025-11-14"
 }
 
+-- Platynator Profile
+-- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Version: 1.0
+-- Last Updated: 2025-11-20
+addon.AddonProfiles.Platynator = {
+  name = "Platynator",
+  displayName = "Platynator",
+  description =
+  "Import a pre-configured profile for Platynator that complements the NoobTacoUI aesthetic. This profile includes optimized nameplate styling and positioning.",
+  downloadUrl = "https://www.curseforge.com/wow/addons/platynator",
+  command = "/platynator",
+  instructions = {
+    "Click the button below to copy the profile string",
+    "Type |cFFEBCB8B/platynator|r in chat to open Platynator config",
+    "Navigate to the |cFFEBCB8BImport Profile|r section",
+    "Paste the profile string and import"
+  },
+  profileString =
+  '{"highlights":[{"anchor":[],"color":{"b":1,"g":1,"r":1},"kind":"target","asset":"wide/arrows","scale":1}],"specialBars":[],"addon":"Platynator","auras":[{"direction":"RIGHT","height":1,"anchor":["BOTTOMLEFT",-62,9],"kind":"debuffs","showCountdown":true,"scale":1},{"direction":"LEFT","height":1,"anchor":["LEFT",-100,0],"kind":"buffs","showCountdown":true,"scale":1},{"direction":"RIGHT","height":1,"anchor":["RIGHT",87,0],"kind":"crowdControl","showCountdown":true,"scale":1}],"font":{"outline":false,"shadow":true,"asset":"Dosis-Bold"},"version":1,"bars":[{"relativeTo":0,"scale":1,"aggroColoursOnHostiles":true,"absorb":{"color":{"r":1,"g":1,"b":1},"asset":"wide/blizzard-absorb"},"foreground":{"asset":"wide/fade-left"},"colors":{"npc":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079},"hostile":{"b":0,"g":0,"r":1},"neutral":{"b":0,"g":1,"r":1},"friendly":{"b":0,"g":1,"r":0},"unfriendly":{"r":1,"g":0.5058823529411765,"b":0}},"threat":{"offtank":{"b":0.7843137254901961,"g":0.6666666666666666,"r":0.05882352941176471},"warning":{"b":0,"g":0,"r":0.8},"safe":{"b":0.9019607843137256,"g":0.5882352941176471,"r":0.05882352941176471},"transition":{"b":0,"g":0.6274509803921569,"r":1}}},"kind":"health","anchor":[],"background":{"applyColor":false,"asset":"black","alpha":0.44},"marker":{"asset":"none"},"border":{"color":{"b":0,"g":0,"r":0},"asset":"wide/thin"}},{"marker":{"asset":"none"},"anchor":["TOP",0,-7],"colors":{"normal":{"b":0,"g":0.5490196078431373,"r":0.9882352941176472},"uninterruptable":{"b":0.7647058823529411,"g":0.7529411764705882,"r":0.5137254901960784},"interrupted":{"b":0.8784313725490196,"g":0.211764705882353,"r":0.9882352941176472}},"kind":"cast","foreground":{"asset":"white"},"background":{"applyColor":false,"asset":"white","alpha":0.15},"border":{"color":{"b":0,"g":0,"r":0},"asset":"wide/thin"},"scale":1}],"kind":"style","markers":[{"scale":1,"color":{"b":1,"g":1,"r":1},"kind":"quest","asset":"normal/quest-blizzard","anchor":["LEFT",-78,0]},{"scale":0.8,"color":{"b":0.9019608497619629,"g":0.9019608497619629,"r":1},"kind":"cannotInterrupt","asset":"normal/shield-soft","anchor":["TOP",0,-10]},{"scale":1,"color":{"b":1,"g":1,"r":1},"kind":"elite","asset":"special/blizzard-elite-midnight","anchor":["LEFT",-83,0]},{"scale":1.25,"color":{"b":1,"g":1,"r":1},"kind":"raid","asset":"normal/blizzard-raid","anchor":["BOTTOM",0,12]}],"texts":[{"widthLimit":124,"truncate":true,"align":"LEFT","colors":{"npc":{"tapped":{"r":0.4313725490196079,"g":0.4313725490196079,"b":0.4313725490196079},"hostile":{"r":1,"g":0,"b":0},"neutral":{"r":1,"g":1,"b":0},"friendly":{"r":0,"g":1,"b":0},"unfriendly":{"r":1,"g":0.5058823529411765,"b":0}}},"color":{"r":1,"g":1,"b":1},"anchor":["RIGHT",64,0],"kind":"creatureName","scale":0.8,"applyClassColors":false},{"align":"LEFT","widthLimit":0,"truncate":true,"anchor":["TOPLEFT",-60,-9],"kind":"castSpellName","scale":0.7,"color":{"b":1,"g":1,"r":1}},{"align":"RIGHT","scale":0.8,"widthLimit":0,"displayTypes":["percentage"],"color":{"b":1,"g":1,"r":1},"kind":"health","anchor":["RIGHT",60,0],"truncate":false}]}',
+  version = "1.0",
+  author = "NoobTaco",
+  dateCreated = "2025-11-20"
+}
+
 -- Add more addon profiles here following the same structure
 -- Example:
 -- addon.AddonProfiles.AnotherAddon = {

@@ -49,6 +49,7 @@ Access the configuration interface with any of these commands:
 
 ### Addon Integration System 🆕
 - **BetterBlizzFrames Integration**: Import optimized profiles for BetterBlizzFrames addon with professional configurations
+- **Platynator Integration**: Import optimized profiles for Platynator addon with professional nameplate configurations
 - **Profile Management Dialog**: User-friendly scrollable dialog with selectable text for easy profile copying and sharing
 - **Addon Configuration Sharing**: Clean interface for managing and importing addon configurations
 - **Future Expansions**: Extensible framework ready for additional addon integrations
@@ -123,6 +124,7 @@ This addon works with any World of Warcraft addon that uses LibSharedMedia-3.0 f
 - Details!
 - Bartender4
 - BetterBlizzFrames (with integrated profile import)
+- Platynator (with integrated profile import)
 - And many more...
 
 # Download & Support
