@@ -1925,19 +1925,19 @@ addonIntegrationButton:SetScript("OnClick", function(self)
   local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
 
   local currentYOffset = -INNER_PADDING
-  local lastElement = content.addonIntegrationPanel.Divider
+  local lastElement = scrollChild
 
   if bbfLoaded then
     -- Add BetterBlizzFrames section
-    local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzFrames")
-    bbfHeader:SetPoint("TOPLEFT", lastElement, "BOTTOMLEFT", 0, currentYOffset)
+    local bbfHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "BetterBlizzFrames")
+    bbfHeader:SetPoint("TOPLEFT", lastElement, "TOPLEFT", 0, currentYOffset)
     -- Use same color as selected button for consistency and better readability
     bbfHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
     -- Create a subtle background container for the BBF options
-    local bbfContainer = addon.UIUtils:CreateThemedFrame(content.addonIntegrationPanel, "Frame")
+    local bbfContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
     bbfContainer:SetPoint("TOPLEFT", bbfHeader, "BOTTOMLEFT", -8, -12)
-    bbfContainer:SetPoint("TOPRIGHT", content.addonIntegrationPanel, "TOPRIGHT", -8, -12)
+    bbfContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -12)
     bbfContainer:SetHeight(220) -- Increased height for better content fit
 
     -- Apply subtle Nord1 background with slight transparency
@@ -2108,15 +2108,15 @@ addonIntegrationButton:SetScript("OnClick", function(self)
 
   if platynatorLoaded then
     -- Add Platynator section
-    local platynatorHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "Platynator")
+    local platynatorHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Platynator")
     platynatorHeader:SetPoint("TOPLEFT", lastElement, "BOTTOMLEFT", 0, currentYOffset)
     -- Use same color as selected button for consistency and better readability
     platynatorHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
     -- Create a subtle background container for the Platynator options
-    local platynatorContainer = addon.UIUtils:CreateThemedFrame(content.addonIntegrationPanel, "Frame")
+    local platynatorContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
     platynatorContainer:SetPoint("TOPLEFT", platynatorHeader, "BOTTOMLEFT", -8, -12)
-    platynatorContainer:SetPoint("TOPRIGHT", content.addonIntegrationPanel, "TOPRIGHT", -8, -12)
+    platynatorContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -12)
     platynatorContainer:SetHeight(220) -- Same height as BBF for consistency
 
     -- Apply subtle Nord1 background with slight transparency
