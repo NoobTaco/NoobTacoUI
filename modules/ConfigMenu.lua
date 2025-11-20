@@ -1938,7 +1938,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     local bbfContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
     bbfContainer:SetPoint("TOPLEFT", bbfHeader, "BOTTOMLEFT", -8, -12)
     bbfContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -12)
-    bbfContainer:SetHeight(220) -- Increased height for better content fit
+    bbfContainer:SetHeight(280) -- Increased height for better content fit
 
     -- Apply subtle Nord1 background with slight transparency
     local bgTexture = bbfContainer:CreateTexture(nil, "BACKGROUND")
@@ -1996,7 +1996,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     end
     bbfInstructions:SetText(instructionsText)
     bbfInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 95
+    yOffset = yOffset - 120
 
     -- Copy Profile Button
     local copyButton = CreateFrame("Button", nil, bbfContainer)
@@ -2109,7 +2109,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     local platynatorContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
     platynatorContainer:SetPoint("TOPLEFT", platynatorHeader, "BOTTOMLEFT", -8, -12)
     platynatorContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -12)
-    platynatorContainer:SetHeight(220) -- Same height as BBF for consistency
+    platynatorContainer:SetHeight(280) -- Same height as BBF for consistency
 
     -- Apply subtle Nord1 background with slight transparency
     local bgTexture = platynatorContainer:CreateTexture(nil, "BACKGROUND")
@@ -2167,7 +2167,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     end
     platynatorInstructions:SetText(instructionsText)
     platynatorInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 95
+    yOffset = yOffset - 120
 
     -- Copy Profile Button
     local copyButton = CreateFrame("Button", nil, platynatorContainer)
