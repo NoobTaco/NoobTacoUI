@@ -1921,10 +1921,15 @@ addonIntegrationButton:SetScript("OnClick", function(self)
   end
 
   -- Check if BetterBlizzFrames is loaded
-  if C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
+  local bbfLoaded = C_AddOns.IsAddOnLoaded("BetterBlizzFrames")
+  local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator")
+  
+  local currentYOffset = -SECTION_SPACING
+  
+  if bbfLoaded then
     -- Add BetterBlizzFrames section
     local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzFrames")
-    bbfHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+    bbfHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, currentYOffset)
     -- Use same color as selected button for consistency and better readability
     bbfHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
@@ -2094,8 +2099,187 @@ addonIntegrationButton:SetScript("OnClick", function(self)
       print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
       print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
     end)
-  else
-    -- Add message when BetterBlizzFrames is not loaded
+    
+    currentYOffset = currentYOffset - 260 -- Height of BBF container plus spacing
+  end
+
+  if platynatorLoaded then
+    -- Add Platynator section
+    local platynatorHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "Platynator")
+    platynatorHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, currentYOffset)
+    -- Use same color as selected button for consistency and better readability
+    platynatorHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
+
+    -- Create a subtle background container for the Platynator options
+    local platynatorContainer = addon.UIUtils:CreateThemedFrame(content.addonIntegrationPanel, "Frame")
+    platynatorContainer:SetPoint("TOPLEFT", platynatorHeader, "BOTTOMLEFT", -8, -12)
+    platynatorContainer:SetPoint("TOPRIGHT", content.addonIntegrationPanel, "TOPRIGHT", -8, -12)
+    platynatorContainer:SetHeight(220) -- Same height as BBF for consistency
+
+    -- Apply subtle Nord1 background with slight transparency
+    local bgTexture = platynatorContainer:CreateTexture(nil, "BACKGROUND")
+    bgTexture:SetAllPoints()
+    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    bgTexture:SetAlpha(0.3)
+
+    -- Add a subtle border using Nord3
+    local borderTexture = platynatorContainer:CreateTexture(nil, "BORDER")
+    borderTexture:SetAllPoints()
+    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
+    borderTexture:SetAlpha(0.4)
+
+    -- Create inset for the border effect
+    local insetTexture = platynatorContainer:CreateTexture(nil, "ARTWORK")
+    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
+    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
+    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+    insetTexture:SetAlpha(0.3)
+
+    local yOffset = -20 -- Start with more padding inside container
+
+    -- Get profile data from AddonProfiles module
+    local profile = addon.GetProfile("Platynator")
+    if not profile then
+      print("|cFFBF616ANoobTacoUI-Media|r: Platynator profile not found!")
+      return
+    end
+
+    -- Description text
+    local platynatorDesc = platynatorContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(platynatorDesc, "body-text")
+    platynatorDesc:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    platynatorDesc:SetPoint("RIGHT", platynatorContainer, "RIGHT", -INNER_PADDING, 0)
+    platynatorDesc:SetJustifyH("LEFT")
+    platynatorDesc:SetJustifyV("TOP")
+    platynatorDesc:SetSpacing(3)
+    platynatorDesc:SetText(profile.description)
+    platynatorDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    yOffset = yOffset - 50
+
+    -- CurseForge link text
+    local platynatorLink = platynatorContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(platynatorLink, "body-text")
+    platynatorLink:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    platynatorLink:SetText("|cFF88C0D0Download:|r " .. profile.downloadUrl)
+    platynatorLink:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
+    yOffset = yOffset - 25
+
+    -- Instructions text
+    local platynatorInstructions = platynatorContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(platynatorInstructions, "body-text")
+    platynatorInstructions:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
+    platynatorInstructions:SetPoint("RIGHT", platynatorContainer, "RIGHT", -INNER_PADDING, 0)
+    platynatorInstructions:SetJustifyH("LEFT")
+    platynatorInstructions:SetJustifyV("TOP")
+    platynatorInstructions:SetSpacing(2)
+
+    -- Format instructions from profile data
+    local instructionsText = "|cFFA3BE8CInstructions:|r\n"
+    for i, instruction in ipairs(profile.instructions) do
+      instructionsText = instructionsText .. i .. ". " .. instruction .. "\n"
+    end
+    platynatorInstructions:SetText(instructionsText)
+    platynatorInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    yOffset = yOffset - 70
+
+    -- Copy Profile Button
+    local copyButton = CreateFrame("Button", nil, platynatorContainer)
+    copyButton:SetSize(160, 32)
+    copyButton:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
+
+    -- Button background
+    copyButton.bg = copyButton:CreateTexture(nil, "BACKGROUND")
+    copyButton.bg:SetAllPoints()
+    copyButton.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+
+    copyButton.highlight = copyButton:CreateTexture(nil, "HIGHLIGHT")
+    copyButton.highlight:SetAllPoints()
+    copyButton.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
+    copyButton.highlight:SetAlpha(0.3)
+
+    -- Button text
+    copyButton.text = copyButton:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(copyButton.text, "label-emphasis")
+    copyButton.text:SetPoint("CENTER")
+    copyButton.text:SetText("Copy Profile String")
+    copyButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+    -- Button click handler
+    copyButton:SetScript("OnClick", function(self)
+      -- Show a dialog with the profile string for manual copying
+      if not addon.CopyProfileDialog then
+        addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent,
+          "BasicFrameTemplateWithInset")
+        addon.CopyProfileDialog:SetSize(500, 400)
+        addon.CopyProfileDialog:SetPoint("TOP", UIParent, "TOP", 0, -50)
+        addon.CopyProfileDialog.TitleBg:SetHeight(30)
+        addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
+        addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
+        addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
+        addon.CopyProfileDialog.title:SetText("Copy Profile String")
+
+        -- Create scrollable content area
+        local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
+        scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
+        scrollFrame:SetPoint("BOTTOMRIGHT", addon.CopyProfileDialog, "BOTTOMRIGHT", -16, 50)
+
+        local scrollChild = scrollFrame.scrollChild
+        scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
+
+        -- Profile text as selectable EditBox
+        addon.CopyProfileDialog.editBox = CreateFrame("EditBox", nil, scrollChild)
+        addon.CopyProfileDialog.editBox:SetMultiLine(true)
+        addon.CopyProfileDialog.editBox:SetFontObject("GameFontNormal")
+        addon.CopyProfileDialog.editBox:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 8, -8)
+        addon.CopyProfileDialog.editBox:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -8)
+        addon.CopyProfileDialog.editBox:SetJustifyH("LEFT")
+        addon.CopyProfileDialog.editBox:SetJustifyV("TOP")
+        addon.CopyProfileDialog.editBox:SetAutoFocus(true)
+        addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
+        addon.CopyProfileDialog.editBox:SetSpacing(2)
+
+        -- Make it read-only but selectable
+        addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self)
+          -- Prevent editing by restoring the original text
+          self:SetText(profile.profileString or "")
+        end)
+        addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
+          self:HighlightText()
+        end)
+
+        -- Background for the editbox
+        local bg = addon.CopyProfileDialog.editBox:CreateTexture(nil, "BACKGROUND")
+        bg:SetAllPoints()
+        bg:SetColorTexture(0, 0, 0, 0.3)
+
+        -- OK Button
+        addon.CopyProfileDialog.okButton = CreateFrame("Button", nil, addon.CopyProfileDialog, "GameMenuButtonTemplate")
+        addon.CopyProfileDialog.okButton:SetSize(80, 22)
+        addon.CopyProfileDialog.okButton:SetPoint("BOTTOM", 0, 15)
+        addon.CopyProfileDialog.okButton:SetText("OK")
+        addon.CopyProfileDialog.okButton:SetScript("OnClick", function()
+          addon.CopyProfileDialog:Hide()
+        end)
+
+        -- Store scroll frame reference
+        addon.CopyProfileDialog.scrollFrame = scrollFrame
+      end
+
+      addon.CopyProfileDialog.editBox:SetText(profile.profileString)
+      -- Update scroll child height based on text
+      local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
+      addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
+        addon.CopyProfileDialog.scrollFrame:GetHeight()))
+      addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
+      addon.CopyProfileDialog:Show()
+
+      print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
+      print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
+    end)
+  end
+
+  if not bbfLoaded and not platynatorLoaded then
+    -- Add message when neither addon is loaded
     local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
     ApplyConfigFont(noAddonText, "body-text")
     noAddonText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
@@ -2103,7 +2287,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     noAddonText:SetJustifyH("LEFT")
     noAddonText:SetJustifyV("TOP")
     noAddonText:SetText(
-      "BetterBlizzFrames addon not detected. Install and enable it to access profile import functionality.")
+      "No compatible addons detected. Install and enable BetterBlizzFrames or Platynator to access profile import functionality.")
     noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
   end
 
