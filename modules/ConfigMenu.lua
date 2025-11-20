@@ -1980,14 +1980,6 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     bbfDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
     yOffset = yOffset - 50
 
-    -- CurseForge link text
-    local bbfLink = bbfContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(bbfLink, "body-text")
-    bbfLink:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    bbfLink:SetText("|cFF88C0D0Download:|r " .. profile.downloadUrl)
-    bbfLink:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-    yOffset = yOffset - 25
-
     -- Instructions text
     local bbfInstructions = bbfContainer:CreateFontString(nil, "OVERLAY")
     ApplyConfigFont(bbfInstructions, "body-text")
@@ -2004,7 +1996,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     end
     bbfInstructions:SetText(instructionsText)
     bbfInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 70
+    yOffset = yOffset - 95
 
     -- Copy Profile Button
     local copyButton = CreateFrame("Button", nil, bbfContainer)
@@ -2159,14 +2151,6 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     platynatorDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
     yOffset = yOffset - 50
 
-    -- CurseForge link text
-    local platynatorLink = platynatorContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(platynatorLink, "body-text")
-    platynatorLink:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    platynatorLink:SetText("|cFF88C0D0Download:|r " .. profile.downloadUrl)
-    platynatorLink:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
-    yOffset = yOffset - 25
-
     -- Instructions text
     local platynatorInstructions = platynatorContainer:CreateFontString(nil, "OVERLAY")
     ApplyConfigFont(platynatorInstructions, "body-text")
@@ -2183,7 +2167,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     end
     platynatorInstructions:SetText(instructionsText)
     platynatorInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 70
+    yOffset = yOffset - 95
 
     -- Copy Profile Button
     local copyButton = CreateFrame("Button", nil, platynatorContainer)
