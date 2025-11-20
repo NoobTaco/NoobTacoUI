@@ -6,6 +6,10 @@
 local addonName, addon = ...
 local LSM = LibStub("LibSharedMedia-3.0")
 
+-- Cooldown tracking
+local lastSoundTime = 0
+local SOUND_COOLDOWN = 4
+
 -- Default settings for collection notifications
 local defaultSettings = {
   enabled = true,
@@ -120,8 +124,14 @@ local function SetSetting(key, value)
 end
 
 -- Play sound notification
-local function PlayNotificationSound(soundKey)
+local function PlayNotificationSound(soundKey, ignoreCooldown)
   if not GetSetting("enabled") then return end
+
+  -- Check cooldown
+  local currentTime = GetTime()
+  if not ignoreCooldown and (currentTime - lastSoundTime < SOUND_COOLDOWN) then
+    return
+  end
 
   local soundName = GetSetting(soundKey)
   if type(soundName) ~= "string" or soundName == "" then return end
@@ -130,6 +140,9 @@ local function PlayNotificationSound(soundKey)
   local soundFile = LSM:Fetch("sound", soundName)
   if soundFile then
     PlaySoundFile(soundFile, "Master")
+    if not ignoreCooldown then
+      lastSoundTime = currentTime
+    end
   end
 end
 
@@ -326,31 +339,31 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
 
   if args == "test" then
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications: Testing all sounds...")
-    PlayNotificationSound("soundPet")
-    C_Timer.After(1, function() PlayNotificationSound("soundMount") end)
-    C_Timer.After(2, function() PlayNotificationSound("soundToy") end)
-    C_Timer.After(3, function() PlayNotificationSound("soundTransmog") end)
+    PlayNotificationSound("soundPet", true)
+    C_Timer.After(1, function() PlayNotificationSound("soundMount", true) end)
+    C_Timer.After(2, function() PlayNotificationSound("soundToy", true) end)
+    C_Timer.After(3, function() PlayNotificationSound("soundTransmog", true) end)
   elseif args == "testpet" then
     print("|cFF16C3F2NoobTacoUI|r Testing pet notification...")
-    PlayNotificationSound("soundPet")
+    PlayNotificationSound("soundPet", true)
     if GetSetting("showMessages") then
       print("|cFF16C3F2NoobTacoUI|r: New pet species collected: |cFF00FF00Test Pet|r")
     end
   elseif args == "testmount" then
     print("|cFF16C3F2NoobTacoUI|r Testing mount notification...")
-    PlayNotificationSound("soundMount")
+    PlayNotificationSound("soundMount", true)
     if GetSetting("showMessages") then
       print("|cFF16C3F2NoobTacoUI|r: New mount collected: |cFF00FF00Test Mount|r")
     end
   elseif args == "testtoy" then
     print("|cFF16C3F2NoobTacoUI|r Testing toy notification...")
-    PlayNotificationSound("soundToy")
+    PlayNotificationSound("soundToy", true)
     if GetSetting("showMessages") then
       print("|cFF16C3F2NoobTacoUI|r: New toy collected: |cFF00FF00Test Toy|r")
     end
   elseif args == "testtransmog" then
     print("|cFF16C3F2NoobTacoUI|r Testing transmog notification...")
-    PlayNotificationSound("soundTransmog")
+    PlayNotificationSound("soundTransmog", true)
     if GetSetting("showMessages") then
       print("|cFF16C3F2NoobTacoUI|r: New transmog collected: |cFF00FF00Test Transmog Item|r")
     end

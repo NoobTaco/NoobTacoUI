@@ -1,5 +1,14 @@
 # NoobTacoUIMedia
 
+## [v1.3.3-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.3-beta) (Unreleased)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.3.2-beta...v1.3.3-beta)
+
+### 🎨 User Experience
+
+#### Audio System Refinements
+- **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
+- **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
+
 ## [v1.3.2-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.2-beta) (2025-11-20)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.3.2-beta)
 
@@ -533,4 +542,4 @@ This beta release introduces the foundation for addon integration with BetterBli
 - Merge pull request #21 from NoobTaco/copilot/fix-20  
     [WIP] ✨ Set up Copilot instructions  
 - Initial plan  
-- 📝 Auto-update changelog   
+- 📝 Auto-update changelog
