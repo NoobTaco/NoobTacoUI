@@ -997,7 +997,7 @@ ApplyConfigFont(versionFooter, "small-text")
 versionFooter:SetPoint("BOTTOMRIGHT", EnhancedConfigFrame, "BOTTOMRIGHT", -PADDING, PADDING)
 versionFooter:SetJustifyH("RIGHT")
 versionFooter:SetText("v" .. (C_AddOns and C_AddOns.GetAddOnMetadata and
-  C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.2.0"))
+  C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.3.2-beta"))
 versionFooter:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
 versionFooter:SetAlpha(0.7)
 
@@ -1056,7 +1056,7 @@ aboutButton:SetScript("OnClick", function(self)
     ApplyConfigFont(versionText, "header-primary")
     versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, 0)
     versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
-      C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.2.0"))
+      C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.3.2-beta"))
     versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
     -- Author info

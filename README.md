@@ -4,7 +4,7 @@
 
 A comprehensive media addon that provides high-quality fonts, audio files, and status bar textures for World of Warcraft addons. All media is registered with LibSharedMedia-3.0 and will automatically appear in any compatible addon's media selection lists.
 
-## ✨ What's New in Version 1.3.1-beta
+## ✨ What's New in Version 1.3.2-beta
 
 ### Addon Integration System 🆕
 - **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles with professional configurations
