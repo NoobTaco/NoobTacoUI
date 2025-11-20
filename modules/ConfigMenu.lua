@@ -1925,11 +1925,12 @@ addonIntegrationButton:SetScript("OnClick", function(self)
   local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
 
   local currentYOffset = -INNER_PADDING
+  local lastElement = content.addonIntegrationPanel.Divider
 
   if bbfLoaded then
     -- Add BetterBlizzFrames section
     local bbfHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "BetterBlizzFrames")
-    bbfHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, currentYOffset)
+    bbfHeader:SetPoint("TOPLEFT", lastElement, "BOTTOMLEFT", 0, currentYOffset)
     -- Use same color as selected button for consistency and better readability
     bbfHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
@@ -2099,12 +2100,16 @@ addonIntegrationButton:SetScript("OnClick", function(self)
       print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
       print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
     end)
+
+    -- Update for next element positioning
+    lastElement = bbfContainer
+    currentYOffset = -40 -- Reset offset for spacing between sections
   end
 
   if platynatorLoaded then
     -- Add Platynator section
     local platynatorHeader = addon.UIUtils:CreateCategoryHeader(content.addonIntegrationPanel, "Platynator")
-    platynatorHeader:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, currentYOffset)
+    platynatorHeader:SetPoint("TOPLEFT", lastElement, "BOTTOMLEFT", 0, currentYOffset)
     -- Use same color as selected button for consistency and better readability
     platynatorHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
@@ -2274,7 +2279,9 @@ addonIntegrationButton:SetScript("OnClick", function(self)
       print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
       print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
     end)
-    currentYOffset = currentYOffset - 260 -- Height of Platynator container plus spacing
+    -- Update for next element positioning
+    lastElement = platynatorContainer
+    currentYOffset = -40 -- Reset offset for spacing between sections
   end
 
   if not bbfLoaded and not platynatorLoaded then
