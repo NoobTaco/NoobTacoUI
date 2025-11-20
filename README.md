@@ -4,7 +4,11 @@
 
 A comprehensive media addon that provides high-quality fonts, audio files, and status bar textures for World of Warcraft addons. All media is registered with LibSharedMedia-3.0 and will automatically appear in any compatible addon's media selection lists.
 
-## ✨ What's New in Version 1.3.2-beta
+## ✨ What's New in Version 1.3.3
+
+### Audio System Refinements 🔊
+- **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
+- **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
 
 ### Addon Integration System 🆕
 - **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles with professional configurations

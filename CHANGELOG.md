@@ -1,16 +1,7 @@
 # NoobTacoUIMedia
 
-## [v1.3.3-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.3-beta) (Unreleased)
-[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.3.2-beta...v1.3.3-beta)
-
-### 🎨 User Experience
-
-#### Audio System Refinements
-- **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
-- **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
-
-## [v1.3.2-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.2-beta) (2025-11-20)
-[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.3.2-beta)
+## [v1.3.3](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.3) (2025-11-20)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.3.3)
 
 ### 🎯 Major Features Added
 
@@ -39,6 +30,10 @@
 
 ### 🎨 User Experience
 
+#### Audio System Refinements
+- **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
+- **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
+
 #### Professional Profile Management
 - **Visual Feedback**: Clear success messages and instructions for profile import
 - **Accessibility**: Proper text selection and copying for all users
@@ -65,7 +60,7 @@
 
 ### 🚀 What's Next
 
-This beta release introduces the foundation for addon integration with BetterBlizzFrames as the first implementation. Future enhancements may include:
+This release introduces the foundation for addon integration with BetterBlizzFrames as the first implementation. Future enhancements may include:
 - **Additional Addon Profiles**: More optimized profiles for popular addons
 - **Profile Sharing**: Community profile sharing and import features
 - **Advanced Profile Management**: Profile versioning and conflict resolution
@@ -82,10 +77,6 @@ This beta release introduces the foundation for addon integration with BetterBli
 - **Syntax Validation**: All code passes Lua syntax checks
 - **Cross-Version Testing**: Tested across multiple WoW versions
 - **Performance Monitoring**: Efficient profile loading and management
-
----
-
-**Beta Release Notes**: This is a beta release introducing the new addon integration system. The core functionality remains stable, with the new features thoroughly tested. Please report any issues encountered with the BetterBlizzFrames integration or Midnight Beta compatibility.
 
 ## [v1.2.0](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.2.0) (2025-09-06)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.1.3...v1.2.0) [Previous Releases](https://github.com/NoobTaco/NoobTacoUI-Media/releases)
