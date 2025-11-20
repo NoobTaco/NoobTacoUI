@@ -1679,15 +1679,322 @@ if AreCollectionsAvailable() then
   table.insert(categories, audioButton)
 end
 
+-- Helper function for collapsible sections
+local function CreateCollapsibleAddonSection(parent, title, profile, previousElement, yOffset, onExpandCollapse)
+  local container = CreateFrame("Frame", nil, parent)
+  container:SetPoint("TOPLEFT", previousElement, "BOTTOMLEFT", 0, yOffset)
+  container:SetPoint("RIGHT", parent, "RIGHT", -INNER_PADDING, 0)
+
+  local HEADER_HEIGHT = 32
+  container:SetHeight(HEADER_HEIGHT)
+
+  -- Header Button
+  local header = CreateFrame("Button", nil, container)
+  header:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 0)
+  header:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, 0)
+  header:SetHeight(HEADER_HEIGHT)
+
+  -- Header Background
+  header.bg = header:CreateTexture(nil, "BACKGROUND")
+  header.bg:SetAllPoints()
+  header.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord0))
+  header.bg:SetAlpha(0.8)
+
+  -- Hover effect
+  header:SetScript("OnEnter", function(self)
+    self.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+  end)
+  header:SetScript("OnLeave", function(self)
+    self.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord0))
+  end)
+
+  -- Title Text
+  header.title = header:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(header.title, "header-secondary")
+  header.title:SetPoint("LEFT", header, "LEFT", INNER_PADDING, 0)
+  header.title:SetText(title)
+  header.title:SetTextColor(unpack(addon.UIAssets.Colors.Nord9))
+
+  -- Expand/Collapse Label
+  header.expandLabel = header:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(header.expandLabel, "header-secondary")
+  header.expandLabel:SetPoint("RIGHT", header, "RIGHT", -INNER_PADDING, 0)
+  header.expandLabel:SetText("+")
+  header.expandLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord9))
+
+  -- Content Frame
+  local content = CreateFrame("Frame", nil, container)
+  content:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+  content:SetPoint("TOPRIGHT", container, "TOPRIGHT", 0, 0)
+  content:Hide()
+
+  -- Content Background
+  content.bg = content:CreateTexture(nil, "BACKGROUND")
+  content.bg:SetAllPoints()
+  content.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord0))
+  content.bg:SetAlpha(0.3)
+
+  local contentYOffset = -INNER_PADDING
+
+  -- Description
+  local desc = content:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(desc, "body-text")
+  desc:SetPoint("TOPLEFT", content, "TOPLEFT", INNER_PADDING, contentYOffset)
+  desc:SetPoint("RIGHT", content, "RIGHT", -INNER_PADDING, 0)
+  desc:SetJustifyH("LEFT")
+  desc:SetJustifyV("TOP")
+  desc:SetSpacing(3)
+  desc:SetText(profile.description)
+  desc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+  -- Force width for calculation
+  desc:SetWidth(parent:GetWidth() - (INNER_PADDING * 3)) -- Approximate width
+  local descHeight = desc:GetStringHeight()
+  contentYOffset = contentYOffset - descHeight - 20
+
+  -- Instructions
+  local instructions = content:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(instructions, "body-text")
+  instructions:SetPoint("TOPLEFT", content, "TOPLEFT", INNER_PADDING, contentYOffset)
+  instructions:SetPoint("RIGHT", content, "RIGHT", -INNER_PADDING, 0)
+  instructions:SetJustifyH("LEFT")
+  instructions:SetJustifyV("TOP")
+  instructions:SetSpacing(2)
+
+  local instructionsText = "|cFFA3BE8CInstructions:|r\n"
+  for i, instruction in ipairs(profile.instructions) do
+    instructionsText = instructionsText .. i .. ". " .. instruction .. "\n"
+  end
+  instructions:SetText(instructionsText)
+  instructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+  instructions:SetWidth(parent:GetWidth() - (INNER_PADDING * 3))
+  local instrHeight = instructions:GetStringHeight()
+  contentYOffset = contentYOffset - instrHeight - 20
+
+  -- Copy Button
+  local copyButton = CreateFrame("Button", nil, content)
+  copyButton:SetSize(160, 32)
+  copyButton:SetPoint("TOPLEFT", content, "TOPLEFT", INNER_PADDING, contentYOffset)
+
+  copyButton.bg = copyButton:CreateTexture(nil, "BACKGROUND")
+  copyButton.bg:SetAllPoints()
+  copyButton.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+
+  copyButton.highlight = copyButton:CreateTexture(nil, "HIGHLIGHT")
+  copyButton.highlight:SetAllPoints()
+  copyButton.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
+  copyButton.highlight:SetAlpha(0.3)
+
+  copyButton.text = copyButton:CreateFontString(nil, "OVERLAY")
+  ApplyConfigFont(copyButton.text, "label-emphasis")
+  copyButton.text:SetPoint("CENTER")
+  copyButton.text:SetText("Copy Profile String")
+  copyButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+  copyButton:SetScript("OnClick", function()
+    if not addon.CopyProfileDialog then
+      addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent, "BasicFrameTemplateWithInset")
+      addon.CopyProfileDialog:SetSize(500, 400)
+      addon.CopyProfileDialog:SetPoint("TOP", UIParent, "TOP", 0, -50)
+      addon.CopyProfileDialog.TitleBg:SetHeight(30)
+      addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
+      addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
+      addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
+      addon.CopyProfileDialog.title:SetText("Copy Profile String")
+
+      local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
+      scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
+      scrollFrame:SetPoint("BOTTOMRIGHT", addon.CopyProfileDialog, "BOTTOMRIGHT", -16, 50)
+
+      local scrollChild = scrollFrame.scrollChild
+      scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
+
+      addon.CopyProfileDialog.editBox = CreateFrame("EditBox", nil, scrollChild)
+      addon.CopyProfileDialog.editBox:SetMultiLine(true)
+      addon.CopyProfileDialog.editBox:SetFontObject("GameFontNormal")
+      addon.CopyProfileDialog.editBox:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 8, -8)
+      addon.CopyProfileDialog.editBox:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -8)
+      addon.CopyProfileDialog.editBox:SetJustifyH("LEFT")
+      addon.CopyProfileDialog.editBox:SetJustifyV("TOP")
+      addon.CopyProfileDialog.editBox:SetAutoFocus(true)
+      addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
+      addon.CopyProfileDialog.editBox:SetSpacing(2)
+
+      addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self)
+        self:SetText(profile.profileString or "")
+      end)
+      addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
+        self:HighlightText()
+      end)
+
+      local bg = addon.CopyProfileDialog.editBox:CreateTexture(nil, "BACKGROUND")
+      bg:SetAllPoints()
+      bg:SetColorTexture(0, 0, 0, 0.3)
+
+      addon.CopyProfileDialog.okButton = CreateFrame("Button", nil, addon.CopyProfileDialog, "GameMenuButtonTemplate")
+      addon.CopyProfileDialog.okButton:SetSize(80, 22)
+      addon.CopyProfileDialog.okButton:SetPoint("BOTTOM", 0, 15)
+      addon.CopyProfileDialog.okButton:SetText("OK")
+      addon.CopyProfileDialog.okButton:SetScript("OnClick", function()
+        addon.CopyProfileDialog:Hide()
+      end)
+
+      addon.CopyProfileDialog.scrollFrame = scrollFrame
+    end
+
+    addon.CopyProfileDialog.editBox:SetText(profile.profileString)
+    local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
+    addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
+      addon.CopyProfileDialog.scrollFrame:GetHeight()))
+    addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
+    addon.CopyProfileDialog:Show()
+
+    print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
+    print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
+  end)
+
+  contentYOffset = contentYOffset - 40
+  local contentHeight = math.abs(contentYOffset)
+  content:SetHeight(contentHeight)
+
+  local isExpanded = false
+  header:SetScript("OnClick", function()
+    isExpanded = not isExpanded
+    if isExpanded then
+      content:Show()
+      container:SetHeight(HEADER_HEIGHT + contentHeight)
+      header.expandLabel:SetText("-")
+    else
+      content:Hide()
+      container:SetHeight(HEADER_HEIGHT)
+      header.expandLabel:SetText("+")
+    end
+    if onExpandCollapse then onExpandCollapse() end
+  end)
+
+  return container
+end
+
+-- Addon Integration button
+local addonIntegrationButton = CreateEnhancedCategoryButton(sidebar, "Addon Integration", addon.UIAssets.Icons.Settings)
+if AreCollectionsAvailable() then
+  addonIntegrationButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
+else
+  addonIntegrationButton:SetPoint("TOPLEFT", aboutButton, "BOTTOMLEFT", 0, -4)
+end
+
+addonIntegrationButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
+  end
+
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
+
+  -- Show addon integration panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
+
+  if not content.addonIntegrationPanel then
+    content.addonIntegrationPanel = CreateEnhancedSettingsPanel(
+      content,
+      "Addon Integration",
+      "Import optimized profiles and settings for compatible addons to create a cohesive UI experience."
+    )
+
+    -- Create scrollable content for the panel
+    local scrollFrame = CreateNordScrollFrame(content.addonIntegrationPanel)
+    scrollFrame:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
+    scrollFrame:SetPoint("BOTTOMRIGHT", content.addonIntegrationPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+
+    -- Store references
+    content.addonIntegrationPanel.scrollFrame = scrollFrame
+    content.addonIntegrationPanel.scrollChild = scrollFrame.scrollChild
+    scrollFrame.scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus scrollbar
+  end
+
+  -- Clear existing content
+  local scrollChild = content.addonIntegrationPanel.scrollChild
+  for _, child in ipairs({ scrollChild:GetChildren() }) do
+    child:Hide()
+    child:SetParent(nil)
+  end
+
+  -- Check if BetterBlizzFrames is loaded
+  local bbfLoaded = C_AddOns.IsAddOnLoaded("BetterBlizzFrames")
+  local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
+
+  local currentYOffset = -INNER_PADDING
+
+  -- Create a dummy anchor frame at the top
+  local anchor = CreateFrame("Frame", nil, scrollChild)
+  anchor:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
+  anchor:SetSize(1, 1)
+  local lastElement = anchor
+
+  local function UpdateLayout()
+    C_Timer.After(0.01, function()
+      local bottom = 0
+      local children = { scrollChild:GetChildren() }
+      for _, child in ipairs(children) do
+        if child:IsShown() then
+          local childBottom = (scrollChild:GetTop() or 0) - (child:GetBottom() or 0)
+          if childBottom > bottom then bottom = childBottom end
+        end
+      end
+      scrollChild:SetHeight(bottom + PADDING)
+      content.addonIntegrationPanel.scrollFrame.UpdateScrollThumb()
+    end)
+  end
+
+  if bbfLoaded then
+    local profile = addon.GetProfile("BetterBlizzFrames")
+    if profile then
+      local section = CreateCollapsibleAddonSection(scrollChild, "BetterBlizzFrames", profile, lastElement,
+        currentYOffset, UpdateLayout)
+      lastElement = section
+      currentYOffset = -4 -- Spacing between sections
+    end
+  end
+
+  if platynatorLoaded then
+    local profile = addon.GetProfile("Platynator")
+    if profile then
+      local section = CreateCollapsibleAddonSection(scrollChild, "Platynator", profile, lastElement, currentYOffset,
+        UpdateLayout)
+      lastElement = section
+      currentYOffset = -4
+    end
+  end
+
+  if not bbfLoaded and not platynatorLoaded then
+    -- Add message when neither addon is loaded
+    local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(noAddonText, "body-text")
+    noAddonText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+    noAddonText:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+    noAddonText:SetJustifyH("LEFT")
+    noAddonText:SetJustifyV("TOP")
+    noAddonText:SetText(
+      "No compatible addons detected. Install and enable BetterBlizzFrames or Platynator to access profile import functionality.")
+    noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+  end
+
+  UpdateLayout()
+
+  content.addonIntegrationPanel:Show()
+  content.currentPanel = content.addonIntegrationPanel
+end)
+
+table.insert(categories, addonIntegrationButton)
+
 -- General settings button
 local generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.Settings)
-if AreCollectionsAvailable() then
-  -- Position below audio button if collections are available
-  generalButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
-else
-  -- Position below about button if collections are not available
-  generalButton:SetPoint("TOPLEFT", aboutButton, "BOTTOMLEFT", 0, -4)
-end
+generalButton:SetPoint("TOPLEFT", addonIntegrationButton, "BOTTOMLEFT", 0, -4)
 generalButton:SetScript("OnClick", function(self)
   -- Clear previous selection
   if currentCategory then
@@ -1877,418 +2184,7 @@ end)
 
 table.insert(categories, generalButton)
 
--- Addon Integration button
-local addonIntegrationButton = CreateEnhancedCategoryButton(sidebar, "Addon Integration", addon.UIAssets.Icons.Settings)
-addonIntegrationButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
-addonIntegrationButton:SetScript("OnClick", function(self)
-  -- Clear previous selection
-  if currentCategory then
-    currentCategory:SetSelected(false)
-  end
 
-  -- Set new selection
-  self:SetSelected(true)
-  currentCategory = self
-
-  -- Show addon integration panel
-  if content.currentPanel then
-    content.currentPanel:Hide()
-  end
-
-  if not content.addonIntegrationPanel then
-    content.addonIntegrationPanel = CreateEnhancedSettingsPanel(
-      content,
-      "Addon Integration",
-      "Import optimized profiles and settings for compatible addons to create a cohesive UI experience."
-    )
-
-    -- Create scrollable content for the panel
-    local scrollFrame = CreateNordScrollFrame(content.addonIntegrationPanel)
-    scrollFrame:SetPoint("TOPLEFT", content.addonIntegrationPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
-    scrollFrame:SetPoint("BOTTOMRIGHT", content.addonIntegrationPanel, "BOTTOMRIGHT", -PADDING, PADDING)
-
-    -- Store references
-    content.addonIntegrationPanel.scrollFrame = scrollFrame
-    content.addonIntegrationPanel.scrollChild = scrollFrame.scrollChild
-    scrollFrame.scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus scrollbar
-  end
-
-  -- Clear existing content
-  local scrollChild = content.addonIntegrationPanel.scrollChild
-  for _, child in ipairs({ scrollChild:GetChildren() }) do
-    child:Hide()
-    child:SetParent(nil)
-  end
-
-  -- Check if BetterBlizzFrames is loaded
-  local bbfLoaded = C_AddOns.IsAddOnLoaded("BetterBlizzFrames")
-  local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
-
-  local currentYOffset = -INNER_PADDING
-  local lastElement = scrollChild
-
-  if bbfLoaded then
-    -- Add BetterBlizzFrames section
-    local bbfHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "BetterBlizzFrames")
-    bbfHeader:SetPoint("TOPLEFT", lastElement, "TOPLEFT", 0, currentYOffset)
-    -- Use same color as selected button for consistency and better readability
-    bbfHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
-
-    -- Create a subtle background container for the BBF options
-    local bbfContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
-    bbfContainer:SetPoint("TOPLEFT", bbfHeader, "BOTTOMLEFT", 0, -12)
-    bbfContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", 0, -12)
-    bbfContainer:SetHeight(240) -- Optimized height for content fit
-
-    -- Apply subtle Nord1 background with slight transparency
-    local bgTexture = bbfContainer:CreateTexture(nil, "BACKGROUND")
-    bgTexture:SetAllPoints()
-    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-    bgTexture:SetAlpha(0.3)
-
-    -- Add a subtle border using Nord3
-    local borderTexture = bbfContainer:CreateTexture(nil, "BORDER")
-    borderTexture:SetAllPoints()
-    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-    borderTexture:SetAlpha(0.4)
-
-    -- Create inset for the border effect
-    local insetTexture = bbfContainer:CreateTexture(nil, "ARTWORK")
-    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
-    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
-    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-    insetTexture:SetAlpha(0.3)
-
-    local yOffset = -20 -- Start with more padding inside container
-
-    -- Get profile data from AddonProfiles module
-    local profile = addon.GetProfile("BetterBlizzFrames")
-    if not profile then
-      print("|cFFBF616ANoobTacoUI-Media|r: BetterBlizzFrames profile not found!")
-      return
-    end
-
-    -- Description text
-    local bbfDesc = bbfContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(bbfDesc, "body-text")
-    bbfDesc:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    bbfDesc:SetPoint("RIGHT", bbfContainer, "RIGHT", -INNER_PADDING, 0)
-    bbfDesc:SetJustifyH("LEFT")
-    bbfDesc:SetJustifyV("TOP")
-    bbfDesc:SetSpacing(3)
-    bbfDesc:SetText(profile.description)
-    bbfDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 50
-
-    -- Instructions text
-    local bbfInstructions = bbfContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(bbfInstructions, "body-text")
-    bbfInstructions:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    bbfInstructions:SetPoint("RIGHT", bbfContainer, "RIGHT", -INNER_PADDING, 0)
-    bbfInstructions:SetJustifyH("LEFT")
-    bbfInstructions:SetJustifyV("TOP")
-    bbfInstructions:SetSpacing(2)
-
-    -- Format instructions from profile data
-    local instructionsText = "|cFFA3BE8CInstructions:|r\n"
-    for i, instruction in ipairs(profile.instructions) do
-      instructionsText = instructionsText .. i .. ". " .. instruction .. "\n"
-    end
-    bbfInstructions:SetText(instructionsText)
-    bbfInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 100
-
-    -- Copy Profile Button
-    local copyButton = CreateFrame("Button", nil, bbfContainer)
-    copyButton:SetSize(160, 32)
-    copyButton:SetPoint("TOPLEFT", bbfContainer, "TOPLEFT", INNER_PADDING, yOffset)
-
-    -- Button background
-    copyButton.bg = copyButton:CreateTexture(nil, "BACKGROUND")
-    copyButton.bg:SetAllPoints()
-    copyButton.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
-
-    copyButton.highlight = copyButton:CreateTexture(nil, "HIGHLIGHT")
-    copyButton.highlight:SetAllPoints()
-    copyButton.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
-    copyButton.highlight:SetAlpha(0.3)
-
-    -- Button text
-    copyButton.text = copyButton:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(copyButton.text, "label-emphasis")
-    copyButton.text:SetPoint("CENTER")
-    copyButton.text:SetText("Copy Profile String")
-    copyButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
-
-    -- Button click handler
-    copyButton:SetScript("OnClick", function(self)
-      -- Show a dialog with the profile string for manual copying
-      if not addon.CopyProfileDialog then
-        addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent,
-          "BasicFrameTemplateWithInset")
-        addon.CopyProfileDialog:SetSize(500, 400)
-        addon.CopyProfileDialog:SetPoint("TOP", UIParent, "TOP", 0, -50)
-        addon.CopyProfileDialog.TitleBg:SetHeight(30)
-        addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
-        addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
-        addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
-        addon.CopyProfileDialog.title:SetText("Copy Profile String")
-
-        -- Create scrollable content area
-        local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
-        scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
-        scrollFrame:SetPoint("BOTTOMRIGHT", addon.CopyProfileDialog, "BOTTOMRIGHT", -16, 50)
-
-        local scrollChild = scrollFrame.scrollChild
-        scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
-
-        -- Profile text as selectable EditBox
-        addon.CopyProfileDialog.editBox = CreateFrame("EditBox", nil, scrollChild)
-        addon.CopyProfileDialog.editBox:SetMultiLine(true)
-        addon.CopyProfileDialog.editBox:SetFontObject("GameFontNormal")
-        addon.CopyProfileDialog.editBox:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 8, -8)
-        addon.CopyProfileDialog.editBox:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -8)
-        addon.CopyProfileDialog.editBox:SetJustifyH("LEFT")
-        addon.CopyProfileDialog.editBox:SetJustifyV("TOP")
-        addon.CopyProfileDialog.editBox:SetAutoFocus(true)
-        addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
-        addon.CopyProfileDialog.editBox:SetSpacing(2)
-
-        -- Make it read-only but selectable
-        addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self)
-          -- Prevent editing by restoring the original text
-          self:SetText(profile.profileString or "")
-        end)
-        addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
-          self:HighlightText()
-        end)
-
-        -- Background for the editbox
-        local bg = addon.CopyProfileDialog.editBox:CreateTexture(nil, "BACKGROUND")
-        bg:SetAllPoints()
-        bg:SetColorTexture(0, 0, 0, 0.3)
-
-        -- OK Button
-        addon.CopyProfileDialog.okButton = CreateFrame("Button", nil, addon.CopyProfileDialog, "GameMenuButtonTemplate")
-        addon.CopyProfileDialog.okButton:SetSize(80, 22)
-        addon.CopyProfileDialog.okButton:SetPoint("BOTTOM", 0, 15)
-        addon.CopyProfileDialog.okButton:SetText("OK")
-        addon.CopyProfileDialog.okButton:SetScript("OnClick", function()
-          addon.CopyProfileDialog:Hide()
-        end)
-
-        -- Store scroll frame reference
-        addon.CopyProfileDialog.scrollFrame = scrollFrame
-      end
-
-      addon.CopyProfileDialog.editBox:SetText(profile.profileString)
-      -- Update scroll child height based on text
-      local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
-      addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
-        addon.CopyProfileDialog.scrollFrame:GetHeight()))
-      addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
-      addon.CopyProfileDialog:Show()
-
-      print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
-      print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
-    end)
-
-    -- Update for next element positioning
-    lastElement = bbfContainer
-    currentYOffset = -40 -- Reset offset for spacing between sections
-  end
-
-  if platynatorLoaded then
-    -- Add Platynator section
-    local platynatorHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Platynator")
-    platynatorHeader:SetPoint("TOPLEFT", lastElement, "BOTTOMLEFT", 0, currentYOffset)
-    -- Use same color as selected button for consistency and better readability
-    platynatorHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
-
-    -- Create a subtle background container for the Platynator options
-    local platynatorContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
-    platynatorContainer:SetPoint("TOPLEFT", platynatorHeader, "BOTTOMLEFT", 0, -12)
-    platynatorContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", 0, -12)
-    platynatorContainer:SetHeight(240) -- Same height as BBF for consistency
-
-    -- Apply subtle Nord1 background with slight transparency
-    local bgTexture = platynatorContainer:CreateTexture(nil, "BACKGROUND")
-    bgTexture:SetAllPoints()
-    bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-    bgTexture:SetAlpha(0.3)
-
-    -- Add a subtle border using Nord3
-    local borderTexture = platynatorContainer:CreateTexture(nil, "BORDER")
-    borderTexture:SetAllPoints()
-    borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-    borderTexture:SetAlpha(0.4)
-
-    -- Create inset for the border effect
-    local insetTexture = platynatorContainer:CreateTexture(nil, "ARTWORK")
-    insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
-    insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
-    insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-    insetTexture:SetAlpha(0.3)
-
-    local yOffset = -20 -- Start with more padding inside container
-
-    -- Get profile data from AddonProfiles module
-    local profile = addon.GetProfile("Platynator")
-    if not profile then
-      print("|cFFBF616ANoobTacoUI-Media|r: Platynator profile not found!")
-      return
-    end
-
-    -- Description text
-    local platynatorDesc = platynatorContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(platynatorDesc, "body-text")
-    platynatorDesc:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    platynatorDesc:SetPoint("RIGHT", platynatorContainer, "RIGHT", -INNER_PADDING, 0)
-    platynatorDesc:SetJustifyH("LEFT")
-    platynatorDesc:SetJustifyV("TOP")
-    platynatorDesc:SetSpacing(3)
-    platynatorDesc:SetText(profile.description)
-    platynatorDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 50
-
-    -- Instructions text
-    local platynatorInstructions = platynatorContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(platynatorInstructions, "body-text")
-    platynatorInstructions:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
-    platynatorInstructions:SetPoint("RIGHT", platynatorContainer, "RIGHT", -INNER_PADDING, 0)
-    platynatorInstructions:SetJustifyH("LEFT")
-    platynatorInstructions:SetJustifyV("TOP")
-    platynatorInstructions:SetSpacing(2)
-
-    -- Format instructions from profile data
-    local instructionsText = "|cFFA3BE8CInstructions:|r\n"
-    for i, instruction in ipairs(profile.instructions) do
-      instructionsText = instructionsText .. i .. ". " .. instruction .. "\n"
-    end
-    platynatorInstructions:SetText(instructionsText)
-    platynatorInstructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-    yOffset = yOffset - 100
-
-    -- Copy Profile Button
-    local copyButton = CreateFrame("Button", nil, platynatorContainer)
-    copyButton:SetSize(160, 32)
-    copyButton:SetPoint("TOPLEFT", platynatorContainer, "TOPLEFT", INNER_PADDING, yOffset)
-
-    -- Button background
-    copyButton.bg = copyButton:CreateTexture(nil, "BACKGROUND")
-    copyButton.bg:SetAllPoints()
-    copyButton.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
-
-    copyButton.highlight = copyButton:CreateTexture(nil, "HIGHLIGHT")
-    copyButton.highlight:SetAllPoints()
-    copyButton.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
-    copyButton.highlight:SetAlpha(0.3)
-
-    -- Button text
-    copyButton.text = copyButton:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(copyButton.text, "label-emphasis")
-    copyButton.text:SetPoint("CENTER")
-    copyButton.text:SetText("Copy Profile String")
-    copyButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
-
-    -- Button click handler
-    copyButton:SetScript("OnClick", function(self)
-      -- Show a dialog with the profile string for manual copying
-      if not addon.CopyProfileDialog then
-        addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent,
-          "BasicFrameTemplateWithInset")
-        addon.CopyProfileDialog:SetSize(500, 400)
-        addon.CopyProfileDialog:SetPoint("TOP", UIParent, "TOP", 0, -50)
-        addon.CopyProfileDialog.TitleBg:SetHeight(30)
-        addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
-        addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
-        addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
-        addon.CopyProfileDialog.title:SetText("Copy Profile String")
-
-        -- Create scrollable content area
-        local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
-        scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
-        scrollFrame:SetPoint("BOTTOMRIGHT", addon.CopyProfileDialog, "BOTTOMRIGHT", -16, 50)
-
-        local scrollChild = scrollFrame.scrollChild
-        scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
-
-        -- Profile text as selectable EditBox
-        addon.CopyProfileDialog.editBox = CreateFrame("EditBox", nil, scrollChild)
-        addon.CopyProfileDialog.editBox:SetMultiLine(true)
-        addon.CopyProfileDialog.editBox:SetFontObject("GameFontNormal")
-        addon.CopyProfileDialog.editBox:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 8, -8)
-        addon.CopyProfileDialog.editBox:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -8)
-        addon.CopyProfileDialog.editBox:SetJustifyH("LEFT")
-        addon.CopyProfileDialog.editBox:SetJustifyV("TOP")
-        addon.CopyProfileDialog.editBox:SetAutoFocus(true)
-        addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
-        addon.CopyProfileDialog.editBox:SetSpacing(2)
-
-        -- Make it read-only but selectable
-        addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self)
-          -- Prevent editing by restoring the original text
-          self:SetText(profile.profileString or "")
-        end)
-        addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
-          self:HighlightText()
-        end)
-
-        -- Background for the editbox
-        local bg = addon.CopyProfileDialog.editBox:CreateTexture(nil, "BACKGROUND")
-        bg:SetAllPoints()
-        bg:SetColorTexture(0, 0, 0, 0.3)
-
-        -- OK Button
-        addon.CopyProfileDialog.okButton = CreateFrame("Button", nil, addon.CopyProfileDialog, "GameMenuButtonTemplate")
-        addon.CopyProfileDialog.okButton:SetSize(80, 22)
-        addon.CopyProfileDialog.okButton:SetPoint("BOTTOM", 0, 15)
-        addon.CopyProfileDialog.okButton:SetText("OK")
-        addon.CopyProfileDialog.okButton:SetScript("OnClick", function()
-          addon.CopyProfileDialog:Hide()
-        end)
-
-        -- Store scroll frame reference
-        addon.CopyProfileDialog.scrollFrame = scrollFrame
-      end
-
-      addon.CopyProfileDialog.editBox:SetText(profile.profileString)
-      -- Update scroll child height based on text
-      local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
-      addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
-        addon.CopyProfileDialog.scrollFrame:GetHeight()))
-      addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
-      addon.CopyProfileDialog:Show()
-
-      print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
-      print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
-    end)
-    -- Update for next element positioning
-    lastElement = platynatorContainer
-    currentYOffset = -40 -- Reset offset for spacing between sections
-  end
-
-  if not bbfLoaded and not platynatorLoaded then
-    -- Add message when neither addon is loaded
-    local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(noAddonText, "body-text")
-    noAddonText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
-    noAddonText:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
-    noAddonText:SetJustifyH("LEFT")
-    noAddonText:SetJustifyV("TOP")
-    noAddonText:SetText(
-      "No compatible addons detected. Install and enable BetterBlizzFrames or Platynator to access profile import functionality.")
-    noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-  end
-
-  -- Update scroll area
-  content.addonIntegrationPanel.scrollFrame.UpdateScrollThumb()
-
-  content.addonIntegrationPanel:Show()
-  content.currentPanel = content.addonIntegrationPanel
-end)
-
-table.insert(categories, addonIntegrationButton)
 
 -- Select first category by default (changed to About)
 if aboutButton then
