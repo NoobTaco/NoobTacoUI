@@ -1922,7 +1922,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
 
   -- Check if BetterBlizzFrames is loaded
   local bbfLoaded = C_AddOns.IsAddOnLoaded("BetterBlizzFrames")
-  local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator")
+  local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
 
   local currentYOffset = -INNER_PADDING
 
