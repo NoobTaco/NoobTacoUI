@@ -1,7 +1,7 @@
 # NoobTacoUIMedia
 
-## [v1.2.1-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.2.1-beta) (2025-11-20)
-[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.2.1-beta)
+## [v1.3.1-beta](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.1-beta) (2025-11-20)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.3.1-beta)
 
 ### 🎯 Major Features Added
 
