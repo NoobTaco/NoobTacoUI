@@ -54,6 +54,30 @@ addon.AddonProfiles.Platynator = {
   dateCreated = "2025-11-20"
 }
 
+-- Cooldown Manager Tweaks Profile
+-- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Version: 1.0
+-- Last Updated: 2025-11-27
+addon.AddonProfiles.CooldownManagerTweaks = {
+  name = "CooldownManagerTweaks",
+  displayName = "Cooldown Manager Tweaks",
+  description =
+  "Import a pre-configured profile for Cooldown Manager Tweaks that complements the NoobTacoUI aesthetic. This profile includes optimized tracker styling and positioning.",
+  downloadUrl = "https://www.curseforge.com/wow/addons/cooldown-manager-tweaks",
+  command = "/cmt",
+  instructions = {
+    "Click the button below to copy the profile string",
+    "Type |cFFEBCB8B/cmt|r in chat to open Cooldown Manager Tweaks config",
+    "Navigate to the |cFFEBCB8BProfiles|r section",
+    "Paste the profile string and import"
+  },
+  profileString =
+  'CMT1:{"trackers":{"items":{"cooldownTextScale":1,"zoom":1,"borderAlpha":1,"hSpacing":2,"compactMode":false,"vSpacing":2,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":40,"barSpacing":2,"rowPattern":[1,3,4,3],"barIconGap":0},"buffs":{"cooldownTextScale":1,"zoom":1.1000000238419,"borderAlpha":0.5,"hSpacing":0,"compactMode":false,"vSpacing":0,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":35,"barSpacing":2,"rowPattern":[6],"barIconGap":0},"essential":{"cooldownTextScale":1,"zoom":1.1000000238419,"borderAlpha":0.5,"hSpacing":0,"compactMode":false,"vSpacing":0,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":43,"barSpacing":2,"rowPattern":[6,6],"barIconGap":0},"utility":{"cooldownTextScale":1,"zoom":1.1000000238419,"borderAlpha":0.5,"hSpacing":0,"compactMode":false,"vSpacing":0,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":30,"barSpacing":2,"rowPattern":[8,6],"barIconGap":0}},"version":"4.4.0","profileName":"NT"}',
+  version = "1.0",
+  author = "NoobTaco",
+  dateCreated = "2025-11-27"
+}
+
 -- Add more addon profiles here following the same structure
 -- Example:
 -- addon.AddonProfiles.AnotherAddon = {

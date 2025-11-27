@@ -1936,6 +1936,7 @@ addonIntegrationButton:SetScript("OnClick", function(self)
   -- Check if BetterBlizzFrames is loaded
   local bbfLoaded = C_AddOns.IsAddOnLoaded("BetterBlizzFrames")
   local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
+  local cmtLoaded = C_AddOns.IsAddOnLoaded("CooldownManagerTweaks")
 
   local currentYOffset = -INNER_PADDING
 
@@ -1980,7 +1981,17 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     end
   end
 
-  if not bbfLoaded and not platynatorLoaded then
+  if cmtLoaded then
+    local profile = addon.GetProfile("CooldownManagerTweaks")
+    if profile then
+      local section = CreateCollapsibleAddonSection(scrollChild, "Cooldown Manager Tweaks", profile, lastElement,
+        currentYOffset, UpdateLayout)
+      lastElement = section
+      currentYOffset = -4
+    end
+  end
+
+  if not bbfLoaded and not platynatorLoaded and not cmtLoaded then
     -- Add message when neither addon is loaded
     local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
     ApplyConfigFont(noAddonText, "body-text")
