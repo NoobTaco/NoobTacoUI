@@ -69,7 +69,16 @@ local content = scrollFrame.scrollChild
 - **Consistent Styling**: Maintains Nord theme and layout patterns
 - **Extensible Design**: Easy to add new settings as features are developed
 
-### 3. About Section
+### 3. Addon Integrations
+- **Profile Management**: Import optimized profiles for supported addons
+- **Collapsible Sections**: Organized list of available addon integrations
+- **Smart Detection**: Only shows profiles for loaded addons
+- **Supported Addons**:
+  - BetterBlizzFrames
+  - Platynator
+  - Cooldown Manager Tweaks
+
+### 4. About Section
 - **Logo Integration**: 64x64px logo display with proper positioning
 - **Professional Layout**: Two-column design with logo and content
 - **Comprehensive Information**:

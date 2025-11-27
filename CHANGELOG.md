@@ -1,5 +1,12 @@
 # NoobTacoUIMedia
 
+## [Unreleased]
+
+### 🎯 Major Features Added
+
+#### Addon Integration System 🆕
+- **Cooldown Manager Tweaks Profile**: One-click import of optimized Cooldown Manager Tweaks profile
+
 ## [v1.3.3](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.3) (2025-11-20)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.3.3)
 

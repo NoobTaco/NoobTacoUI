@@ -57,6 +57,7 @@ The addon now includes a powerful integration system that allows you to import o
 #### Supported Integrations
 - **BetterBlizzFrames** - Import optimized profiles for BetterBlizzFrames
 - **Platynator** - Import optimized nameplate profiles
+- **Cooldown Manager Tweaks** - Import optimized profiles for Cooldown Manager Tweaks
 
 #### Key Features
 - **Smart Layout**: Collapsible profile list for clean and organized navigation
