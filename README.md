@@ -55,9 +55,11 @@ Access the configuration interface with any of these commands:
 The addon now includes a powerful integration system that allows you to import optimized profiles for other popular addons. This ensures a cohesive UI experience with professional configurations.
 
 #### Supported Integrations
+- **Default WoW UI Edit Mode** - Import optimized layout for the default UI
 - **BetterBlizzFrames** - Import optimized profiles for BetterBlizzFrames
 - **Platynator** - Import optimized nameplate profiles
 - **Cooldown Manager Tweaks** - Import optimized profiles for Cooldown Manager Tweaks
+- **zBarButtonBG** - Import optimized profiles for zBarButtonBG
 
 #### Key Features
 - **Smart Layout**: Collapsible profile list for clean and organized navigation

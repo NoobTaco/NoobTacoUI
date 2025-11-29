@@ -103,6 +103,30 @@ addon.AddonProfiles.CooldownManagerTweaks = {
   dateCreated = "2025-11-27"
 }
 
+-- zBarButtonBG Profile
+-- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Version: 1.0
+-- Last Updated: 2025-11-29
+addon.AddonProfiles.zBarButtonBG = {
+  name = "zBarButtonBG",
+  displayName = "zBarButtonBG",
+  description =
+  "Import a pre-configured profile for zBarButtonBG that complements the NoobTacoUI aesthetic. This profile includes optimized button styling.",
+  downloadUrl = "https://www.curseforge.com/wow/addons/zbarbuttonbg",
+  command = "Options > Addons",
+  instructions = {
+    "Click the button below to copy the profile string",
+    "Press |cFFEBCB8BEscape|r and go to |cFFEBCB8BOptions > Addons|r",
+    "Select |cFFEBCB8BzBarButtonBG|r and go to |cFFEBCB8BProfiles|r",
+    "Paste the profile string and import"
+  },
+  profileString =
+  "nsvBtQjpu0Fr7ockc(rXzT1oU4og680(LmtacivmxEscJZ2F9nHeqa1P9d(69MCoN75Cb7GJXOuOHjpKNlOYFIJMHr1CiDDL8lvW1nqfW1nruvEDLhgXXroyuH(NlXOe9NUyjgDHKYHiYf6hGOuwcmmk8qC8H3Ta8FLzYt4OfUQd1iLadj)SIIrO)VHWP6MGQm4kBmIgaNza0a3iWgs7Z0ptkzzFLwwCsQyPRrj9YWcyeWuVNa8mkFiyogOuQXOo3HQZE3g4(rlCTQAlOEvrkey0HVhVFx0B3rot3ItW1qs65mouJdvxT977P5Y1z)QriVqzkwp)wPyOEsLrY5zUsG3qI3iOBQicr7r2XyuooPxoA2Jk)n1mS65T(VXOpG66sM4fe9szOYBgOy7zwAKfQcKAPvWv1Z0IBeOHTtAnQJay6uJYijv02JNtYOBSXb956giVteNPzXqyB(r350KQ1IpsRRiP0jiEtPw5pmsAHieux9LjJ9(BPlAnVZq7LMOPOGkK0S1P6S)djZGH(uXZjSc6owwzkrc8X2RVDh41fDjZz(wh2P1Il1U6JsYDjcNU21D3BIpYH7v63u6VmxtN2n59VTT7bf3dKbgdio3TSmA3CmUdsv9lTEdiXa)zWZOS7tpyGpr(ZDw0VsS6g76S6JAeN40wA(pOrT9FCKRPZJqJCKvSnWzPRVV38vbZ9MfSiaN)IxRFU1BPNJN)s3zURc8w47QRSuJYZQK8Skt3YpOjXO9T)UEKy8F(",
+  version = "1.0",
+  author = "NoobTaco",
+  dateCreated = "2025-11-29"
+}
+
 -- Add more addon profiles here following the same structure
 -- Example:
 -- addon.AddonProfiles.AnotherAddon = {
