@@ -4,6 +4,12 @@
 
 ### 🎯 Major Features Added
 
+#### Game Settings & Pixel Perfect 🆕
+- **Pixel Perfect Scaling**: One-click resolution scaling for 4K, 1440p, and 1080p
+- **Smart Detection**: "Print Current Scale" button identifies if current scale matches standard resolutions
+- **Safety First**: Built-in warnings and reload prompts to ensure settings are applied correctly
+- **CVar Management**: Direct control over `uiScale` and `useUiScale` CVars
+
 #### Addon Integration System 🆕
 - **Default WoW UI Edit Mode**: One-click import of optimized Edit Mode layout
 - **Cooldown Manager Tweaks Profile**: One-click import of optimized Cooldown Manager Tweaks profile

@@ -69,7 +69,15 @@ local content = scrollFrame.scrollChild
 - **Consistent Styling**: Maintains Nord theme and layout patterns
 - **Extensible Design**: Easy to add new settings as features are developed
 
-### 3. Addon Integrations
+### 3. Game Settings (Pixel Perfect)
+- **Resolution Scaling**: One-click buttons for 4K, 1440p, and 1080p UI scaling
+- **Smart Feedback**: "Print Current Scale" identifies standard resolutions
+- **Safety Features**: 
+  - Warning text about CVar modification
+  - Automatic reload prompt after changes
+  - Ensures `useUiScale` is enabled
+
+### 4. Addon Integrations
 - **Profile Management**: Import optimized profiles for supported addons
 - **Collapsible Sections**: Organized list of available addon integrations
 - **Smart Detection**: Only shows profiles for loaded addons

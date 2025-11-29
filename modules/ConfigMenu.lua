@@ -2312,6 +2312,148 @@ end)
 
 table.insert(categories, generalButton)
 
+-- Game Settings (CVARS) button
+local gameSettingsButton = CreateEnhancedCategoryButton(sidebar, "Game Settings", addon.UIAssets.Icons.Settings)
+gameSettingsButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
+gameSettingsButton:SetScript("OnClick", function(self)
+  -- Clear previous selection
+  if currentCategory then
+    currentCategory:SetSelected(false)
+  end
+
+  -- Set new selection
+  self:SetSelected(true)
+  currentCategory = self
+
+  -- Show game settings panel
+  if content.currentPanel then
+    content.currentPanel:Hide()
+  end
+
+  if not content.gameSettingsPanel then
+    content.gameSettingsPanel = CreateEnhancedSettingsPanel(
+      content,
+      "Game Settings",
+      "Configure advanced game settings and CVars"
+    )
+
+    -- Create scrollable content for the panel
+    local scrollFrame = CreateNordScrollFrame(content.gameSettingsPanel)
+    scrollFrame:SetPoint("TOPLEFT", content.gameSettingsPanel, "TOPLEFT", PADDING, -60)
+    scrollFrame:SetPoint("BOTTOMRIGHT", content.gameSettingsPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+
+    local scrollChild = scrollFrame.scrollChild
+    scrollChild:SetSize(scrollFrame:GetWidth(), 1) -- Initial size to ensure visibility
+
+    local yOffset = 0
+
+    -- WARNING Section
+    local warningText = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(warningText, "body-text")
+    warningText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+    warningText:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+    warningText:SetJustifyH("LEFT")
+    warningText:SetText(
+      "|cFFBF616AWARNING:|r Changing these settings (CVars) can affect other UI elements and game behavior. Use with caution.")
+    yOffset = yOffset - 40
+
+    -- Resolution Scaling Section
+    local scalingHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Pixel Perfect (scaling)")
+    scalingHeader:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+    yOffset = yOffset - SECTION_SPACING - 10
+
+    local scalingDesc = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(scalingDesc, "body-text")
+    scalingDesc:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+    scalingDesc:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+    scalingDesc:SetJustifyH("LEFT")
+    scalingDesc:SetText("Set the UI Scale CVar for pixel-perfect scaling at common resolutions.")
+    scalingDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+    yOffset = yOffset - 30
+
+    -- Current Setting Button
+    local btnCurrent = addon.UIUtils:CreateThemedButton(scrollChild, "Print Current Scale", 160, 30)
+    btnCurrent:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+    btnCurrent:SetScript("OnClick", function()
+      local currentScale = tonumber(GetCVar("uiScale"))
+      local scaleText = tostring(currentScale)
+      local resolution = ""
+
+      -- Check for matches with small tolerance
+      if math.abs(currentScale - 0.355555555) < 0.000001 then
+        resolution = " (4K)"
+      elseif math.abs(currentScale - 0.533333333) < 0.000001 then
+        resolution = " (1440p)"
+      elseif math.abs(currentScale - 0.711111111) < 0.000001 then
+        resolution = " (1080p)"
+      end
+
+      print("|cFF16C3F2NoobTacoUI-Media|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. resolution)
+    end)
+
+    yOffset = yOffset - 40
+
+    -- Buttons Container
+    local buttonContainer = CreateFrame("Frame", nil, scrollChild)
+    buttonContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+    buttonContainer:SetSize(500, 40)
+
+    -- Helper function to set scale and prompt reload
+    local function SetUIScale(scale, label)
+      SetCVar("useUiScale", "1")
+      SetCVar("uiScale", scale)
+      print("|cFF16C3F2NoobTacoUI-Media|r: UI Scale set to |cFFA3BE8C" .. scale .. "|r (" .. label .. ")")
+
+      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
+        text = "UI Scale changed to " ..
+            label .. ".\nA reload is required for settings to take full effect.\nReload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+          ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI")
+    end
+
+    -- 4K Button
+    local btn4k = addon.UIUtils:CreateThemedButton(buttonContainer, "4K (2160p)", 120, 30)
+    btn4k:SetPoint("LEFT", buttonContainer, "LEFT", 0, 0)
+    btn4k:SetScript("OnClick", function()
+      SetUIScale(0.355555555, "4K")
+    end)
+
+    -- 1440p Button
+    local btn1440p = addon.UIUtils:CreateThemedButton(buttonContainer, "1440p", 120, 30)
+    btn1440p:SetPoint("LEFT", btn4k, "RIGHT", 10, 0)
+    btn1440p:SetScript("OnClick", function()
+      SetUIScale(0.533333333, "1440p")
+    end)
+
+    -- 1080p Button
+    local btn1080p = addon.UIUtils:CreateThemedButton(buttonContainer, "1080p", 120, 30)
+    btn1080p:SetPoint("LEFT", btn1440p, "RIGHT", 10, 0)
+    btn1080p:SetScript("OnClick", function()
+      SetUIScale(0.711111111, "1080p")
+    end)
+
+    yOffset = yOffset - 50
+
+    -- Update scroll child height
+    scrollChild:SetHeight(math.abs(yOffset) + PADDING)
+    scrollFrame.UpdateScrollThumb()
+  end
+
+  content.gameSettingsPanel:Show()
+  content.currentPanel = content.gameSettingsPanel
+end)
+
+table.insert(categories, gameSettingsButton)
+
 
 
 -- Select first category by default (changed to About)

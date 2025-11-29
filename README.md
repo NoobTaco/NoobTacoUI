@@ -6,6 +6,11 @@ A comprehensive media addon that provides high-quality fonts, audio files, and s
 
 ## ✨ What's New in Version 1.3.3
 
+### Game Settings & Pixel Perfect 🖥️
+- **Pixel Perfect Scaling**: One-click resolution scaling for 4K, 1440p, and 1080p
+- **Smart Detection**: "Print Current Scale" button identifies if current scale matches standard resolutions
+- **Safety First**: Built-in warnings and reload prompts to ensure settings are applied correctly
+
 ### Audio System Refinements 🔊
 - **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
 - **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
