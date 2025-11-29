@@ -15,6 +15,12 @@
 - **Cooldown Manager Tweaks Profile**: One-click import of optimized Cooldown Manager Tweaks profile
 - **zBarButtonBG Profile**: One-click import of optimized zBarButtonBG profile
 
+### 🔧 Technical Improvements
+
+#### Performance Optimization
+- **Lazy Loading**: Configuration menu UI elements are now created only when first accessed, reducing initial memory usage and load time.
+- **Efficient Initialization**: Streamlined startup process for faster addon loading.
+
 ## [v1.3.3](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.3.3) (2025-11-20)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.2.0...v1.3.3)
 

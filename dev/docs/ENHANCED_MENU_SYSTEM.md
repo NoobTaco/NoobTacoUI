@@ -31,6 +31,13 @@ The NoobTacoUI-Media addon features a completely redesigned configuration interf
 - **Scrollable**: Custom Nord-themed scroll frames for long content
 - **Responsive**: Adapts to different content types and lengths
 
+### Performance Optimization
+
+#### Lazy Loading Architecture
+- **Deferred Initialization**: The main configuration frame and its sub-components are not created until the user first requests to open the menu.
+- **Memory Efficiency**: Reduces initial memory footprint and addon load time.
+- **On-Demand Creation**: UI elements are instantiated only when needed via `InitializeConfigFrame()`.
+
 ### Custom Nord-Themed Scroll Frame
 
 #### Features
