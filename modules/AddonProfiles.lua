@@ -6,6 +6,31 @@ local addonName, addon = ...
 -- Profile storage table
 addon.AddonProfiles = addon.AddonProfiles or {}
 
+-- Default WoW UI Edit Mode Profile
+-- Optimized for NoobTacoUI aesthetic
+-- Version: 1.0
+-- Last Updated: 2025-11-28
+addon.AddonProfiles.EditMode = {
+  name = "EditMode",
+  displayName = "Default WoW UI Edit Mode",
+  description =
+  "Import the default WoW UI Edit Mode layout optimized for NoobTacoUI. This layout provides a clean and functional interface base. Optimized for 4K display.",
+  downloadUrl = "N/A",
+  command = "Open Edit Mode",
+  instructions = {
+    "Click the button below to copy the layout string",
+    "Open Edit Mode (ESC > Edit Mode)",
+    "Click the dropdown menu for layouts",
+    "Select |cFFEBCB8BImport|r",
+    "Paste the layout string and import"
+  },
+  profileString =
+  "1 43 0 0 0 0 0 UIParent 870.0 -1117.5 -1 ##$$%/&%'%)$+$,$ 0 1 0 1 1 UIParent 0.0 -1082.0 -1 ##$$%/&%'%(#,$ 0 2 0 7 7 UIParent -0.0 122.0 -1 ##$$%/&%'%(#,$ 0 3 0 3 3 UIParent 1708.7 -365.0 -1 ##$$%/&%'%(#,# 0 4 0 7 7 UIParent 896.1 242.0 -1 ##$$%/&$'%(&,# 0 5 0 4 4 UIParent 161.7 168.6 -1 ##$$%/&('%(#,$ 0 6 0 4 4 UIParent 154.1 168.3 -1 ##$$%/&('%(#,$ 0 7 0 4 4 UIParent 154.6 165.5 -1 ##$$%/&('%(#,$ 0 10 0 7 7 UIParent -450.7 40.3 -1 #$$$&&'% 0 11 0 3 3 UIParent 6.3 -291.1 -1 ##$$&''%,# 0 12 0 7 7 UIParent -171.3 162.0 -1 ##$$&('% 1 -1 0 7 7 UIParent 0.8 247.8 -1 #%$#%# 2 -1 0 2 2 UIParent 0.0 0.0 -1 ##$#%( 3 0 0 7 7 UIParent -253.4 266.2 -1 $#3# 3 1 0 7 7 UIParent 253.5 264.5 -1 %$3# 3 2 0 8 8 UIParent -416.2 262.5 -1 %#&#3# 3 3 0 0 0 UIParent 18.5 -459.5 -1 '$(#)#-?.;/#1#3# 3 4 0 0 0 UIParent 19.4 -515.2 -1 ,%-'.//#0#1$2( 3 5 0 2 2 UIParent -241.3 -263.8 -1 &$*$3' 3 6 0 2 2 UIParent -11.4 -460.4 -1 -#.#/#4& 3 7 1 4 4 UIParent 0.0 0.0 -1 3# 4 -1 0 7 7 UIParent -0.3 144.2 -1 # 5 -1 0 7 7 UIParent 411.4 42.2 -1 # 6 0 1 2 0 MinimapCluster -10.0 -10.0 -1 ##$#%#&.(()( 6 1 0 4 4 UIParent -262.1 -102.4 -1 ##$$%#'((*)( 7 -1 0 1 1 UIParent 7.0 -162.0 -1 # 8 -1 0 4 4 UIParent -636.5 -346.3 -1 #($%%%&$ 9 -1 0 4 4 UIParent -320.0 -440.0 -1 # 10 -1 1 0 0 UIParent 16.0 -116.0 -1 # 11 -1 0 8 8 UIParent -26.3 51.1 -1 # 12 -1 0 5 5 UIParent -6.1 10.2 -1 #@$#%# 13 -1 0 1 1 UIParent -930.3 -2.0 -1 ##$#%&&, 14 -1 0 6 8 MicroMenuContainer 3.6 -0.4 -1 ##$#%$ 15 0 0 0 0 UIParent 866.8 -1153.2 -1 # 15 1 0 0 0 UIParent 866.8 -1164.1 -1 # 16 -1 0 7 7 UIParent -239.0 53.6 -1 #( 17 -1 1 1 1 UIParent 0.0 -100.0 -1 ## 18 -1 1 5 5 UIParent 0.0 0.0 -1 #- 19 -1 0 4 4 UIParent 0.0 415.8 -1 ## 20 0 0 4 4 UIParent 0.6 -314.4 -1 ##$)%$&('%(-($)#+$,$-$ 20 1 0 7 7 UIParent 0.1 180.6 -1 ##$+%$&('%(-($)#+$,$-$ 20 2 0 4 4 UIParent 0.5 -234.9 -1 ##$$%$&*'%(-($)#+$,$-$ 20 3 0 1 1 UIParent 472.0 -670.6 -1 #$$$%#&('((-($)#*#+$,$-$",
+  version = "1.0",
+  author = "NoobTaco",
+  dateCreated = "2025-11-28"
+}
+
 -- BetterBlizzFrames Profile
 -- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
 -- Version: 1.0

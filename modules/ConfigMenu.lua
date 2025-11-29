@@ -1961,6 +1961,15 @@ addonIntegrationButton:SetScript("OnClick", function(self)
     end)
   end
 
+  -- Default WoW Edit Mode Profile
+  local editModeProfile = addon.GetProfile("EditMode")
+  if editModeProfile then
+    local section = CreateCollapsibleAddonSection(scrollChild, "EditMode", editModeProfile, lastElement,
+      currentYOffset, UpdateLayout)
+    lastElement = section
+    currentYOffset = -4
+  end
+
   if bbfLoaded then
     local profile = addon.GetProfile("BetterBlizzFrames")
     if profile then
