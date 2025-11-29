@@ -1863,6 +1863,94 @@ local function CreateCollapsibleAddonSection(parent, title, profile, previousEle
     print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
   end)
 
+  -- Link Button
+  if profile.downloadUrl and profile.downloadUrl ~= "N/A" then
+    local linkButton = CreateFrame("Button", nil, content)
+    linkButton:SetSize(160, 32)
+    linkButton:SetPoint("LEFT", copyButton, "RIGHT", 10, 0)
+
+    linkButton.bg = linkButton:CreateTexture(nil, "BACKGROUND")
+    linkButton.bg:SetAllPoints()
+    linkButton.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+
+    linkButton.highlight = linkButton:CreateTexture(nil, "HIGHLIGHT")
+    linkButton.highlight:SetAllPoints()
+    linkButton.highlight:SetColorTexture(unpack(addon.UIAssets.Colors.Nord9))
+    linkButton.highlight:SetAlpha(0.3)
+
+    linkButton.text = linkButton:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(linkButton.text, "label-emphasis")
+    linkButton.text:SetPoint("CENTER")
+    linkButton.text:SetText("Get Addon Link")
+    linkButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+    linkButton:SetScript("OnClick", function()
+      if not addon.CopyProfileDialog then
+        addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent,
+          "BasicFrameTemplateWithInset")
+        addon.CopyProfileDialog:SetSize(500, 400)
+        addon.CopyProfileDialog:SetPoint("TOP", UIParent, "TOP", 0, -50)
+        addon.CopyProfileDialog.TitleBg:SetHeight(30)
+        addon.CopyProfileDialog.title = addon.CopyProfileDialog:CreateFontString(nil, "OVERLAY")
+        addon.CopyProfileDialog.title:SetFontObject("GameFontHighlight")
+        addon.CopyProfileDialog.title:SetPoint("TOP", 0, -5)
+
+        local scrollFrame = CreateNordScrollFrame(addon.CopyProfileDialog)
+        scrollFrame:SetPoint("TOPLEFT", addon.CopyProfileDialog, "TOPLEFT", 16, -40)
+        scrollFrame:SetPoint("BOTTOMRIGHT", addon.CopyProfileDialog, "BOTTOMRIGHT", -16, 50)
+
+        local scrollChild = scrollFrame.scrollChild
+        scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
+
+        addon.CopyProfileDialog.editBox = CreateFrame("EditBox", nil, scrollChild)
+        addon.CopyProfileDialog.editBox:SetMultiLine(true)
+        addon.CopyProfileDialog.editBox:SetFontObject("GameFontNormal")
+        addon.CopyProfileDialog.editBox:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 8, -8)
+        addon.CopyProfileDialog.editBox:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -8, -8)
+        addon.CopyProfileDialog.editBox:SetJustifyH("LEFT")
+        addon.CopyProfileDialog.editBox:SetJustifyV("TOP")
+        addon.CopyProfileDialog.editBox:SetAutoFocus(true)
+        addon.CopyProfileDialog.editBox:SetTextInsets(0, 0, 0, 0)
+        addon.CopyProfileDialog.editBox:SetSpacing(2)
+
+        addon.CopyProfileDialog.editBox:SetScript("OnTextChanged", function(self, userInput)
+          if userInput and addon.CopyProfileDialog.currentString then
+            self:SetText(addon.CopyProfileDialog.currentString)
+            self:HighlightText()
+          end
+        end)
+
+        addon.CopyProfileDialog.editBox:SetScript("OnEditFocusGained", function(self)
+          self:HighlightText()
+        end)
+
+        local bg = addon.CopyProfileDialog.editBox:CreateTexture(nil, "BACKGROUND")
+        bg:SetAllPoints()
+        bg:SetColorTexture(0, 0, 0, 0.3)
+
+        addon.CopyProfileDialog.okButton = CreateFrame("Button", nil, addon.CopyProfileDialog, "GameMenuButtonTemplate")
+        addon.CopyProfileDialog.okButton:SetSize(80, 22)
+        addon.CopyProfileDialog.okButton:SetPoint("BOTTOM", 0, 15)
+        addon.CopyProfileDialog.okButton:SetText("OK")
+        addon.CopyProfileDialog.okButton:SetScript("OnClick", function()
+          addon.CopyProfileDialog:Hide()
+        end)
+
+        addon.CopyProfileDialog.scrollFrame = scrollFrame
+      end
+
+      addon.CopyProfileDialog.currentString = profile.downloadUrl
+      addon.CopyProfileDialog.title:SetText("Copy " .. profile.displayName .. " Link")
+      addon.CopyProfileDialog.editBox:SetText(profile.downloadUrl)
+      addon.CopyProfileDialog.editBox:HighlightText()
+      local textHeight = addon.CopyProfileDialog.editBox:GetHeight() + 16
+      addon.CopyProfileDialog.scrollFrame.scrollChild:SetHeight(math.max(textHeight,
+        addon.CopyProfileDialog.scrollFrame:GetHeight()))
+      addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
+      addon.CopyProfileDialog:Show()
+    end)
+  end
+
   contentYOffset = contentYOffset - 40
   local contentHeight = math.abs(contentYOffset)
   content:SetHeight(contentHeight)
