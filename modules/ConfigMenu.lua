@@ -1126,6 +1126,8 @@ local function InitializeConfigFrame()
       featuresList:SetSpacing(3)
       featuresList:SetText(
         "• Collection notification system with customizable audio alerts\n" ..
+        "• Pixel Perfect Scaling for 4K, 1440p, and 1080p resolutions\n" ..
+        "• Addon Integration for easy profile imports\n" ..
         "• Nord-themed texture library for consistent UI styling\n" ..
         "• Curated font collection optimized for readability\n" ..
         "• Enhanced configuration interface with modern design\n" ..
@@ -1230,11 +1232,11 @@ local function InitializeConfigFrame()
         insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
         insetTexture:SetAlpha(0.3)
 
-        local yOffset = -20               -- Start with more padding inside container
+        local yOffset = -20                 -- Start with more padding inside container
         local configurableElements = {}
-        local soundDropdowns = {}         -- Store references to dropdowns for refreshing
+        local soundDropdowns = {}           -- Store references to dropdowns for refreshing
         local checkboxRefs = { types = {} } -- Store references to checkboxes for refreshing
-        local rowElements = {}            -- Store elements for each row for per-row disable functionality
+        local rowElements = {}              -- Store elements for each row for per-row disable functionality
 
         -- Helper functions to use CollectionNotifications module functions
         local function GetCollectionSetting(key)
@@ -1339,7 +1341,7 @@ local function InitializeConfigFrame()
 
           -- Sound dropdown - positioned to align with other dropdowns on same line (right-justified)
           local soundDropdown = addon.UIUtils:CreateSoundDropdown(rowFrame, 140, 24) -- Slightly wider
-          soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0)               -- Right-aligned with offset for test button -- Fixed position for alignment
+          soundDropdown:SetPoint("RIGHT", rowFrame, "RIGHT", -40, 0)                 -- Right-aligned with offset for test button -- Fixed position for alignment
 
           -- Set current value from saved settings
           local currentSound = GetCollectionSetting(typeData.sound)
@@ -1363,7 +1365,7 @@ local function InitializeConfigFrame()
             -- If saved sound doesn't exist, fall back to default
             if not soundExists then
               print("|cFF16C3F2NoobTacoUI-Media|r: Saved sound '" ..
-              currentSound .. "' no longer available, using default")
+                currentSound .. "' no longer available, using default")
               validSound = false
             end
           end
@@ -1387,7 +1389,7 @@ local function InitializeConfigFrame()
           -- Test button for each type - positioned to align with other test buttons on same line (right-justified)
           local testButton = addon.UIUtils:CreateSoundTestButton(rowFrame, 24)
           testButton:SetPoint("RIGHT", rowFrame, "RIGHT", -8, 0) -- Right-aligned with padding
-          testButton:SetSound(soundDropdown:GetValue())        -- Use the validated sound from dropdown
+          testButton:SetSound(soundDropdown:GetValue())          -- Use the validated sound from dropdown
 
           -- Store dropdown reference for refreshing
           soundDropdowns[typeData.sound] = soundDropdown
@@ -1454,7 +1456,7 @@ local function InitializeConfigFrame()
           table.insert(configurableElements, { element = testButton, type = "testbutton" })
           table.insert(configurableElements, { element = rowFrame, type = "frame" }) -- Include row frame
 
-          yOffset = yOffset - 32                                                   -- Consistent spacing between rows
+          yOffset = yOffset - 32                                                     -- Consistent spacing between rows
         end
 
         -- Initialize per-row states based on current settings
@@ -1990,7 +1992,7 @@ local function InitializeConfigFrame()
   end
 
   -- Addon Integration button
-  addonIntegrationButton = CreateEnhancedCategoryButton(sidebar, "Addon Integration", addon.UIAssets.Icons.Settings)
+  addonIntegrationButton = CreateEnhancedCategoryButton(sidebar, "Addon Integration", addon.UIAssets.Icons.Addons)
   if AreCollectionsAvailable() then
     addonIntegrationButton:SetPoint("TOPLEFT", audioButton, "BOTTOMLEFT", 0, -4)
   else
@@ -2137,7 +2139,7 @@ local function InitializeConfigFrame()
   table.insert(categories, addonIntegrationButton)
 
   -- General settings button
-  generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.Settings)
+  generalButton = CreateEnhancedCategoryButton(sidebar, "General Settings", addon.UIAssets.Icons.General)
   generalButton:SetPoint("TOPLEFT", addonIntegrationButton, "BOTTOMLEFT", 0, -4)
   generalButton:SetScript("OnClick", function(self)
     -- Clear previous selection
@@ -2329,7 +2331,7 @@ local function InitializeConfigFrame()
   table.insert(categories, generalButton)
 
   -- Game Settings (CVARS) button
-  gameSettingsButton = CreateEnhancedCategoryButton(sidebar, "Game Settings", addon.UIAssets.Icons.Settings)
+  gameSettingsButton = CreateEnhancedCategoryButton(sidebar, "Game Settings", addon.UIAssets.Icons.Game)
   gameSettingsButton:SetPoint("TOPLEFT", generalButton, "BOTTOMLEFT", 0, -4)
   gameSettingsButton:SetScript("OnClick", function(self)
     -- Clear previous selection

@@ -96,9 +96,11 @@ addon.UIAssets = {
 
   -- WoW Texture Icons for Menu Categories
   Icons = {
+    About = "Interface\\Icons\\INV_Misc_Book_11",                     -- Open book for information
     Audio = "Interface\\Icons\\INV_Misc_Bell_01",                     -- Bell for notifications/audio
-    Settings = "Interface\\Icons\\INV_Misc_Gear_01",                  -- Gear for settings
-    About = "Interface\\Icons\\INV_Misc_Book_09",                     -- Book for information
+    Addons = "Interface\\Icons\\INV_Misc_EngGizmos_27",               -- Gizmo for addon integration
+    General = "Interface\\Icons\\INV_Misc_Gear_01",                   -- Gear for general settings
+    Game = "Interface\\Icons\\INV_Misc_Spyglass_02",                  -- Spyglass for game/view settings
     Close = "Interface\\Buttons\\UI-Panel-MinimizeButton-Up",         -- Close/X button
     -- Alternative options:
     AudioAlt = "Interface\\GossipFrame\\UI-GossipIcon-Chat",          -- Speech bubble
