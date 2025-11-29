@@ -1,6 +1,6 @@
-# NoobTacoUI-Media Assets
+# NoobTacoUI Assets
 
-This directory contains generated showcase images and other assets for the NoobTacoUI-Media addon. These files are included in the repository for documentation and promotional purposes but are excluded from the packaged addon distribution.
+This directory contains generated showcase images and other assets for the NoobTacoUI addon. These files are included in the repository for documentation and promotional purposes but are excluded from the packaged addon distribution.
 
 ## 📁 Directory Structure
 
