@@ -1,6 +1,7 @@
 # NoobTacoUIMedia
 
-## [Unreleased]
+## [v1.4.0](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.0) (2025-11-29)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.3.3...v1.4.0)
 
 ### 🎯 Major Features Added
 

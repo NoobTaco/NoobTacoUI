@@ -4,27 +4,27 @@
 
 A comprehensive media addon that provides high-quality fonts, audio files, and status bar textures for World of Warcraft addons. All media is registered with LibSharedMedia-3.0 and will automatically appear in any compatible addon's media selection lists.
 
-## ✨ What's New in Version 1.3.3
+## ✨ What's New in Version 1.4.0
 
 ### Game Settings & Pixel Perfect 🖥️
 - **Pixel Perfect Scaling**: One-click resolution scaling for 4K, 1440p, and 1080p
 - **Smart Detection**: "Print Current Scale" button identifies if current scale matches standard resolutions
 - **Safety First**: Built-in warnings and reload prompts to ensure settings are applied correctly
+- **CVar Management**: Direct control over `uiScale` and `useUiScale` CVars
+
+### Expanded Addon Integration 🧩
+- **Default WoW Edit Mode**: One-click import of optimized Edit Mode layout
+- **Cooldown Manager Tweaks**: Optimized profile for cooldown tracking
+- **zBarButtonBG**: Custom styling profile for action bars
+- **BetterBlizzFrames**: Continued support for optimized unit frame profiles
+
+### Performance Improvements 🚀
+- **Lazy Loading**: Configuration menu loads significantly faster
+- **Memory Optimization**: Reduced initial memory footprint
 
 ### Audio System Refinements 🔊
 - **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
 - **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
-
-### Addon Integration System 🆕
-- **BetterBlizzFrames Profiles**: One-click import of optimized BetterBlizzFrames profiles with professional configurations
-- **User-Friendly Profile Dialog**: Scrollable popup with selectable text for easy profile copying and sharing
-- **Profile Management Interface**: Clean, Nord-themed interface for addon configuration management
-- **Extensible Integration Framework**: Foundation for future addon integrations and profile sharing
-
-### Midnight Beta Compatibility 🌙
-- **Interface 120000 Support**: Full compatibility with World of Warcraft Midnight Beta
-- **Future-Proof Architecture**: Ready for upcoming WoW expansion features and API changes
-- **Enhanced API Compliance**: Updated for latest WoW development standards
 
 ### Enhanced Configuration Interface
 - **Professional Menu System**: Completely redesigned configuration interface with modern Nord theme
