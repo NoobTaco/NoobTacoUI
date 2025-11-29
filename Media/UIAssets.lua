@@ -1,4 +1,4 @@
--- NoobTacoUI-Media UI Assets Registry
+-- NoobTacoUI UI Assets Registry
 -- Inspired by Plumber's asset management
 
 local addonName, addon = ...
@@ -49,22 +49,22 @@ end
 -- Asset paths for easy management
 addon.UIAssets = {
   -- Logo and branding
-  Logo = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\logo",
+  Logo = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo",
 
   -- Background textures using your Nord theme
   Background = {
-    Main = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord0",
-    Panel = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord1",
-    Dark = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord3",
-    Accent = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord8",
+    Main = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord0",
+    Panel = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord1",
+    Dark = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord3",
+    Accent = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord8",
   },
 
   -- Gradient textures for depth
   Gradients = {
-    MainGrad = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord0_grd",
-    PanelGrad = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord1_grd",
-    DarkGrad = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord3_grd",
-    AccentGrad = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\NT_nord8_grd",
+    MainGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord0_grd",
+    PanelGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord1_grd",
+    DarkGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord3_grd",
+    AccentGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord8_grd",
   },
 
   -- Colors extracted from Nord theme
@@ -398,7 +398,7 @@ function addon.UIUtils:CreateSoundDropdown(parent, width, height, mediaType)
 
       -- If sound doesn't exist, don't set it
       if not soundExists then
-        print("|cFF16C3F2NoobTacoUI-Media|r: Warning - Sound '" .. tostring(value) .. "' not found in LibSharedMedia")
+        print("|cFF16C3F2NoobTacoUI|r: Warning - Sound '" .. tostring(value) .. "' not found in LibSharedMedia")
         return
       end
     end

@@ -1,8 +1,8 @@
--- NoobTacoUI-Media Version Command Module
+-- NoobTacoUI Version Command Module
 -- Author: NoobTaco
 -- Version: @project-version@
 
-local addonName = "NoobTacoUI-Media"
+local addonName = "NoobTacoUI"
 local addonVersion = "v1.4.0" -- Fallback version - should match latest git tag
 
 -- Create a frame to handle the slash command
@@ -30,34 +30,34 @@ end
 
 -- Function to display version information
 local function ShowVersion()
-  local coloredTitle = "|cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r"
+  local coloredTitle = "|cFF16C3F2NoobTacoUI|r"
   local currentVersion = GetCurrentVersion()
   local message = string.format("%s version: |cFF00FF00%s|r", coloredTitle, currentVersion)
   print(message)
 end
 
 -- Register the slash command
-SLASH_NTMVERSION1 = "/ntm"
-SLASH_NTMVERSION2 = "/ntmversion"
-SlashCmdList["NTMVERSION"] = function(msg)
+SLASH_NTVERSION1 = "/nt"
+SLASH_NTVERSION2 = "/noobtaco"
+SlashCmdList["NTVERSION"] = function(msg)
   local args = string.lower(msg or "")
 
   if args == "version" or args == "ver" or args == "v" then
     ShowVersion()
   elseif args == "config" or args == "cfg" or args == "options" then
     -- Show configuration menu (requires ConfigMenu.lua to be loaded)
-    if _G.NoobTacoUIMediaAddon and _G.NoobTacoUIMediaAddon.ShowConfigMenu then
-      _G.NoobTacoUIMediaAddon.ShowConfigMenu()
+    if _G.NoobTacoUIAddon and _G.NoobTacoUIAddon.ShowConfigMenu then
+      _G.NoobTacoUIAddon.ShowConfigMenu()
     else
-      print("|cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r: Configuration menu not available")
+      print("|cFF16C3F2NoobTacoUI|r: Configuration menu not available")
     end
   elseif args == "" then
     -- Show help when no arguments provided
-    print("|cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r commands:")
-    print("  |cFFFFFF00/ntm version|r - Display addon version")
-    print("  |cFFFFFF00/ntm ver|r - Display addon version (short)")
-    print("  |cFFFFFF00/ntm v|r - Display addon version (shortest)")
-    print("  |cFFFFFF00/ntm config|r - Open configuration menu")
+    print("|cFF16C3F2NoobTacoUI|r commands:")
+    print("  |cFFFFFF00/nt version|r - Display addon version")
+    print("  |cFFFFFF00/nt ver|r - Display addon version (short)")
+    print("  |cFFFFFF00/nt v|r - Display addon version (shortest)")
+    print("  |cFFFFFF00/nt config|r - Open configuration menu")
     print("  |cFFFFFF00/ntm cfg|r - Open configuration menu (short)")
     print("  |cFFFFFF00/ntmcollection|r - Collection notification commands")
   else

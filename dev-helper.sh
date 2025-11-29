@@ -26,7 +26,7 @@ case "$1" in
         cd "$DEV_SCRIPTS_DIR" && make clean
         ;;
     *)
-        echo "NoobTacoUI-Media Development Helper"
+        echo "NoobTacoUI Development Helper"
         echo ""
         echo "Usage: $0 <command>"
         echo ""

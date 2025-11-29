@@ -1,4 +1,4 @@
--- NoobTacoUI-Media Enhanced Config Menu
+-- NoobTacoUI Enhanced Config Menu
 -- Enhanced with Plumber-style design patterns using Nord theme
 
 local addonName, addon = ...
@@ -102,7 +102,7 @@ local function GetExpansionName()
 end
 
 -- Initialize database if needed (account-wide)
-NoobTacoUIMediaDB = NoobTacoUIMediaDB or {}
+NoobTacoUIDB = NoobTacoUIDB or {}
 
 -- Ensure database is account-wide by setting up saved variables properly
 local frame = CreateFrame("Frame")
@@ -111,20 +111,20 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:SetScript("OnEvent", function(self, event, loadedAddonName)
   if event == "ADDON_LOADED" and loadedAddonName == addonName then
     -- Initialize global database structure
-    NoobTacoUIMediaDB = NoobTacoUIMediaDB or {}
+    NoobTacoUIDB = NoobTacoUIDB or {}
 
     -- One-time migration from legacy NoobTacoDB if present
     local legacy = rawget(_G, "NoobTacoDB")
     if legacy and type(legacy) == "table" then
-      _G.NoobTacoUIMediaDB = _G.NoobTacoUIMediaDB or {}
-      _G.NoobTacoUIMediaDB.CollectionNotifications = _G.NoobTacoUIMediaDB.CollectionNotifications or
+      _G.NoobTacoUIDB = _G.NoobTacoUIDB or {}
+      _G.NoobTacoUIDB.CollectionNotifications = _G.NoobTacoUIDB.CollectionNotifications or
           legacy.CollectionNotifications
       -- Do not nil the old table to avoid affecting other addons; just stop using it here
     end
 
     -- Initialize General Settings if needed
-    if not NoobTacoUIMediaDB.GeneralSettings then
-      NoobTacoUIMediaDB.GeneralSettings = {
+    if not NoobTacoUIDB.GeneralSettings then
+      NoobTacoUIDB.GeneralSettings = {
         showMinimapButton = true,
         enableAddonCompartment = true,
         minimapButtonAngle = 225, -- Default angle in degrees (bottom-left position)
@@ -132,15 +132,15 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
     end
 
     -- Ensure minimapButtonAngle exists for existing databases
-    if NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle == nil then
-      NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle = 225
+    if NoobTacoUIDB.GeneralSettings.minimapButtonAngle == nil then
+      NoobTacoUIDB.GeneralSettings.minimapButtonAngle = 225
     end
 
     -- Initialize Collection Notifications settings if needed with full defaults
     -- Only initialize for versions that support collections
     if AreCollectionsAvailable() then
-      if not NoobTacoUIMediaDB.CollectionNotifications then
-        NoobTacoUIMediaDB.CollectionNotifications = {
+      if not NoobTacoUIDB.CollectionNotifications then
+        NoobTacoUIDB.CollectionNotifications = {
           enabled = true,
           newPet = true,
           newMount = true,
@@ -168,8 +168,8 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
         }
 
         for key, defaultValue in pairs(defaults) do
-          if NoobTacoUIMediaDB.CollectionNotifications[key] == nil then
-            NoobTacoUIMediaDB.CollectionNotifications[key] = defaultValue
+          if NoobTacoUIDB.CollectionNotifications[key] == nil then
+            NoobTacoUIDB.CollectionNotifications[key] = defaultValue
           end
         end
       end
@@ -185,18 +185,18 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
 end)
 
 -- Global functions for AddonCompartment integration
-function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
+function NoobTacoUI_OnAddonCompartmentClick(addonName, buttonName)
   -- Check if addon compartment is enabled in settings
   local enableCompartment = true -- Default to enabled
-  if NoobTacoUIMediaDB and NoobTacoUIMediaDB.GeneralSettings then
-    local setting = NoobTacoUIMediaDB.GeneralSettings.enableAddonCompartment
+  if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings then
+    local setting = NoobTacoUIDB.GeneralSettings.enableAddonCompartment
     if setting ~= nil then
       enableCompartment = setting
     end
   end
 
   if not enableCompartment then
-    print("|cFF16C3F2NoobTacoUI-Media|r: |cFFBF616AAddon drawer integration is disabled|r - Enable in General Settings")
+    print("|cFF16C3F2NoobTacoUI|r: |cFFBF616AAddon drawer integration is disabled|r - Enable in General Settings")
     return
   end
 
@@ -204,31 +204,31 @@ function NoobTacoUIMedia_OnAddonCompartmentClick(addonName, buttonName)
     addon.ShowConfigMenu()
   elseif buttonName == "RightButton" and AreCollectionsAvailable() then
     -- Toggle collection notifications (only available in retail)
-    local enabled = NoobTacoUIMediaDB.CollectionNotifications and NoobTacoUIMediaDB.CollectionNotifications.enabled
+    local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
     if enabled then
-      NoobTacoUIMediaDB.CollectionNotifications.enabled = false
-      print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFBF616ADisabled|r")
+      NoobTacoUIDB.CollectionNotifications.enabled = false
+      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFBF616ADisabled|r")
     else
-      NoobTacoUIMediaDB.CollectionNotifications.enabled = true
-      print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFA3BE8CEnabled|r")
+      NoobTacoUIDB.CollectionNotifications.enabled = true
+      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFA3BE8CEnabled|r")
     end
   elseif buttonName == "RightButton" and not AreCollectionsAvailable() then
-    print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications not available in " .. GetExpansionName())
+    print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
   end
 end
 
-function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
+function NoobTacoUI_OnAddonCompartmentEnter(addonName, menuButtonFrame)
   -- Check if addon compartment is enabled in settings
   local enableCompartment = true -- Default to enabled
-  if NoobTacoUIMediaDB and NoobTacoUIMediaDB.GeneralSettings then
-    local setting = NoobTacoUIMediaDB.GeneralSettings.enableAddonCompartment
+  if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings then
+    local setting = NoobTacoUIDB.GeneralSettings.enableAddonCompartment
     if setting ~= nil then
       enableCompartment = setting
     end
   end
 
   GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
-  GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+  GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
   GameTooltip:AddLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
   GameTooltip:AddLine(" ", 1, 1, 1)
 
@@ -245,7 +245,7 @@ function NoobTacoUIMedia_OnAddonCompartmentEnter(addonName, menuButtonFrame)
   GameTooltip:Show()
 end
 
-function NoobTacoUIMedia_OnAddonCompartmentLeave(addonName, menuButtonFrame)
+function NoobTacoUI_OnAddonCompartmentLeave(addonName, menuButtonFrame)
   GameTooltip:Hide()
 end
 
@@ -275,37 +275,37 @@ end
 local function GetDBValue(key)
   if key == "CollectionNotificationsEnabled" then
     -- Use CollectionNotifications settings structure
-    if not NoobTacoUIMediaDB.CollectionNotifications then
-      NoobTacoUIMediaDB.CollectionNotifications = {}
+    if not NoobTacoUIDB.CollectionNotifications then
+      NoobTacoUIDB.CollectionNotifications = {}
     end
-    return NoobTacoUIMediaDB.CollectionNotifications.enabled
+    return NoobTacoUIDB.CollectionNotifications.enabled
   elseif key:find("GeneralSettings%.") then
     -- Handle general settings
     local settingKey = key:gsub("GeneralSettings%.", "")
-    if not NoobTacoUIMediaDB.GeneralSettings then
-      NoobTacoUIMediaDB.GeneralSettings = {}
+    if not NoobTacoUIDB.GeneralSettings then
+      NoobTacoUIDB.GeneralSettings = {}
     end
-    return NoobTacoUIMediaDB.GeneralSettings[settingKey]
+    return NoobTacoUIDB.GeneralSettings[settingKey]
   end
-  return NoobTacoUIMediaDB[key]
+  return NoobTacoUIDB[key]
 end
 
 local function SetDBValue(key, value)
   if key == "CollectionNotificationsEnabled" then
     -- Use CollectionNotifications settings structure
-    if not NoobTacoUIMediaDB.CollectionNotifications then
-      NoobTacoUIMediaDB.CollectionNotifications = {}
+    if not NoobTacoUIDB.CollectionNotifications then
+      NoobTacoUIDB.CollectionNotifications = {}
     end
-    NoobTacoUIMediaDB.CollectionNotifications.enabled = value
+    NoobTacoUIDB.CollectionNotifications.enabled = value
   elseif key:find("GeneralSettings%.") then
     -- Handle general settings
     local settingKey = key:gsub("GeneralSettings%.", "")
-    if not NoobTacoUIMediaDB.GeneralSettings then
-      NoobTacoUIMediaDB.GeneralSettings = {}
+    if not NoobTacoUIDB.GeneralSettings then
+      NoobTacoUIDB.GeneralSettings = {}
     end
-    NoobTacoUIMediaDB.GeneralSettings[settingKey] = value
+    NoobTacoUIDB.GeneralSettings[settingKey] = value
   else
-    NoobTacoUIMediaDB[key] = value
+    NoobTacoUIDB[key] = value
   end
 
   -- Trigger callback if available
@@ -360,7 +360,7 @@ end
 local function CreateMinimapButton()
   if minimapButton or not Minimap then return end
 
-  minimapButton = CreateFrame("Button", "NoobTacoUIMediaMinimapButton", Minimap)
+  minimapButton = CreateFrame("Button", "NoobTacoUIMinimapButton", Minimap)
   minimapButton:SetSize(32, 32)
   minimapButton:SetFrameStrata("MEDIUM")
   minimapButton:SetFrameLevel(8)
@@ -376,7 +376,7 @@ local function CreateMinimapButton()
   minimapButton.icon = minimapButton:CreateTexture(nil, "ARTWORK")
   minimapButton.icon:SetSize(14, 14) -- Slightly smaller to fit within border better
   minimapButton.icon:SetPoint("TOPLEFT", 9, -7)
-  minimapButton.icon:SetTexture("Interface\\AddOns\\NoobTacoUI-Media\\Media\\Textures\\logo.tga")
+  minimapButton.icon:SetTexture("Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga")
   minimapButton.icon:SetVertexColor(1, 1, 1, 1) -- Keep logo in original colors
 
   -- Border overlay with proper minimap button border
@@ -392,7 +392,7 @@ local function CreateMinimapButton()
     -- Keep logo colors original, just brighten the background
 
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+    GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
     GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
     if AreCollectionsAvailable() then
       GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
@@ -421,7 +421,7 @@ local function CreateMinimapButton()
 
     -- Update tooltip to show drag instructions
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+    GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
     GameTooltip:AddLine("Drag to reposition", 0.7, 0.7, 0.7)
     GameTooltip:AddLine("Release to save position", 0.7, 0.7, 0.7)
     GameTooltip:Show()
@@ -433,7 +433,7 @@ local function CreateMinimapButton()
     if isDragging then
       -- Calculate and save the new angle
       local newAngle = GetAngleFromPosition()
-      NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle = newAngle
+      NoobTacoUIDB.GeneralSettings.minimapButtonAngle = newAngle
 
       -- Reposition to clean angle (snaps to calculated position)
       PositionMinimapButton(newAngle)
@@ -442,7 +442,7 @@ local function CreateMinimapButton()
 
       -- Reset tooltip
       GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-      GameTooltip:SetText("|cFF16C3F2NoobTacoUI-Media|r", 1, 1, 1)
+      GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
       GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
       GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
       GameTooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
@@ -461,23 +461,23 @@ local function CreateMinimapButton()
       addon.ShowConfigMenu()
     elseif button == "RightButton" and AreCollectionsAvailable() then
       -- Toggle collection notifications (only available in retail)
-      local enabled = NoobTacoUIMediaDB.CollectionNotifications and NoobTacoUIMediaDB.CollectionNotifications.enabled
+      local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
       if enabled then
-        NoobTacoUIMediaDB.CollectionNotifications.enabled = false
-        print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFBF616ADisabled|r")
+        NoobTacoUIDB.CollectionNotifications.enabled = false
+        print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFBF616ADisabled|r")
       else
-        NoobTacoUIMediaDB.CollectionNotifications.enabled = true
-        print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications |cFFA3BE8CEnabled|r")
+        NoobTacoUIDB.CollectionNotifications.enabled = true
+        print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFA3BE8CEnabled|r")
       end
     elseif button == "RightButton" and not AreCollectionsAvailable() then
-      print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications not available in " .. GetExpansionName())
+      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
     end
   end)
 
   minimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
   -- Position using stored angle or default
-  local savedAngle = NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle or 225
+  local savedAngle = NoobTacoUIDB.GeneralSettings.minimapButtonAngle or 225
   PositionMinimapButton(savedAngle)
 
   minimapButton:Show()
@@ -493,14 +493,14 @@ local function UpdateMinimapButtonVisibility(showMessages)
     if minimapButton then
       minimapButton:Show()
       if showMessages then
-        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button shown")
+        print("|cFF16C3F2NoobTacoUI|r: Minimap button shown")
       end
     end
   else
     if minimapButton then
       minimapButton:Hide()
       if showMessages then
-        print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button hidden")
+        print("|cFF16C3F2NoobTacoUI|r: Minimap button hidden")
       end
     end
   end
@@ -516,7 +516,7 @@ local function SetupAddonCompartment()
 
   -- TOC file handles the registration with AddonCompartmentFunc entries
   -- This function just marks that we've set up the integration
-  print("|cFF16C3F2NoobTacoUI-Media|r: Addon compartment integration ready")
+  print("|cFF16C3F2NoobTacoUI|r: Addon compartment integration ready")
 end
 
 -- Wait for UIAssets to be loaded
@@ -665,7 +665,7 @@ local function CreateEnhancedHeader(parent)
   header.Background:SetColorTexture(unpack(addon.UIAssets.Colors.Nord2))
 
   -- Title with enhanced styling
-  header.Title = addon.UIUtils:CreateCategoryHeader(header, "NoobTacoUI-Media Configuration")
+  header.Title = addon.UIUtils:CreateCategoryHeader(header, "NoobTacoUI Configuration")
   header.Title:SetPoint("LEFT", header, "LEFT", PADDING, 0)
 
   -- Close button with enhanced styling using WoW texture
@@ -1015,7 +1015,7 @@ local function InitializeConfigFrame()
   versionFooter:SetPoint("BOTTOMRIGHT", EnhancedConfigFrame, "BOTTOMRIGHT", -PADDING, PADDING)
   versionFooter:SetJustifyH("RIGHT")
   versionFooter:SetText("v" .. (C_AddOns and C_AddOns.GetAddOnMetadata and
-    C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.3.2-beta"))
+    C_AddOns.GetAddOnMetadata("NoobTacoUI", "Version") or "1.3.2-beta"))
   versionFooter:SetTextColor(unpack(addon.UIAssets.Colors.Nord3))
   versionFooter:SetAlpha(0.7)
 
@@ -1040,7 +1040,7 @@ local function InitializeConfigFrame()
     if not content.aboutPanel then
       content.aboutPanel = CreateEnhancedSettingsPanel(
         content,
-        "About NoobTacoUI-Media",
+        "About NoobTacoUI",
         "Shared media assets and enhanced UI components for the NoobTacoUI addon suite."
       )
 
@@ -1070,7 +1070,7 @@ local function InitializeConfigFrame()
       ApplyConfigFont(versionText, "header-primary")
       versionText:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, 0)
       versionText:SetText("Version " .. (C_AddOns and C_AddOns.GetAddOnMetadata and
-        C_AddOns.GetAddOnMetadata("NoobTacoUI-Media", "Version") or "1.3.2-beta"))
+        C_AddOns.GetAddOnMetadata("NoobTacoUI", "Version") or "1.3.2-beta"))
       versionText:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
       -- Author info
@@ -1198,7 +1198,7 @@ local function InitializeConfigFrame()
         content.audioPanel = CreateEnhancedSettingsPanel(
           content,
           "Audio Configuration",
-          "Configure audio notifications, custom sounds, and sound effects used throughout NoobTacoUI-Media."
+          "Configure audio notifications, custom sounds, and sound effects used throughout NoobTacoUI."
         )
 
         -- Add collection notifications section
@@ -1245,10 +1245,10 @@ local function InitializeConfigFrame()
             value = addon.CollectionNotifications.GetSetting(key)
           else
             -- Fallback to direct access if module not loaded yet
-            if not NoobTacoUIMediaDB.CollectionNotifications then
-              NoobTacoUIMediaDB.CollectionNotifications = {}
+            if not NoobTacoUIDB.CollectionNotifications then
+              NoobTacoUIDB.CollectionNotifications = {}
             end
-            value = NoobTacoUIMediaDB.CollectionNotifications[key]
+            value = NoobTacoUIDB.CollectionNotifications[key]
           end
           return value
         end
@@ -1261,12 +1261,12 @@ local function InitializeConfigFrame()
             addon.CollectionNotifications.SetSetting(key, value)
           else
             -- Fallback to direct access if module not loaded yet
-            if not NoobTacoUIMediaDB.CollectionNotifications then
-              NoobTacoUIMediaDB.CollectionNotifications = {}
+            if not NoobTacoUIDB.CollectionNotifications then
+              NoobTacoUIDB.CollectionNotifications = {}
             end
             if value == nil then value = false end
             if value == 1 then value = true end
-            NoobTacoUIMediaDB.CollectionNotifications[key] = value
+            NoobTacoUIDB.CollectionNotifications[key] = value
             if addon.CallbackRegistry then
               addon.CallbackRegistry:Trigger("CollectionNotifications." .. key, value)
             end
@@ -1364,7 +1364,7 @@ local function InitializeConfigFrame()
 
             -- If saved sound doesn't exist, fall back to default
             if not soundExists then
-              print("|cFF16C3F2NoobTacoUI-Media|r: Saved sound '" ..
+              print("|cFF16C3F2NoobTacoUI|r: Saved sound '" ..
                 currentSound .. "' no longer available, using default")
               validSound = false
             end
@@ -1877,7 +1877,7 @@ local function InitializeConfigFrame()
       addon.CopyProfileDialog.scrollFrame.UpdateScrollThumb()
       addon.CopyProfileDialog:Show()
 
-      print("|cFF16C3F2NoobTacoUI-Media|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
+      print("|cFF16C3F2NoobTacoUI|r: " .. profile.displayName .. " profile string displayed. Copy it manually.")
       print("|cFFA3BE8CNext step:|r Type |cFFEBCB8B" .. profile.command .. "|r and navigate to Import Profile")
     end)
 
@@ -2270,10 +2270,10 @@ local function InitializeConfigFrame()
           SetGeneralSetting("enableAddonCompartment", newValue)
 
           if newValue then
-            print("|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFA3BE8CEnabled|r")
+            print("|cFF16C3F2NoobTacoUI|r: Addon drawer integration |cFFA3BE8CEnabled|r")
           else
             print(
-              "|cFF16C3F2NoobTacoUI-Media|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
+              "|cFF16C3F2NoobTacoUI|r: Addon drawer integration |cFFBF616ADisabled|r - Drawer entry will be non-functional")
           end
         end)
         yOffset = yOffset - 35
@@ -2406,7 +2406,7 @@ local function InitializeConfigFrame()
           resolution = " (1080p)"
         end
 
-        print("|cFF16C3F2NoobTacoUI-Media|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. resolution)
+        print("|cFF16C3F2NoobTacoUI|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. resolution)
       end)
 
       yOffset = yOffset - 40
@@ -2420,7 +2420,7 @@ local function InitializeConfigFrame()
       local function SetUIScale(scale, label)
         SetCVar("useUiScale", "1")
         SetCVar("uiScale", scale)
-        print("|cFF16C3F2NoobTacoUI-Media|r: UI Scale set to |cFFA3BE8C" .. scale .. "|r (" .. label .. ")")
+        print("|cFF16C3F2NoobTacoUI|r: UI Scale set to |cFFA3BE8C" .. scale .. "|r (" .. label .. ")")
 
         StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
           text = "UI Scale changed to " ..
@@ -2549,7 +2549,7 @@ end
 SLASH_NTCC1 = "/ntcc"
 SlashCmdList["NTCC"] = function()
   if not AreCollectionsAvailable() then
-    print("|cFF16C3F2NoobTacoUI-Media|r: Collection Notifications not available in " .. GetExpansionName())
+    print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
     print("This feature requires MoP (5.x) or later")
     return
   end
@@ -2571,19 +2571,19 @@ SLASH_NTMINIMAP1 = "/ntminimap"
 SlashCmdList["NTMINIMAP"] = function(arg)
   if arg == "show" then
     CreateMinimapButton()
-    print("|cFF16C3F2NoobTacoUI-Media|r: Forcing minimap button creation")
+    print("|cFF16C3F2NoobTacoUI|r: Forcing minimap button creation")
   elseif arg == "hide" then
     if minimapButton then
       minimapButton:Hide()
-      print("|cFF16C3F2NoobTacoUI-Media|r: Hiding minimap button")
+      print("|cFF16C3F2NoobTacoUI|r: Hiding minimap button")
     end
   elseif arg == "toggle" then
     if minimapButton and minimapButton:IsVisible() then
       minimapButton:Hide()
-      print("|cFF16C3F2NoobTacoUI-Media|r: Hiding minimap button")
+      print("|cFF16C3F2NoobTacoUI|r: Hiding minimap button")
     else
       CreateMinimapButton()
-      print("|cFF16C3F2NoobTacoUI-Media|r: Showing minimap button")
+      print("|cFF16C3F2NoobTacoUI|r: Showing minimap button")
     end
   elseif arg == "refresh" then
     if minimapButton then
@@ -2591,18 +2591,18 @@ SlashCmdList["NTMINIMAP"] = function(arg)
       minimapButton = nil
     end
     CreateMinimapButton()
-    print("|cFF16C3F2NoobTacoUI-Media|r: Refreshed minimap button")
+    print("|cFF16C3F2NoobTacoUI|r: Refreshed minimap button")
   elseif arg == "reset" then
     -- Reset button position to default
-    NoobTacoUIMediaDB.GeneralSettings.minimapButtonAngle = 225
+    NoobTacoUIDB.GeneralSettings.minimapButtonAngle = 225
     if minimapButton then
       PositionMinimapButton(225)
-      print("|cFF16C3F2NoobTacoUI-Media|r: Minimap button position reset to default (bottom-left)")
+      print("|cFF16C3F2NoobTacoUI|r: Minimap button position reset to default (bottom-left)")
     else
-      print("|cFF16C3F2NoobTacoUI-Media|r: Position reset - create button to see effect")
+      print("|cFF16C3F2NoobTacoUI|r: Position reset - create button to see effect")
     end
   else
-    print("|cFF16C3F2NoobTacoUI-Media|r: Use /ntminimap show|hide|toggle|refresh|reset")
+    print("|cFF16C3F2NoobTacoUI|r: Use /ntminimap show|hide|toggle|refresh|reset")
     print("  |cFF5E81ACshow|r - Force create minimap button")
     print("  |cFF5E81AChide|r - Hide minimap button")
     print("  |cFF5E81ACtoggle|r - Toggle button visibility")
@@ -2614,23 +2614,23 @@ end
 -- Debug command for troubleshooting settings
 SLASH_NTDEBUG1 = "/ntdebug"
 SlashCmdList["NTDEBUG"] = function()
-  print("|cFF16C3F2NoobTacoUI-Media Debug:|r")
-  print("NoobTacoUIMediaDB exists: " .. tostring(NoobTacoUIMediaDB ~= nil))
+  print("|cFF16C3F2NoobTacoUI Debug:|r")
+  print("NoobTacoUIDB exists: " .. tostring(NoobTacoUIDB ~= nil))
 
-  if NoobTacoUIMediaDB then
-    print("CollectionNotifications table exists: " .. tostring(NoobTacoUIMediaDB.CollectionNotifications ~= nil))
-    print("GeneralSettings table exists: " .. tostring(NoobTacoUIMediaDB.GeneralSettings ~= nil))
+  if NoobTacoUIDB then
+    print("CollectionNotifications table exists: " .. tostring(NoobTacoUIDB.CollectionNotifications ~= nil))
+    print("GeneralSettings table exists: " .. tostring(NoobTacoUIDB.GeneralSettings ~= nil))
 
-    if NoobTacoUIMediaDB.GeneralSettings then
+    if NoobTacoUIDB.GeneralSettings then
       print("Current General settings:")
-      for key, value in pairs(NoobTacoUIMediaDB.GeneralSettings) do
+      for key, value in pairs(NoobTacoUIDB.GeneralSettings) do
         print("  " .. key .. " = " .. tostring(value))
       end
     end
 
-    if NoobTacoUIMediaDB.CollectionNotifications then
+    if NoobTacoUIDB.CollectionNotifications then
       print("Current Collection Notification settings:")
-      for key, value in pairs(NoobTacoUIMediaDB.CollectionNotifications) do
+      for key, value in pairs(NoobTacoUIDB.CollectionNotifications) do
         print("  " .. key .. " = " .. tostring(value))
       end
 
@@ -2640,7 +2640,7 @@ SlashCmdList["NTDEBUG"] = function()
 
       print("Sound validation:")
       for _, soundKey in ipairs(soundKeys) do
-        local soundName = NoobTacoUIMediaDB.CollectionNotifications[soundKey]
+        local soundName = NoobTacoUIDB.CollectionNotifications[soundKey]
         if type(soundName) == "string" and soundName ~= "" then
           local soundFile = LSM:Fetch("sound", soundName, true) -- silent fetch
           print("  " .. soundKey .. " (" .. soundName .. "): " .. (soundFile and "FOUND" or "MISSING"))
@@ -2674,6 +2674,8 @@ SlashCmdList["NTREFRESH"] = function()
     -- Try to find and refresh any dropdowns
     -- This is a debug function to manually test dropdown refresh
   else
-    print("|cFF16C3F2NoobTacoUI-Media|r: Config menu not open. Open it first with /ntconfig")
+    print("|cFF16C3F2NoobTacoUI|r: Config menu not open. Open it first with /ntconfig")
   end
 end
+
+_G.NoobTacoUIAddon = addon

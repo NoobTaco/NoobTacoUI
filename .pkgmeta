@@ -1,4 +1,4 @@
-package-as: NoobTacoUI-Media
+package-as: NoobTacoUI
 
 ignore:
     - dev

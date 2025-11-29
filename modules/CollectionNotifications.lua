@@ -1,4 +1,4 @@
--- NoobTacoUI-Media Collection Notifications Module
+-- NoobTacoUI Collection Notifications Module
 -- Provides audio notifications for various collection-related events in World of Warcraft
 -- Author: NoobTaco
 -- Version: @project-version@
@@ -26,27 +26,34 @@ local defaultSettings = {
 
 -- Initialize settings if they don't exist
 local function InitializeSettings()
-  if not NoobTacoUIMediaDB then
-    NoobTacoUIMediaDB = {}
+  if not NoobTacoUIDB then
+    NoobTacoUIDB = {}
   end
 
   -- One-time migration from legacy NoobTacoDB if present
   local legacy = rawget(_G, "NoobTacoDB")
   if legacy and type(legacy) == "table" and type(legacy.CollectionNotifications) == "table" then
-    NoobTacoUIMediaDB.CollectionNotifications = NoobTacoUIMediaDB.CollectionNotifications or
+    NoobTacoUIDB.CollectionNotifications = NoobTacoUIDB.CollectionNotifications or
         legacy.CollectionNotifications
   end
 
-  if not NoobTacoUIMediaDB.CollectionNotifications then
-    NoobTacoUIMediaDB.CollectionNotifications = {}
-    print("|cFF16C3F2NoobTacoUI-Media|r: Creating new CollectionNotifications settings table")
+  -- One-time migration from legacy NoobTacoUIMediaDB if present
+  local legacyMedia = rawget(_G, "NoobTacoUIMediaDB")
+  if legacyMedia and type(legacyMedia) == "table" and type(legacyMedia.CollectionNotifications) == "table" then
+    NoobTacoUIDB.CollectionNotifications = NoobTacoUIDB.CollectionNotifications or
+        legacyMedia.CollectionNotifications
+  end
+
+  if not NoobTacoUIDB.CollectionNotifications then
+    NoobTacoUIDB.CollectionNotifications = {}
+    print("|cFF16C3F2NoobTacoUI|r: Creating new CollectionNotifications settings table")
   end
 
   -- Set defaults for any missing values
   local changedSettings = {}
   for key, value in pairs(defaultSettings) do
-    if NoobTacoUIMediaDB.CollectionNotifications[key] == nil then
-      NoobTacoUIMediaDB.CollectionNotifications[key] = value
+    if NoobTacoUIDB.CollectionNotifications[key] == nil then
+      NoobTacoUIDB.CollectionNotifications[key] = value
       table.insert(changedSettings, key)
     end
   end
@@ -54,7 +61,7 @@ local function InitializeSettings()
   -- Normalize legacy non-boolean values for checkbox keys
   local boolKeys = { "enabled", "newPet", "newMount", "newToy", "newTransmog", "showMessages" }
   for _, k in ipairs(boolKeys) do
-    local v = NoobTacoUIMediaDB.CollectionNotifications[k]
+    local v = NoobTacoUIDB.CollectionNotifications[k]
     if v == 1 or v == "1" or v == "true" then
       v = true
     elseif v == 0 or v == "0" or v == "false" or v == nil then
@@ -63,15 +70,15 @@ local function InitializeSettings()
       -- Anything else non-boolean defaults to false for safety
       v = false
     end
-    NoobTacoUIMediaDB.CollectionNotifications[k] = v
+    NoobTacoUIDB.CollectionNotifications[k] = v
   end
 
   if #changedSettings > 0 then
-    print("|cFF16C3F2NoobTacoUI-Media|r: Initialized default values for: " .. table.concat(changedSettings, ", "))
+    print("|cFF16C3F2NoobTacoUI|r: Initialized default values for: " .. table.concat(changedSettings, ", "))
   end
 
   -- One-time migration of legacy default sounds to new dedicated collection sounds
-  local db = NoobTacoUIMediaDB.CollectionNotifications
+  local db = NoobTacoUIDB.CollectionNotifications
   if not db.soundDefaultsMigratedV2 then
     local migrated = {}
     if db.soundPet == "NT_InfussionOfLight" then
@@ -88,7 +95,7 @@ local function InitializeSettings()
     end
     db.soundDefaultsMigratedV2 = true
     if #migrated > 0 then
-      print("|cFF16C3F2NoobTacoUI-Media|r: Updated collection sound defaults (" .. table.concat(migrated, ", ") .. ")")
+      print("|cFF16C3F2NoobTacoUI|r: Updated collection sound defaults (" .. table.concat(migrated, ", ") .. ")")
     end
   end
 end
@@ -96,7 +103,7 @@ end
 -- Helper function to get setting value
 local function GetSetting(key)
   InitializeSettings()
-  local value = NoobTacoUIMediaDB.CollectionNotifications[key]
+  local value = NoobTacoUIDB.CollectionNotifications[key]
   if value ~= nil then return value end
   -- Fallback to legacy table if present
   local legacy = rawget(_G, "NoobTacoDB")
@@ -111,7 +118,7 @@ local function SetSetting(key, value)
   InitializeSettings()
   if value == 1 then value = true end
   if value == nil then value = false end
-  NoobTacoUIMediaDB.CollectionNotifications[key] = value
+  NoobTacoUIDB.CollectionNotifications[key] = value
   -- Mirror to legacy table for backward compatibility during transition
   local legacy = rawget(_G, "NoobTacoDB")
   if legacy then
@@ -332,9 +339,9 @@ if addon then
 end
 
 -- Slash command for testing sounds
-SLASH_NTMCOLLECTION1 = "/ntmcollection"
-SLASH_NTMCOLLECTION2 = "/ntmcol"
-SlashCmdList["NTMCOLLECTION"] = function(msg)
+SLASH_NTCOLLECTION1 = "/ntcollection"
+SLASH_NTCOLLECTION2 = "/ntcol"
+SlashCmdList["NTCOLLECTION"] = function(msg)
   local args = string.lower(msg or "")
 
   if args == "test" then
@@ -376,11 +383,11 @@ SlashCmdList["NTMCOLLECTION"] = function(msg)
     print("  Transmog: " .. (GetSetting("newTransmog") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
   else
     print("|cFF16C3F2NoobTacoUI|r Collection Notifications commands:")
-    print("  |cFFFFFF00/ntmcollection test|r - Test all notification sounds")
-    print("  |cFFFFFF00/ntmcollection testpet|r - Test pet notification")
-    print("  |cFFFFFF00/ntmcollection testmount|r - Test mount notification")
-    print("  |cFFFFFF00/ntmcollection testtoy|r - Test toy notification")
-    print("  |cFFFFFF00/ntmcollection testtransmog|r - Test transmog notification")
-    print("  |cFFFFFF00/ntmcollection status|r - Show current settings")
+    print("  |cFFFFFF00/ntcollection test|r - Test all notification sounds")
+    print("  |cFFFFFF00/ntcollection testpet|r - Test pet notification")
+    print("  |cFFFFFF00/ntcollection testmount|r - Test mount notification")
+    print("  |cFFFFFF00/ntcollection testtoy|r - Test toy notification")
+    print("  |cFFFFFF00/ntcollection testtransmog|r - Test transmog notification")
+    print("  |cFFFFFF00/ntcollection status|r - Show current settings")
   end
 end

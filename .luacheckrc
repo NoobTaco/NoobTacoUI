@@ -1,4 +1,4 @@
--- Luacheck configuration for NoobTacoUI-Media
+-- Luacheck configuration for NoobTacoUI
 -- This file configures luacheck to properly check World of Warcraft addon code
 
 -- Exclude external library files from checking
@@ -11,14 +11,14 @@ exclude_files = {
 globals = {
   "LibStub",
   -- SavedVariables
-  "NoobTacoUIMediaDB",
+  "NoobTacoUIDB",
   -- Addon Compartment Functions
-  "NoobTacoUIMedia_OnAddonCompartmentClick",
-  "NoobTacoUIMedia_OnAddonCompartmentEnter",
-  "NoobTacoUIMedia_OnAddonCompartmentLeave",
+  "NoobTacoUI_OnAddonCompartmentClick",
+  "NoobTacoUI_OnAddonCompartmentEnter",
+  "NoobTacoUI_OnAddonCompartmentLeave",
   -- Slash command globals (pattern: SLASH_COMMANDNAME# and SlashCmdList)
-  "SLASH_NTMVERSION1", "SLASH_NTMVERSION2",
-  "SLASH_NTMCOLLECTION1", "SLASH_NTMCOLLECTION2",
+  "SLASH_NTVERSION1", "SLASH_NTVERSION2",
+  "SLASH_NTCOLLECTION1", "SLASH_NTCOLLECTION2",
   "SLASH_NTUICONFIG1", "SLASH_NTUICONFIG2", "SLASH_NTUICONFIG3", "SLASH_NTUICONFIG4",
   "SLASH_NTCC1",
   "SLASH_NTMINIMAP1",
@@ -27,7 +27,7 @@ globals = {
   "SlashCmdList", -- Slash command handler table (writable)
   -- Configuration menu globals
   "NoobTacoDB",
-  "NoobTacoUIMediaAddon",
+  "NoobTacoUIAddon",
 }
 
 -- Allow access to WoW API globals (read-only)

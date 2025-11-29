@@ -1,7 +1,7 @@
 -- Simple test to verify Collection Notifications config integration
 -- This is just for testing purposes during development
 
-print("Testing NoobTacoUI-Media Collection Notifications Config Integration")
+print("Testing NoobTacoUI Collection Notifications Config Integration")
 
 -- Test that the audio files are properly registered
 local LSM = LibStub and LibStub("LibSharedMedia-3.0")
@@ -29,13 +29,13 @@ else
 end
 
 -- Test that the addon structure is available
-if _G.NoobTacoUIMediaAddon then
-  print("✓ NoobTacoUIMediaAddon global is available")
+if _G.NoobTacoUIAddon then
+  print("✓ NoobTacoUIAddon global is available")
 
-  if _G.NoobTacoUIMediaAddon.CollectionNotifications then
+  if _G.NoobTacoUIAddon.CollectionNotifications then
     print("✓ CollectionNotifications module is loaded")
 
-    local cn = _G.NoobTacoUIMediaAddon.CollectionNotifications
+    local cn = _G.NoobTacoUIAddon.CollectionNotifications
     print("  Available functions:")
     for k, v in pairs(cn) do
       if type(v) == "function" then
@@ -46,13 +46,13 @@ if _G.NoobTacoUIMediaAddon then
     print("✗ CollectionNotifications module not loaded")
   end
 
-  if _G.NoobTacoUIMediaAddon.ShowConfigMenu then
+  if _G.NoobTacoUIAddon.ShowConfigMenu then
     print("✓ ShowConfigMenu function is available")
   else
     print("✗ ShowConfigMenu function not available")
   end
 else
-  print("✗ NoobTacoUIMediaAddon global not available")
+  print("✗ NoobTacoUIAddon global not available")
 end
 
 print("Test complete.")

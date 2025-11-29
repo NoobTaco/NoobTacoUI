@@ -1,4 +1,4 @@
--- NoobTacoUI-Media Addon Integration Profiles
+-- NoobTacoUI Addon Integration Profiles
 -- Pre-configured profile strings for compatible addons
 
 local addonName, addon = ...

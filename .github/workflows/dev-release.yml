@@ -51,7 +51,7 @@ jobs:
         if: "!inputs.upload_to_github"
         uses: actions/upload-artifact@v4
         with:
-          name: NoobTacoUI-Media-dev-${{ inputs.branch }}
+          name: NoobTacoUI-dev-${{ inputs.branch }}
           path: .release/*.zip
           retention-days: 14
           if-no-files-found: error

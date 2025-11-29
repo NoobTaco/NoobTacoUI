@@ -1,16 +1,16 @@
 ## Interface: 120000, 110200, 110107, 50500, 40402, 11507
-## Title: |cFF16C3F2NoobTacoUI|r|cFFFFFFFFMedia|r
+## Title: |cFF16C3F2NoobTacoUI|r
 ## Author: NoobTaco
 ## Version: @project-version@
 ## OptionalDeps: SharedMedia
-## Notes: Fonts, Audio, and Textures for World of Warcraft
+## Notes: The complete UI configuration, profile, and media framework, ready for Midnight.
 ## X-License: GPL-3.0-or-later
 ## DefaultState: enabled
-## IconTexture: Interface\AddOns\NoobTacoUI-Media\media\Textures\logo.tga
-## SavedVariables: NoobTacoUIMediaDB
-## AddonCompartmentFunc: NoobTacoUIMedia_OnAddonCompartmentClick
-## AddonCompartmentFuncOnEnter: NoobTacoUIMedia_OnAddonCompartmentEnter
-## AddonCompartmentFuncOnLeave: NoobTacoUIMedia_OnAddonCompartmentLeave
+## IconTexture: Interface\AddOns\NoobTacoUI\media\Textures\logo.tga
+## SavedVariables: NoobTacoUIDB
+## AddonCompartmentFunc: NoobTacoUI_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: NoobTacoUI_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: NoobTacoUI_OnAddonCompartmentLeave
 ## Category-enUS: UI Overhaul
 ## Category-deDE: UI-Überholung
 ## Category-esES: Renovación de la UI
@@ -23,7 +23,7 @@
 ## Category-zhCN: UI重构
 ## Category-zhTW: UI重構
 ## X-Tukui-ProjectID: 185
-## X-Tukui-ProjectFolders: NoobTacoUI-Media
+## X-Tukui-ProjectFolders: NoobTacoUI
 ## X-WoWI-ID: 25745
 ## X-Curse-Project-ID: 414875
 ## X-Wago-ID: rN4VRxKD
