@@ -1,6 +1,6 @@
-# NoobTacoUI-Media
+# NoobTacoUI
 
-![CI Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI-Media/workflows/Release/badge.svg)
+![CI Status](https://github.com/NoobTaco/NoobTacoUI/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI/workflows/Release/badge.svg)
 
 A comprehensive media addon that provides high-quality fonts, audio files, and status bar textures for World of Warcraft addons. All media is registered with LibSharedMedia-3.0 and will automatically appear in any compatible addon's media selection lists.
 
@@ -46,7 +46,7 @@ A comprehensive media addon that provides high-quality fonts, audio files, and s
 Access the configuration interface with any of these commands:
 - **`/ntm config`** - Open the main configuration window
 - **`/ntm settings`** - Alternative command for configuration
-- **Minimap Button** - Click the NoobTacoUI-Media minimap button
+- **Minimap Button** - Click the NoobTacoUI minimap button
 - **Addon Compartment** - Use WoW's addon drawer (left-click to configure, right-click to toggle notifications)
 
 ### Collection Notifications
@@ -149,11 +149,11 @@ This addon works with any World of Warcraft addon that uses LibSharedMedia-3.0 f
 
 ## Download
 
-Get NoobTacoUI-Media from your favorite addon platform:
+Get NoobTacoUI from your favorite addon platform:
 
-- [GitHub](https://github.com/NoobTaco/NoobTacoUI-Media)
+- [GitHub](https://github.com/NoobTaco/NoobTacoUI)
 - [Curse/Overwolf](https://www.curseforge.com/wow/addons/noobtacoui-media)
-- [WoW Interface](https://www.wowinterface.com/downloads/info25745-NoobTacoUI-Media.html)
+- [WoW Interface](https://www.wowinterface.com/downloads/info25745-NoobTacoUI.html)
 - [Wago](https://addons.wago.io/addons/noobtacoui-media)
 
 ## Support Development
