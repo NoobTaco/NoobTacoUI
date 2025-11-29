@@ -70,7 +70,7 @@ This keeps the addon package lightweight while providing promotional and documen
 
 These images are perfect for:
 
-- **Addon Store Pages**: CurseForge, WoWInterface, Wago screenshots
+- **Addon Store Pages**: CurseForge, Wago screenshots
 - **Documentation**: README embeds, wiki pages
 - **Social Media**: Sharing font and texture collections
 - **Development**: Reference materials for other addon developers

@@ -22,9 +22,6 @@
 ## Category-koKR: UI 개편
 ## Category-zhCN: UI重构
 ## Category-zhTW: UI重構
-## X-Tukui-ProjectID: 185
-## X-Tukui-ProjectFolders: NoobTacoUI
-## X-WoWI-ID: 25745
 ## X-Curse-Project-ID: 414875
 ## X-Wago-ID: rN4VRxKD
 

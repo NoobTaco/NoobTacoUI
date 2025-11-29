@@ -153,7 +153,6 @@ Get NoobTacoUI from your favorite addon platform:
 
 - [GitHub](https://github.com/NoobTaco/NoobTacoUI)
 - [Curse/Overwolf](https://www.curseforge.com/wow/addons/noobtacoui)
-- [WoW Interface](https://www.wowinterface.com/downloads/info25745-NoobTacoUI.html)
 - [Wago](https://addons.wago.io/addons/noobtacoui)
 
 ## Support Development
