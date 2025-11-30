@@ -2044,7 +2044,7 @@ local function InitializeConfigFrame()
     local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
     local cmtLoaded = C_AddOns.IsAddOnLoaded("CooldownManagerTweaks")
     local zbarLoaded = C_AddOns.IsAddOnLoaded("zBarButtonBG")
-    local xivLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar")
+    local xivLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued")
 
     local currentYOffset = -INNER_PADDING
 
