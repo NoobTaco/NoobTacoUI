@@ -1,5 +1,14 @@
 # NoobTacoUIMedia
 
+## [v1.4.1](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.1) (2025-11-30)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.4.0...v1.4.1)
+
+### 🎯 Major Features Added
+
+#### Addon Integration System 🆕
+- **XIV_Databar Continued Profile**: One-click import of optimized XIV_Databar Continued profile
+- **Enhanced Detection**: Improved detection for XIV_Databar Continued to support multiple folder naming conventions
+
 ## [v1.4.0](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.0) (2025-11-29)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.3.3...v1.4.0)
 
