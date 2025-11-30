@@ -7,6 +7,7 @@
 
 #### Addon Integration System 🆕
 - **XIV_Databar Continued Profile**: One-click import of optimized XIV_Databar Continued profile
+- **Sensei Class Resource Bar Profile**: One-click import of optimized Sensei Class Resource Bar profile
 - **Enhanced Detection**: Improved detection for XIV_Databar Continued to support multiple folder naming conventions
 
 ### 🔧 Technical Improvements
