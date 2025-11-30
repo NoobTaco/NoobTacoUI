@@ -127,6 +127,30 @@ addon.AddonProfiles.zBarButtonBG = {
   dateCreated = "2025-11-29"
 }
 
+-- XIV_Databar Continued Profile
+-- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Version: 1.0
+-- Last Updated: 2025-11-30
+addon.AddonProfiles.XIV_Databar = {
+  name = "XIV_Databar",
+  displayName = "XIV_Databar Continued",
+  description =
+  "Import a pre-configured profile for XIV_Databar Continued that complements the NoobTacoUI aesthetic. This profile includes optimized bar styling and positioning.",
+  downloadUrl = "https://www.curseforge.com/wow/addons/xiv-databar-continued",
+  command = "/xivbar config",
+  instructions = {
+    "Click the button below to copy the profile string",
+    "Type |cFFEBCB8B/xivbar config|r in chat to open XIV_Databar config",
+    "Navigate to the |cFFEBCB8BProfiles|r section",
+    "Paste the profile string and import"
+  },
+  profileString =
+  "9v1Y2jooq0pNzvNJngJnldV60NtZJtKNPNvUJWUaRjYsEKeqOxKV9Pkz7aHKEwHPQs1ZBDR8W8SCwJrVtib6tqX3kHLNDvIInAJJlT5BZzwqcfoO8bGBCvwNwbw0CxoBpOadx6DJwOqjtNVkB(J5SxwVBNfC5RcYzB5MnARWj0QC2K1zzRx6fUKB2luVzcVSuO2NVkkND(9VEXbP0wyaqLpXlyQUEl39GOeO87GfMlp(NFJuAaj3jocBEF6i1fpdLKb16YdsG1WlAdwxeKI9vV5quWpeLUQ8vHrJIPcT4GHbCRwTwjptMuOLAdv3kTPUTdWX09UKymhOpsXUt3VBB)fDJqXlOS7nZh0AEO34qVPHKHyjnDkfNk9rWhhJVz0B1I4OrPJhNmmC8Oe8NH57(sCu3lFGEd(8(EvxMYZxKeNommjjnioAqAuQ)vdjFVyusAy64W0KOGKXdgpI0mII3VtZ2FNM2CidEX5Ra8Vo8Bkb2PvoM4xa1wruf22KlUiAqRb5Sn6MgHY(fgulMOLLKlQUc69DHLC3QWXbdIsqeLr)myE9PmdxzXbnNaAV(0sUZiEbnlzqyY4C2ChyuCP3UJiI28h2xF6kiD(QbrXbHyP9iucns95Aq5q)4bmu4IItXPzMOgoXLp)zoyy84eCkT5U13XUl7okjSUwdN)sJbSFmKJgLI1aQvIRihHB1hmoicXixj81N07E9jxf(XcjV2h2rXimLnvBRff34HW00XXyVDMUgrF4w8T6hoiEiQptx356m9jS91U)J6hnyCcoU(Qb4UDCmUyR(h4Y1Nv)bPjbiEAganLNazxtEozcOU14WGHXywpZWbLpTrG6EOMczeQYx0LY2EM2yHAU62i663Nj(iMZWlb7ZcP8czMFN3wPpLP1sNOPFPG2oiOjxId5BmxQ5L6do2jHRal35x00A03FVEpRIq1XyehCB8C(mdHC3eMpWP8z0VeLgxvIdVFbpyB3NWHSrVeuhihU)Gq2tSj2jatFGjIIIkUZZGxPB8SjG0)BnxOih8gnica4fvKQ)9ay7FZPVUCD2SlPwBZSbhSKmrHwDTd66LuyqE07BAMIRZiFhjrBz6cbxs0cT76ni9o1R3T33lQ4M(G2va(AVMQYjTE8kp4jGPtaZv(x51q29p6d0sojS5yxZh7ZgqvC(M2pXkTw9iX73Jr(7ni04tamV0mXdz2EXzzv45OCwWvsoPZzrbdsViAncrrrbEU)9ev2hXLlq)mHVNAKqVS10w2JaxwB7fXi2YP4rnBxBY4YQ0hSi2Odvuq34UjaxyChe02eNFeNr99qhsLTGUFrquCF9iCF9MA6GVbVGqeDTUULf7V0Yd1WTLGdAOdz(Rw2Z4FR))x(WR8ALntJx2oHiHUTL7LY1kmb392S4hAJhxJULBQBVGDIBuiAB2bdFRqkCNBRRBc23KhL9FpvRnDni0rLCjh3M(zL9Nw84aIBzZAf9EAL3TY5tHAWXPmGWPiKgx6zR06TB5QNX4)sdnoO2fETz0Wy8KdrABOjyo7EWiqQ1na)zFAK)Fd",
+  version = "1.0",
+  author = "NoobTaco",
+  dateCreated = "2025-11-30"
+}
+
 -- Add more addon profiles here following the same structure
 -- Example:
 -- addon.AddonProfiles.AnotherAddon = {

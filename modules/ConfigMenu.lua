@@ -2044,6 +2044,7 @@ local function InitializeConfigFrame()
     local platynatorLoaded = C_AddOns.IsAddOnLoaded("Platynator") or C_AddOns.IsAddOnLoaded("Platynator-main")
     local cmtLoaded = C_AddOns.IsAddOnLoaded("CooldownManagerTweaks")
     local zbarLoaded = C_AddOns.IsAddOnLoaded("zBarButtonBG")
+    local xivLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar")
 
     local currentYOffset = -INNER_PADDING
 
@@ -2117,7 +2118,17 @@ local function InitializeConfigFrame()
       end
     end
 
-    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded then
+    if xivLoaded then
+      local profile = addon.GetProfile("XIV_Databar")
+      if profile then
+        local section = CreateCollapsibleAddonSection(scrollChild, "XIV_Databar", profile, lastElement,
+          currentYOffset, UpdateLayout)
+        lastElement = section
+        currentYOffset = -4
+      end
+    end
+
+    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded then
       -- Add message when neither addon is loaded
       local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(noAddonText, "body-text")
@@ -2126,7 +2137,7 @@ local function InitializeConfigFrame()
       noAddonText:SetJustifyH("LEFT")
       noAddonText:SetJustifyV("TOP")
       noAddonText:SetText(
-        "No compatible addons detected. Install and enable BetterBlizzFrames, Platynator, Cooldown Manager Tweaks, or zBarButtonBG to access profile import functionality.")
+        "No compatible addons detected. Install and enable BetterBlizzFrames, Platynator, Cooldown Manager Tweaks, zBarButtonBG, or XIV_Databar to access profile import functionality.")
       noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
     end
 
