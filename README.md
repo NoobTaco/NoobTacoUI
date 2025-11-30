@@ -2,168 +2,78 @@
 
 ![CI Status](https://github.com/NoobTaco/NoobTacoUI/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI/workflows/Release/badge.svg)
 
-A comprehensive media addon that provides high-quality fonts, audio files, and status bar textures for World of Warcraft addons. All media is registered with LibSharedMedia-3.0 and will automatically appear in any compatible addon's media selection lists.
+**NoobTacoUI is a set of UI profiles that create a uniform and beautiful UI experience for World of Warcraft.**
 
-## ✨ What's New in Version 1.4.0
+It serves as a comprehensive media and configuration addon that provides high-quality fonts, audio files, and status bar textures, along with powerful tools to easily configure and unify your interface.
 
-### Game Settings & Pixel Perfect 🖥️
-- **Pixel Perfect Scaling**: One-click resolution scaling for 4K, 1440p, and 1080p
-- **Smart Detection**: "Print Current Scale" button identifies if current scale matches standard resolutions
-- **Safety First**: Built-in warnings and reload prompts to ensure settings are applied correctly
-- **CVar Management**: Direct control over `uiScale` and `useUiScale` CVars
+## ✨ Key Features
 
-### Expanded Addon Integration 🧩
-- **Default WoW Edit Mode**: One-click import of optimized Edit Mode layout
-- **Cooldown Manager Tweaks**: Optimized profile for cooldown tracking
-- **zBarButtonBG**: Custom styling profile for action bars
-- **BetterBlizzFrames**: Continued support for optimized unit frame profiles
+### 🎨 Unified UI Experience
+Create a cohesive and professional look across your entire interface with built-in profile management.
+- **Addon Profiles**: One-click import of optimized profiles for popular addons:
+  - **Default WoW Edit Mode**: Optimized layout for the default UI.
+  - **BetterBlizzFrames**: Enhanced unit frame configurations.
+  - **Platynator**: Clean and functional nameplate profiles.
+  - **Cooldown Manager Tweaks**: Optimized tracking settings.
+  - **zBarButtonBG**: Custom styling for action bars.
+- **Pixel Perfect Scaling**: Built-in tools to set your UI scale perfectly for 4K, 1440p, and 1080p resolutions.
+- **Game Settings**: Direct control over critical CVars to ensure your UI looks crisp.
 
-### Performance Improvements 🚀
-- **Lazy Loading**: Configuration menu loads significantly faster
-- **Memory Optimization**: Reduced initial memory footprint
+### 📚 Extensive Media Library
+All media is automatically registered with **LibSharedMedia-3.0** and available in any compatible addon.
+- **Google Fonts**: A curated collection of fonts optimized for readability (Montserrat, Roboto, Lato, Dosis, Exo2, Mukta, Poppins).
+- **Nord Theme Textures**: 32 high-quality status bar textures (Solid and Gradient) based on the popular Nord color palette.
+- **High-Quality Audio**: Professional sound effects designed for notifications, rare mob scans, and UI interactions.
 
-### Audio System Refinements 🔊
-- **Smart Cooldowns**: Added 4-second cooldown to collection notifications to prevent audio spam when unlocking sets
-- **Spam Prevention**: Ensures only one notification plays at a time during mass collection events
+### 🔔 Collection Notifications
+Never miss a new addition to your collection with the advanced notification system.
+- **Smart Detection**: Automatically detects new mounts, pets, toys, and transmog items.
+- **Custom Alerts**: Choose specific sounds for different collection types.
+- **Visual Feedback**: Optional chat messages and visual indicators.
+- **Spam Prevention**: Intelligent cooldowns to prevent audio spam during mass collection events.
 
-### Enhanced Configuration Interface
-- **Professional Menu System**: Completely redesigned configuration interface with modern Nord theme
-- **Collection Notifications**: Advanced notification system for mounts, pets, toys, and transmog with customizable audio alerts
-- **Minimap Integration**: Interactive minimap button with configuration access
-- **WoW Addon Compartment**: Full support for the modern addon drawer system
-- **General Settings Panel**: Centralized interface customization options
+### ⚙️ Modern Configuration
+A completely redesigned, professional menu system featuring the Nord theme.
+- **Easy Access**: Open via Minimap button, Addon Compartment, or chat commands.
+- **Interactive Preview**: Test audio and view media before applying changes.
+- **Account-Wide Settings**: Configuration persists across all your characters.
 
-### Improved User Experience
-- **Visual Polish**: Enhanced hover states, selection indicators, and custom scrollbars
-- **Smart Detection**: Automatically detects new collection items with optional notifications
-- **Easy Configuration**: Intuitive navigation with clear organization and helpful tooltips
-- **Account-Wide Settings**: Persistent configuration across all characters
+## 🚀 Getting Started
 
-# Features
+### Configuration
+Access the main configuration panel using any of these methods:
+- Chat Command: **`/nt config`** or **`/ntconfig`**
+- **Minimap Button**
+- **WoW Addon Compartment** (Left-click to configure)
 
-## Easy Configuration
-
-Access the configuration interface with any of these commands:
-- **`/nt config`** - Open the main configuration window
-- **`/ntconfig`** - Alternative command for configuration
-- **Minimap Button** - Click the NoobTacoUI minimap button
-- **Addon Compartment** - Use WoW's addon drawer (left-click to configure, right-click to toggle notifications)
-
-### Collection Notifications
-- **Smart Detection**: Automatically detects new mounts, pets, toys, and transmog items
-- **Custom Audio**: Choose from curated sound effects for each collection type
-- **Visual Messages**: Optional chat messages with collection notifications
-- **Granular Control**: Enable/disable notifications for specific collection types
-- **Real-time Preview**: Test any audio file before applying
-
-### Addon Integration System 🆕
-The addon now includes a powerful integration system that allows you to import optimized profiles for other popular addons. This ensures a cohesive UI experience with professional configurations.
-
-#### Supported Integrations
-- **Default WoW UI Edit Mode** - Import optimized layout for the default UI
-- **BetterBlizzFrames** - Import optimized profiles for BetterBlizzFrames
-- **Platynator** - Import optimized nameplate profiles
-- **Cooldown Manager Tweaks** - Import optimized profiles for Cooldown Manager Tweaks
-- **zBarButtonBG** - Import optimized profiles for zBarButtonBG
-
-#### Key Features
-- **Smart Layout**: Collapsible profile list for clean and organized navigation
-- **Profile Management Dialog**: User-friendly scrollable dialog with selectable text for easy profile copying and sharing
-- **Addon Configuration Sharing**: Clean interface for managing and importing addon configurations
-- **Future Expansions**: Extensible framework ready for additional addon integrations
-
-## Quick Commands
-
+### Quick Commands
 - **`/ntm version`** - Display current addon version
-- **`/ntm ver`** - Short version command  
-- **`/ntm v`** - Shortest version command
 - **`/ntm`** - Show help with available commands
 
-## Google Fonts
+## 📦 Installation
 
-A carefully curated collection of Google Fonts optimized for World of Warcraft. These fonts are registered with SharedMedia and will show up in any addon's font list.
+Simply install the addon through your preferred addon manager (CurseForge, Wago, etc.) or manually extract it to your `Interface/AddOns` folder.
 
-- **Montserrat** - Modern geometric sans-serif (5 weights: Black, Bold, Medium, Regular, SemiBold)
-- **Roboto** - Clean, natural reading rhythm (4 weights: Black, Bold, Medium, Regular)
-- **Lato** - Humanist sans-serif (3 weights: Black, Bold, Regular)
-- **Dosis** - Rounded sans-serif (7 weights: Bold, ExtraBold, ExtraLight, Light, Medium, Regular, SemiBold)
-- **Exo2** - Contemporary geometric (6 weights: Black, Bold, ExtraBold, Medium, Regular, SemiBold)
-- **Mukta** - Minimalist Devanagari (7 weights: Bold, ExtraBold, ExtraLight, Light, Medium, Regular, SemiBold)
-- **Poppins** - Geometric sans-serif (9 weights: Black, Bold, ExtraBold, ExtraLight, Italic, Medium, Regular, SemiBold, Thin)
+## 🔧 Compatibility
 
-## Audio Files
+**🌙 Midnight Beta Ready**: Fully compatible with World of Warcraft Midnight Beta (Interface: 120000).
 
-Enhanced collection of high-quality sound effects designed for collection notifications and rare mob scanning addons:
+Works seamlessly with any addon that uses LibSharedMedia-3.0, including Bartender4, WeakAuras, Plater, and many more.
 
-### Collection Notification Sounds
-- **NT_InfussionOfLight** - Magical discovery sound for special collections
-- **NT_Mount** - Mount-related sound effect for new mount acquisitions
-- **NT_Chest** - Treasure discovery sound for toys and general items
-- **NT_Transmog** - Appearance-related sound for transmog notifications
+## ❤️ Support & Download
 
-### General Audio Assets
-- **NT_Group** - Group/party NPC encounter sound
-- **NT_NPC** - General NPC/rare mob sound
-
-All audio files are:
-- **High Quality**: Professional sound design optimized for game audio
-- **Notification Ready**: Perfect for collection and achievement systems
-- **SharedMedia Compatible**: Automatically available in any addon's audio selection
-
-## Status Bar Textures
-
-Complete Nord theme collection with 32 high-quality status bar textures for health bars, mana bars, and other UI elements:
-
-### Solid Nord Textures
-16 solid-colored textures based on the popular Nord color palette (NT_Nord00 through NT_Nord15)
-
-### Gradient Nord Textures
-16 matching gradient versions for enhanced visual depth (NT_Nord00_Gradient through NT_Nord15_Gradient)
-
-All textures feature:
-- Clean, modern aesthetic inspired by the Nord color scheme
-- Optimized for readability and visual appeal
-- Consistent naming with zero-padded numbers for perfect sorting
-
-# Installation & Compatibility
-
-## Installation
-
-Simply install the addon through your preferred addon manager or manually extract to your `Interface/AddOns` folder. All media will be automatically registered and available in compatible addons immediately.
-
-## Compatibility
-
-**🌙 Midnight Beta Ready**: Fully compatible with World of Warcraft Midnight Beta (Interface: 120000)
-
-This addon works with any World of Warcraft addon that uses LibSharedMedia-3.0 for media management, including:
-
-- ElvUI
-- WeakAuras
-- Details!
-- Bartender4
-- BetterBlizzFrames (with integrated profile import)
-- Platynator (with integrated profile import)
-- And many more...
-
-# Download & Support
-
-## Download
-
-Get NoobTacoUI from your favorite addon platform:
-
+**Download:**
 - [GitHub](https://github.com/NoobTaco/NoobTacoUI)
-- [Curse/Overwolf](https://www.curseforge.com/wow/addons/noobtacoui)
-- [Wago](https://addons.wago.io/addons/noobtacoui)
+- [CurseForge](https://www.curseforge.com/wow/addons/noobtacoui)
+- [Wago.io](https://addons.wago.io/addons/noobtacoui)
 
-## Support Development
-
+**Support Development:**
 If you enjoy this addon, consider supporting its development:
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G01GM9G)
 [![sponsormeongithub](https://user-images.githubusercontent.com/1172935/97088810-463e0e00-15e8-11eb-8078-f18da01c6e9e.png)](https://github.com/sponsors/NoobTaco)
 
-# License
+## 📄 License
 
 Code in this repository is licensed under GPL-3.0-or-later. See `LICENSE` for details.
-
-Note: Media files (fonts, audio, textures) are included under their respective upstream licenses. Ensure any redistribution complies with each asset's license terms.
+*Media files (fonts, audio, textures) are included under their respective upstream licenses.*

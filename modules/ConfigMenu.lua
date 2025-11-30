@@ -2418,7 +2418,6 @@ local function InitializeConfigFrame()
 
       -- Helper function to set scale and prompt reload
       local function SetUIScale(scale, label)
-        SetCVar("useUiScale", "1")
         SetCVar("uiScale", scale)
         print("|cFF16C3F2NoobTacoUI|r: UI Scale set to |cFFA3BE8C" .. scale .. "|r (" .. label .. ")")
 
