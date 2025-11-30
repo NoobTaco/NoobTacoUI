@@ -28,5 +28,5 @@ echo "📦 Your packaged addon should now display version v1.1.2 correctly"
 echo
 echo "To install and test:"
 echo "1. Copy .release/NoobTacoUI-Media/ to your WoW AddOns folder"
-echo "2. In-game, type: /ntm version"
+echo "2. In-game, type: /nt version"
 echo "3. Or open config menu to see version in lower-right corner"

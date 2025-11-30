@@ -3,10 +3,10 @@
 ### Added
 
 -   **New Feature:** Version command system with slash commands
-    -   `/ntm version` - Display current addon version
-    -   `/ntm ver` - Short version command
-    -   `/ntm v` - Shortest version command
-    -   `/ntm` - Show help with available commands
+    -   `/nt version` - Display current addon version
+    -   `/nt ver` - Short version command
+    -   `/nt v` - Shortest version command
+    -   `/nt` - Show help with available commands
 -   Enhanced README.md with detailed font descriptions and weight variants
 -   Installation and compatibility sections in documentation
 -   Comprehensive media documentation

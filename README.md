@@ -47,8 +47,8 @@ Access the main configuration panel using any of these methods:
 - **WoW Addon Compartment** (Left-click to configure)
 
 ### Quick Commands
-- **`/ntm version`** - Display current addon version
-- **`/ntm`** - Show help with available commands
+- **`/nt version`** - Display current addon version
+- **`/nt`** - Show help with available commands
 
 ## 📦 Installation
 

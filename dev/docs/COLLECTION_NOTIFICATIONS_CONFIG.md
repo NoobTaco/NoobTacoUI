@@ -46,12 +46,12 @@ Each collection type has its own sound dropdown with the following options:
 - `/ntcollectionconfig` or `/ntcc` - Opens config menu directly to Collection Notifications
 
 ### Collection Notification Testing (from CollectionNotifications.lua)
-- `/ntmcollection test` - Test all notification sounds in sequence
-- `/ntmcollection testpet` - Test pet notification only
-- `/ntmcollection testmount` - Test mount notification only  
-- `/ntmcollection testtoy` - Test toy notification only
-- `/ntmcollection testtransmog` - Test transmog notification only
-- `/ntmcollection status` - Show current settings
+- `/ntcollection test` - Test all notification sounds in sequence
+- `/ntcollection testpet` - Test pet notification only
+- `/ntcollection testmount` - Test mount notification only  
+- `/ntcollection testtoy` - Test toy notification only
+- `/ntcollection testtransmog` - Test transmog notification only
+- `/ntcollection status` - Show current settings
 
 ## Technical Implementation
 
@@ -104,7 +104,7 @@ The system uses WoW's built-in collection events:
 
 4. **Test your setup**:
    - Use the test buttons in the config
-   - Or use `/ntmcollection test` to test all sounds
+   - Or use `/ntcollection test` to test all sounds
    - Collect items in-game to verify notifications work
 
 ## Default Configuration

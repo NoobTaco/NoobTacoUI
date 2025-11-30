@@ -88,12 +88,12 @@ Modified the Collection Notifications section to include:
 - `/ntcc` - Direct access to Collection Notifications
 
 ### Testing Commands (from CollectionNotifications)
-- `/ntmcollection test` - Test all notification sounds
-- `/ntmcollection testpet` - Test pet notification
-- `/ntmcollection testmount` - Test mount notification  
-- `/ntmcollection testtoy` - Test toy notification
-- `/ntmcollection testtransmog` - Test transmog notification
-- `/ntmcollection status` - Show current settings
+- `/ntcollection test` - Test all notification sounds
+- `/ntcollection testpet` - Test pet notification
+- `/ntcollection testmount` - Test mount notification  
+- `/ntcollection testtoy` - Test toy notification
+- `/ntcollection testtransmog` - Test transmog notification
+- `/ntcollection status` - Show current settings
 
 ## Result
 
