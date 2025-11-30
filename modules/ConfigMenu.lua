@@ -1806,10 +1806,21 @@ local function InitializeConfigFrame()
     copyButton.text = copyButton:CreateFontString(nil, "OVERLAY")
     ApplyConfigFont(copyButton.text, "label-emphasis")
     copyButton.text:SetPoint("CENTER")
-    copyButton.text:SetText("Copy Profile String")
+    if profile.isCustomApply then
+      copyButton.text:SetText("Apply Profile")
+    else
+      copyButton.text:SetText("Copy Profile String")
+    end
     copyButton.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
 
     copyButton:SetScript("OnClick", function()
+      if profile.isCustomApply then
+        if profile.applyFunction then
+          profile.applyFunction()
+        end
+        return
+      end
+
       if not addon.CopyProfileDialog then
         addon.CopyProfileDialog = CreateFrame("Frame", "NoobTacoCopyProfileDialog", UIParent,
           "BasicFrameTemplateWithInset")
@@ -2045,6 +2056,7 @@ local function InitializeConfigFrame()
     local cmtLoaded = C_AddOns.IsAddOnLoaded("CooldownManagerTweaks")
     local zbarLoaded = C_AddOns.IsAddOnLoaded("zBarButtonBG")
     local xivLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued")
+    local scrbLoaded = C_AddOns.IsAddOnLoaded("SenseiClassResourceBar")
 
     local currentYOffset = -INNER_PADDING
 
@@ -2128,7 +2140,17 @@ local function InitializeConfigFrame()
       end
     end
 
-    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded then
+    if scrbLoaded then
+      local profile = addon.GetProfile("SenseiClassResourceBar")
+      if profile then
+        local section = CreateCollapsibleAddonSection(scrollChild, "SenseiClassResourceBar", profile, lastElement,
+          currentYOffset, UpdateLayout)
+        lastElement = section
+        currentYOffset = -4
+      end
+    end
+
+    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded and not scrbLoaded then
       -- Add message when neither addon is loaded
       local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(noAddonText, "body-text")
