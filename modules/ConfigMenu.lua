@@ -3,6 +3,8 @@
 
 local addonName, addon = ...
 local CreateFrame = CreateFrame
+local LDB = LibStub("LibDataBroker-1.1")
+local LDBIcon = LibStub("LibDBIcon-1.0")
 
 -- Version detection for feature availability
 local function GetWoWVersion()
@@ -318,170 +320,53 @@ end
 addon.GetDBValue = GetDBValue
 addon.SetDBValue = SetDBValue
 
--- Minimap button system
-local minimapButton = nil
-
--- Helper function to position minimap button around the minimap
-local function PositionMinimapButton(angle)
-  if not minimapButton then return end
-
-  local radius = 80
-  local radians = math.rad(angle or 45)
-  local x = radius * math.cos(radians)
-  local y = radius * math.sin(radians)
-
-  minimapButton:ClearAllPoints()
-  minimapButton:SetPoint("CENTER", Minimap, "CENTER", x, y)
-end
-
--- Helper function to calculate angle from minimap button position
-local function GetAngleFromPosition()
-  if not minimapButton then return 45 end
-
-  local centerX, centerY = Minimap:GetCenter()
-  local buttonX, buttonY = minimapButton:GetCenter()
-
-  if not centerX or not centerY or not buttonX or not buttonY then
-    return 45
-  end
-
-  local dx = buttonX - centerX
-  local dy = buttonY - centerY
-  local angle = math.deg(math.atan2(dy, dx))
-
-  -- Normalize angle to 0-360 range
-  if angle < 0 then
-    angle = angle + 360
-  end
-
-  return angle
-end
-
-local function CreateMinimapButton()
-  if minimapButton or not Minimap then return end
-
-  minimapButton = CreateFrame("Button", "NoobTacoUIMinimapButton", Minimap)
-  minimapButton:SetSize(32, 32)
-  minimapButton:SetFrameStrata("MEDIUM")
-  minimapButton:SetFrameLevel(8)
-
-  -- Circular background using WoW's minimap button texture
-  minimapButton.bg = minimapButton:CreateTexture(nil, "BACKGROUND")
-  minimapButton.bg:SetSize(20, 20)
-  minimapButton.bg:SetPoint("TOPLEFT", 7, -5)
-  minimapButton.bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-  minimapButton.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord2))
-
-  -- Icon texture (using our addon logo)
-  minimapButton.icon = minimapButton:CreateTexture(nil, "ARTWORK")
-  minimapButton.icon:SetSize(14, 14) -- Slightly smaller to fit within border better
-  minimapButton.icon:SetPoint("TOPLEFT", 9, -7)
-  minimapButton.icon:SetTexture("Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga")
-  minimapButton.icon:SetVertexColor(1, 1, 1, 1) -- Keep logo in original colors
-
-  -- Border overlay with proper minimap button border
-  minimapButton.border = minimapButton:CreateTexture(nil, "OVERLAY")
-  minimapButton.border:SetSize(52, 52)
-  minimapButton.border:SetPoint("TOPLEFT")
-  minimapButton.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-  minimapButton.border:SetVertexColor(1, 1, 1, 1) -- Keep border in original colors
-
-  -- Hover effects
-  minimapButton:SetScript("OnEnter", function(self)
-    self.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord3))
-    -- Keep logo colors original, just brighten the background
-
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
-    GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-    if AreCollectionsAvailable() then
-      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
-    end
-    GameTooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
-    GameTooltip:Show()
-  end)
-
-  minimapButton:SetScript("OnLeave", function(self)
-    self.bg:SetVertexColor(unpack(addon.UIAssets.Colors.Nord2))
-    -- Keep logo colors original
-    GameTooltip:Hide()
-  end)
-
-  -- Drag functionality
-  minimapButton:SetMovable(true)
-  minimapButton:EnableMouse(true)
-  minimapButton:RegisterForDrag("LeftButton")
-
-  local isDragging = false
-
-  minimapButton:SetScript("OnDragStart", function(self)
-    -- Only start dragging if we're not clicking for the normal click function
-    isDragging = true
-    self:StartMoving()
-
-    -- Update tooltip to show drag instructions
-    GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-    GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
-    GameTooltip:AddLine("Drag to reposition", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Release to save position", 0.7, 0.7, 0.7)
-    GameTooltip:Show()
-  end)
-
-  minimapButton:SetScript("OnDragStop", function(self)
-    self:StopMovingOrSizing()
-
-    if isDragging then
-      -- Calculate and save the new angle
-      local newAngle = GetAngleFromPosition()
-      NoobTacoUIDB.GeneralSettings.minimapButtonAngle = newAngle
-
-      -- Reposition to clean angle (snaps to calculated position)
-      PositionMinimapButton(newAngle)
-
-      -- Position saved silently, no chat spam
-
-      -- Reset tooltip
-      GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-      GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
-      GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
-      GameTooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
-      GameTooltip:Show()
-    end
-
-    isDragging = false
-  end)
-
-  -- Click handlers
-  minimapButton:SetScript("OnClick", function(self, button)
-    -- Don't process clicks if we were dragging
-    if isDragging then return end
-
+-- Minimap button system using LibDBIcon
+local minimapButtonLDB = LDB:NewDataObject("NoobTacoUI", {
+  type = "launcher",
+  text = "NoobTacoUI",
+  icon = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
+  OnClick = function(self, button)
     if button == "LeftButton" then
       addon.ShowConfigMenu()
-    elseif button == "RightButton" and AreCollectionsAvailable() then
-      -- Toggle collection notifications (only available in retail)
-      local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
-      if enabled then
-        NoobTacoUIDB.CollectionNotifications.enabled = false
-        print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFBF616ADisabled|r")
+    elseif button == "RightButton" then
+      if AreCollectionsAvailable() then
+        -- Toggle collection notifications (only available in retail)
+        local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
+        if enabled then
+          NoobTacoUIDB.CollectionNotifications.enabled = false
+          print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFBF616ADisabled|r")
+        else
+          NoobTacoUIDB.CollectionNotifications.enabled = true
+          print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFA3BE8CEnabled|r")
+        end
       else
-        NoobTacoUIDB.CollectionNotifications.enabled = true
-        print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFA3BE8CEnabled|r")
+        print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
       end
-    elseif button == "RightButton" and not AreCollectionsAvailable() then
-      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
     end
-  end)
+  end,
+  OnTooltipShow = function(tooltip)
+    tooltip:AddLine("|cFF16C3F2NoobTacoUI|r")
+    tooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+    if AreCollectionsAvailable() then
+      tooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    end
+    tooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
+  end,
+})
 
-  minimapButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+local function CreateMinimapButton()
+  if LDBIcon:IsRegistered("NoobTacoUI") then return end
 
-  -- Position using stored angle or default
-  local savedAngle = NoobTacoUIDB.GeneralSettings.minimapButtonAngle or 225
-  PositionMinimapButton(savedAngle)
+  -- Register the icon with LibDBIcon
+  -- We use a separate table in GeneralSettings for the icon DB
+  if not NoobTacoUIDB.GeneralSettings.minimapIcon then
+    NoobTacoUIDB.GeneralSettings.minimapIcon = {
+      hide = false,
+      minimapPos = NoobTacoUIDB.GeneralSettings.minimapButtonAngle or 225,
+    }
+  end
 
-  minimapButton:Show()
-  -- Silent creation, no chat spam
+  LDBIcon:Register("NoobTacoUI", minimapButtonLDB, NoobTacoUIDB.GeneralSettings.minimapIcon)
 end
 
 local function UpdateMinimapButtonVisibility(showMessages)
@@ -489,19 +374,21 @@ local function UpdateMinimapButtonVisibility(showMessages)
   if showButton == nil then showButton = true end -- Default to true
 
   if showButton then
+    -- Ensure it's created/registered first
     CreateMinimapButton()
-    if minimapButton then
-      minimapButton:Show()
-      if showMessages then
-        print("|cFF16C3F2NoobTacoUI|r: Minimap button shown")
-      end
+
+    LDBIcon:Show("NoobTacoUI")
+    if showMessages then
+      print("|cFF16C3F2NoobTacoUI|r: Minimap button shown")
     end
   else
-    if minimapButton then
-      minimapButton:Hide()
-      if showMessages then
-        print("|cFF16C3F2NoobTacoUI|r: Minimap button hidden")
-      end
+    -- If it's not registered, we don't need to do anything to hide it
+    if LDBIcon:IsRegistered("NoobTacoUI") then
+      LDBIcon:Hide("NoobTacoUI")
+    end
+
+    if showMessages then
+      print("|cFF16C3F2NoobTacoUI|r: Minimap button hidden")
     end
   end
 end
@@ -2602,43 +2489,41 @@ end
 SLASH_NTMINIMAP1 = "/ntminimap"
 SlashCmdList["NTMINIMAP"] = function(arg)
   if arg == "show" then
-    CreateMinimapButton()
-    print("|cFF16C3F2NoobTacoUI|r: Forcing minimap button creation")
+    LDBIcon:Show("NoobTacoUI")
+    print("|cFF16C3F2NoobTacoUI|r: Showing minimap button")
   elseif arg == "hide" then
-    if minimapButton then
-      minimapButton:Hide()
-      print("|cFF16C3F2NoobTacoUI|r: Hiding minimap button")
-    end
+    LDBIcon:Hide("NoobTacoUI")
+    print("|cFF16C3F2NoobTacoUI|r: Hiding minimap button")
   elseif arg == "toggle" then
-    if minimapButton and minimapButton:IsVisible() then
-      minimapButton:Hide()
+    -- Check if registered first
+    if not LDBIcon:IsRegistered("NoobTacoUI") then
+      CreateMinimapButton()
+    end
+
+    local btn = LDBIcon:GetMinimapButton("NoobTacoUI")
+    if btn and btn:IsVisible() then
+      LDBIcon:Hide("NoobTacoUI")
       print("|cFF16C3F2NoobTacoUI|r: Hiding minimap button")
     else
-      CreateMinimapButton()
+      LDBIcon:Show("NoobTacoUI")
       print("|cFF16C3F2NoobTacoUI|r: Showing minimap button")
     end
   elseif arg == "refresh" then
-    if minimapButton then
-      minimapButton:Hide()
-      minimapButton = nil
-    end
-    CreateMinimapButton()
+    LDBIcon:Refresh("NoobTacoUI", NoobTacoUIDB.GeneralSettings.minimapIcon)
     print("|cFF16C3F2NoobTacoUI|r: Refreshed minimap button")
   elseif arg == "reset" then
     -- Reset button position to default
-    NoobTacoUIDB.GeneralSettings.minimapButtonAngle = 225
-    if minimapButton then
-      PositionMinimapButton(225)
+    if NoobTacoUIDB.GeneralSettings.minimapIcon then
+      NoobTacoUIDB.GeneralSettings.minimapIcon.minimapPos = 225
+      LDBIcon:Refresh("NoobTacoUI", NoobTacoUIDB.GeneralSettings.minimapIcon)
       print("|cFF16C3F2NoobTacoUI|r: Minimap button position reset to default (bottom-left)")
-    else
-      print("|cFF16C3F2NoobTacoUI|r: Position reset - create button to see effect")
     end
   else
     print("|cFF16C3F2NoobTacoUI|r: Use /ntminimap show|hide|toggle|refresh|reset")
-    print("  |cFF5E81ACshow|r - Force create minimap button")
+    print("  |cFF5E81ACshow|r - Show minimap button")
     print("  |cFF5E81AChide|r - Hide minimap button")
     print("  |cFF5E81ACtoggle|r - Toggle button visibility")
-    print("  |cFF5E81ACrefresh|r - Recreate button")
+    print("  |cFF5E81ACrefresh|r - Refresh button")
     print("  |cFF5E81ACreset|r - Reset button position to default")
   end
 end
@@ -2691,9 +2576,10 @@ SlashCmdList["NTDEBUG"] = function()
   end
 
   print("UI System status:")
-  print("  Minimap button exists: " .. tostring(minimapButton ~= nil))
-  if minimapButton then
-    print("  Minimap button visible: " .. tostring(minimapButton:IsVisible()))
+  print("  Minimap button registered: " .. tostring(LDBIcon:IsRegistered("NoobTacoUI")))
+  local btn = LDBIcon:GetMinimapButton("NoobTacoUI")
+  if btn then
+    print("  Minimap button visible: " .. tostring(btn:IsVisible()))
   end
   print("  Minimap exists: " .. tostring(Minimap ~= nil))
   print("  AddonCompartmentFrame exists: " .. tostring(AddonCompartmentFrame ~= nil))
