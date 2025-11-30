@@ -60,6 +60,7 @@ Simply install the addon through your preferred addon manager (CurseForge, Wago,
 **🌙 Midnight Beta Ready**: Fully compatible with World of Warcraft Midnight Beta (Interface: 120000).
 
 Works seamlessly with any addon that uses LibSharedMedia-3.0, including Bartender4, WeakAuras, Plater, and many more.
+Now includes standard **LibDataBroker** support for better minimap button compatibility.
 
 ## ❤️ Support & Download
 

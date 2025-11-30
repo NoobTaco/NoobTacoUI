@@ -9,6 +9,13 @@
 - **XIV_Databar Continued Profile**: One-click import of optimized XIV_Databar Continued profile
 - **Enhanced Detection**: Improved detection for XIV_Databar Continued to support multiple folder naming conventions
 
+### 🔧 Technical Improvements
+
+#### Minimap Button Refactor
+- **LibDBIcon Integration**: Replaced custom minimap button implementation with standard `LibDBIcon-1.0`.
+- **Improved Compatibility**: Solved issues with button bar addons (like MinimapButtonButton) showing errors on hover.
+- **Standard Behavior**: Button now behaves consistently with other addons (drag, position, visibility).
+
 ## [v1.4.0](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.0) (2025-11-29)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.3.3...v1.4.0)
 
