@@ -1,5 +1,12 @@
 # NoobTacoUIMedia
 
+## [v1.4.2](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.2) (2025-12-02)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.4.1...v1.4.2)
+
+### 📦 Updates
+- **TOC Update**: Bumped interface version to support WoW 11.0.7 (110207).
+- **Version Bump**: Updated addon version to v1.4.2.
+
 ## [v1.4.1](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.1) (2025-11-30)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.4.0...v1.4.1)
 
