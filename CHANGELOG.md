@@ -1,5 +1,11 @@
 # NoobTacoUIMedia
 
+## [v1.4.3](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.3) (Unreleased)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.4.2...v1.4.3)
+
+### 🎨 Visual Improvements
+- **Platynator Profile**: Updated profile with color tweaks to be more in line with the Nord theme.
+
 ## [v1.4.2](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.2) (2025-12-02)
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.4.1...v1.4.2)
 
