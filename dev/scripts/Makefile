@@ -8,10 +8,10 @@ all: test
 libs:
 	@echo "📥 Updating libraries using BigWigsMods packager..."
 	cd $(PROJECT_ROOT) && curl -s $(PACKAGER_URL) | bash -s -- -c -d -z
-	@if [ -d "$(PROJECT_ROOT)/.release/NoobTacoUI-Media/Libraries/LibSharedMedia-3.0" ]; then \
+	@if [ -d "$(PROJECT_ROOT)/.release/NoobTacoUI/Libraries/LibSharedMedia-3.0" ]; then \
 		echo "📦 Installing LibSharedMedia-3.0..."; \
 		rm -rf $(PROJECT_ROOT)/Libraries/LibSharedMedia-3.0; \
-		cp -r $(PROJECT_ROOT)/.release/NoobTacoUI-Media/Libraries/LibSharedMedia-3.0 $(PROJECT_ROOT)/Libraries/; \
+		cp -r $(PROJECT_ROOT)/.release/NoobTacoUI/Libraries/LibSharedMedia-3.0 $(PROJECT_ROOT)/Libraries/; \
 		echo "✅ Libraries updated successfully!"; \
 	else \
 		echo "❌ Failed to update libraries"; \
@@ -31,7 +31,7 @@ clean:
 
 test:
 	@echo "🧪 Testing addon structure..."
-	@if [ -f "$(PROJECT_ROOT)/NoobTacoUI-Media.toc" ]; then \
+	@if [ -f "$(PROJECT_ROOT)/NoobTacoUI.toc" ]; then \
 		echo "✅ TOC file exists"; \
 	else \
 		echo "❌ TOC file missing"; \
