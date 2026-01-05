@@ -2305,39 +2305,23 @@ local function InitializeConfigFrame()
       scalingDesc:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
       scalingDesc:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
       scalingDesc:SetJustifyH("LEFT")
-      scalingDesc:SetText("Set the UI Scale CVar for pixel-perfect scaling at common resolutions.")
+      scalingDesc:SetText(
+      "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 mapping) keep things crisp while being much easier to read on high-DPI monitors.")
       scalingDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-      yOffset = yOffset - 30
-
-      -- Current Setting Button
-      local btnCurrent = addon.UIUtils:CreateThemedButton(scrollChild, "Print Current Scale", 160, 30)
-      btnCurrent:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
-      btnCurrent:SetScript("OnClick", function()
-        local currentScale = tonumber(GetCVar("uiScale"))
-        local scaleText = tostring(currentScale)
-        local resolution = ""
-
-        -- Check for matches with small tolerance
-        if math.abs(currentScale - 0.355555555) < 0.000001 then
-          resolution = " (4K)"
-        elseif math.abs(currentScale - 0.533333333) < 0.000001 then
-          resolution = " (1440p)"
-        elseif math.abs(currentScale - 0.711111111) < 0.000001 then
-          resolution = " (1080p)"
-        end
-
-        print("|cFF16C3F2NoobTacoUI|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. resolution)
-      end)
-
       yOffset = yOffset - 40
 
-      -- Buttons Container
-      local buttonContainer = CreateFrame("Frame", nil, scrollChild)
-      buttonContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
-      buttonContainer:SetSize(500, 40)
+      -- Resolution Detection
+      local resText = scrollChild:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(resText, "label-standard")
+      resText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      local width, height = GetPhysicalScreenSize()
+      local resDisplay = width .. "x" .. height
+      resText:SetText("Detected Resolution: |cFF88C0D0" .. resDisplay .. "|r")
+      yOffset = yOffset - 30
 
       -- Helper function to set scale and prompt reload
       local function SetUIScale(scale, label)
+        SetCVar("useUiScale", "1")
         SetCVar("uiScale", scale)
         print("|cFF16C3F2NoobTacoUI|r: UI Scale set to |cFFA3BE8C" .. scale .. "|r (" .. label .. ")")
 
@@ -2357,25 +2341,60 @@ local function InitializeConfigFrame()
         StaticPopup_Show("NOOBTACOUI_RELOAD_UI")
       end
 
-      -- 4K Button
-      local btn4k = addon.UIUtils:CreateThemedButton(buttonContainer, "4K (2160p)", 120, 30)
-      btn4k:SetPoint("LEFT", buttonContainer, "LEFT", 0, 0)
-      btn4k:SetScript("OnClick", function()
-        SetUIScale(0.355555555, "4K")
-      end)
+      local function CreateScalingRow(label, standardScale, highVisScale)
+        local row = CreateFrame("Frame", nil, scrollChild)
+        row:SetSize(scrollChild:GetWidth() - (INNER_PADDING * 2), 40)
+        row:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
 
-      -- 1440p Button
-      local btn1440p = addon.UIUtils:CreateThemedButton(buttonContainer, "1440p", 120, 30)
-      btn1440p:SetPoint("LEFT", btn4k, "RIGHT", 10, 0)
-      btn1440p:SetScript("OnClick", function()
-        SetUIScale(0.533333333, "1440p")
-      end)
+        local labelText = row:CreateFontString(nil, "OVERLAY")
+        ApplyConfigFont(labelText, "label-standard")
+        labelText:SetPoint("LEFT", 0, 0)
+        labelText:SetText(label)
+        labelText:SetWidth(100)
+        labelText:SetJustifyH("LEFT")
 
-      -- 1080p Button
-      local btn1080p = addon.UIUtils:CreateThemedButton(buttonContainer, "1080p", 120, 30)
-      btn1080p:SetPoint("LEFT", btn1440p, "RIGHT", 10, 0)
-      btn1080p:SetScript("OnClick", function()
-        SetUIScale(0.711111111, "1080p")
+        local btnStandard = addon.UIUtils:CreateThemedButton(row, "Standard (1:1)", 140, 30)
+        btnStandard:SetPoint("LEFT", 110, 0)
+        btnStandard:SetScript("OnClick", function() SetUIScale(standardScale, label .. " Standard") end)
+
+        local btnHighVis = addon.UIUtils:CreateThemedButton(row, "High Vis (2:1)", 140, 30)
+        btnHighVis:SetPoint("LEFT", btnStandard, "RIGHT", 10, 0)
+        btnHighVis:SetScript("OnClick", function() SetUIScale(highVisScale, label .. " High Visibility") end)
+
+        yOffset = yOffset - 45
+        return row
+      end
+
+      CreateScalingRow("4K (2160p)", 0.355555555, 0.711111111)
+      CreateScalingRow("1440p", 0.533333333, 1.066666666)
+      CreateScalingRow("1080p", 0.711111111, 1.422222222)
+
+      yOffset = yOffset - 10
+
+      -- Current Setting Button
+      local btnCurrent = addon.UIUtils:CreateThemedButton(scrollChild, "Print Current Scale", 160, 30)
+      btnCurrent:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      btnCurrent:SetScript("OnClick", function()
+        local currentScale = tonumber(GetCVar("uiScale"))
+        local scaleText = string.format("%.9f", currentScale)
+        local mode = ""
+
+        local scales = {
+          ["0.355555555"] = "4K Standard",
+          ["0.711111111"] = "4K High Vis / 1080p Standard",
+          ["0.533333333"] = "1440p Standard",
+          ["1.066666666"] = "1440p High Vis",
+          ["1.422222222"] = "1080p High Vis"
+        }
+
+        for s, name in pairs(scales) do
+          if math.abs(currentScale - tonumber(s)) < 0.000001 then
+            mode = " (" .. name .. ")"
+            break
+          end
+        end
+
+        print("|cFF16C3F2NoobTacoUI|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. mode)
       end)
 
       yOffset = yOffset - 50
