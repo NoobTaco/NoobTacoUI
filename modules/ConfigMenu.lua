@@ -1944,6 +1944,7 @@ local function InitializeConfigFrame()
     local zbarLoaded = C_AddOns.IsAddOnLoaded("zBarButtonBG")
     local xivLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued")
     local scrbLoaded = C_AddOns.IsAddOnLoaded("SenseiClassResourceBar")
+    local ltpLoaded = C_AddOns.IsAddOnLoaded("Leatrix_Plus")
 
     local currentYOffset = -INNER_PADDING
 
@@ -2037,6 +2038,7 @@ local function InitializeConfigFrame()
       end
     end
 
+
     if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded and not scrbLoaded then
       -- Add message when neither addon is loaded
       local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
@@ -2046,7 +2048,7 @@ local function InitializeConfigFrame()
       noAddonText:SetJustifyH("LEFT")
       noAddonText:SetJustifyV("TOP")
       noAddonText:SetText(
-        "No compatible addons detected. Install and enable BetterBlizzFrames, Platynator, Cooldown Manager Tweaks, zBarButtonBG, or XIV_Databar to access profile import functionality.")
+        "No compatible addons detected. Install and enable supported addons (like BetterBlizzFrames or Sensei Class Resource Bar) to access profile import functionality.")
       noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
     end
 
@@ -2306,7 +2308,7 @@ local function InitializeConfigFrame()
       scalingDesc:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
       scalingDesc:SetJustifyH("LEFT")
       scalingDesc:SetText(
-      "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 mapping) keep things crisp while being much easier to read on high-DPI monitors.")
+        "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 mapping) keep things crisp while being much easier to read on high-DPI monitors.")
       scalingDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
       yOffset = yOffset - 40
 

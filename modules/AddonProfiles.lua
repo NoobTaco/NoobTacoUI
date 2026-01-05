@@ -10,6 +10,8 @@ addon.AddonProfiles = addon.AddonProfiles or {}
 -- Optimized for NoobTacoUI aesthetic
 -- Version: 1.0
 -- Last Updated: 2025-11-28
+
+
 addon.AddonProfiles.EditMode = {
   name = "EditMode",
   displayName = "Default WoW UI Edit Mode",
@@ -78,6 +80,7 @@ addon.AddonProfiles.Platynator = {
   author = "NoobTaco",
   dateCreated = "2025-12-17"
 }
+
 
 -- Cooldown Manager Tweaks Profile
 -- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
@@ -152,22 +155,6 @@ addon.AddonProfiles.XIV_Databar = {
 }
 
 -- Add more addon profiles here following the same structure
--- Example:
--- addon.AddonProfiles.AnotherAddon = {
---   name = "AnotherAddon",
---   displayName = "Another Addon",
---   description = "Profile description...",
---   downloadUrl = "https://...",
---   command = "/command",
---   instructions = {
---     "Step 1",
---     "Step 2",
---   },
---   profileString = "...",
---   version = "1.0",
---   author = "NoobTaco",
---   dateCreated = "2025-11-14"
--- }
 
 -- Sensei Class Resource Bar Profile
 -- Optimized for NoobTacoUI aesthetic
