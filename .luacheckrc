@@ -28,6 +28,7 @@ globals = {
   -- Configuration menu globals
   "NoobTacoDB",
   "NoobTacoUIAddon",
+  "BetterBlizzFramesDB",
 }
 
 -- Allow access to WoW API globals (read-only)
@@ -41,6 +42,7 @@ read_globals = {
   -- Collection-related API functions
   "C_PetJournal", "C_MountJournal", "C_ToyBox", "GetAchievementInfo",
   "PlaySoundFile", "C_Timer",
+  "BBF",
   -- Add other WoW API functions here as needed
 }
 

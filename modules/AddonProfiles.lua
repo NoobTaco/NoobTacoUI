@@ -82,7 +82,7 @@ addon.AddonProfiles.BetterBlizzFrames = {
 
     -- 3. Apply to database
     -- BBF.ImportProfile returns the data table ready to be assigned
-    _G.BetterBlizzFramesDB = data -- luacheck: ignore BetterBlizzFramesDB
+    BetterBlizzFramesDB = data
 
     print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames profile applied successfully.")
 
