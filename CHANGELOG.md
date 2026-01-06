@@ -1,8 +1,8 @@
-# NoobTacoUIMedia
+# NoobTacoUI
 
-## [v1.4.3](https://github.com/NoobTaco/NoobTacoUI-Media/tree/v1.4.3) (Unreleased)
+## [v1.4.3](https://github.com/NoobTaco/NoobTacoUI/tree/v1.4.3) (Unreleased)
 
-[Full Changelog](https://github.com/NoobTaco/NoobTacoUI-Media/compare/v1.4.2...v1.4.3)
+[Full Changelog](https://github.com/NoobTaco/NoobTacoUI/compare/v1.4.2...v1.4.3)
 
 ### 🎯 Major Features Added
 
@@ -16,6 +16,7 @@
 
 - **zBarButtonBG Automatic Profile**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for zBarButtonBG.
 - **BetterBlizzFrames One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for BetterBlizzFrames.
+- **Sensei Class Resource Bar One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Sensei Class Resource Bar.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
 ### 🔧 Technical Improvements
