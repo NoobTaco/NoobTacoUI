@@ -15,6 +15,7 @@
 #### Addon Integrations 🆕
 
 - **zBarButtonBG Automatic Profile**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for zBarButtonBG.
+- **BetterBlizzFrames One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for BetterBlizzFrames.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
 ### 🔧 Technical Improvements
