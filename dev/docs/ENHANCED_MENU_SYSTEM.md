@@ -107,6 +107,9 @@ local content = scrollFrame.scrollChild
   - BetterBlizzFrames
   - Platynator
   - Cooldown Manager Tweaks
+  - zBarButtonBG
+  - XIV_Databar Continued
+  - Sensei Class Resource Bar
 
 ### 4. About Section
 
