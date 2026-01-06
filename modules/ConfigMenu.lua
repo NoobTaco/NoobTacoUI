@@ -2412,6 +2412,91 @@ local function InitializeConfigFrame()
 
   table.insert(categories, gameSettingsButton)
 
+  -- Instructions button
+  instructionsButton = CreateEnhancedCategoryButton(sidebar, "Instructions", "Interface\\Icons\\INV_Misc_Book_09")
+  instructionsButton:SetPoint("TOPLEFT", gameSettingsButton, "BOTTOMLEFT", 0, -4)
+  instructionsButton:SetScript("OnClick", function(self)
+    -- Clear previous selection
+    if currentCategory then
+      currentCategory:SetSelected(false)
+    end
+
+    -- Set new selection
+    self:SetSelected(true)
+    currentCategory = self
+
+    -- Show instructions panel
+    if content.currentPanel then
+      content.currentPanel:Hide()
+    end
+
+    if not content.instructionsPanel then
+      content.instructionsPanel = CreateEnhancedSettingsPanel(
+        content,
+        "Instructions",
+        "Manual setup guides and troubleshooting for NoobTacoUI features."
+      )
+
+      -- Create scrollable content for the panel
+      local scrollFrame = CreateNordScrollFrame(content.instructionsPanel)
+      scrollFrame:SetPoint("TOPLEFT", content.instructionsPanel, "TOPLEFT", PADDING, -60)
+      scrollFrame:SetPoint("BOTTOMRIGHT", content.instructionsPanel, "BOTTOMRIGHT", -PADDING, PADDING)
+
+      local scrollChild = scrollFrame.scrollChild
+      scrollChild:SetSize(scrollFrame:GetWidth(), 1) -- Initial size
+
+      -- Render instructions content
+      local yOffset = 0
+
+      -- Helper to add text
+      local function AddText(text, fontType, color)
+        local fs = scrollChild:CreateFontString(nil, "OVERLAY")
+        ApplyConfigFont(fs, fontType)
+        fs:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+        fs:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+        fs:SetJustifyH("LEFT")
+        fs:SetText(text)
+        if color then fs:SetTextColor(unpack(color)) end
+        fs:SetSpacing(2)
+        local height = fs:GetStringHeight()
+        yOffset = yOffset - height - 10
+        return fs
+      end
+
+      -- Leatrix Plus Guide
+      local ltpHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Leatrix Plus Setup")
+      ltpHeader:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      yOffset = yOffset - 30
+
+      AddText(
+        "Because automated profile application is not reliable for Leatrix Plus, please follow these steps to configure it manually to match the NoobTacoUI aesthetic.",
+        "body-text", addon.UIAssets.Colors.Nord4)
+      yOffset = yOffset - 10
+
+      local steps = {
+        "1. Open Leatrix Plus settings: Type |cFFEBCB8B/ltp|r",
+        "2. General > Minimap Button: |cFFA3BE8CON|r (After reload, click gear icon > MinimapButtonButton > ON)",
+        "3. Interface > Enhanced Tooltip: |cFFA3BE8CON|r",
+        "4. System > Max Camera Zoom: |cFFA3BE8CON|r",
+        "5. Frames > Manage Widget: |cFFA3BE8CON|r (Top Center)"
+      }
+
+      for _, step in ipairs(steps) do
+        AddText(step, "body-text", addon.UIAssets.Colors.Nord6)
+        yOffset = yOffset + 2 -- reduce spacing for list
+      end
+
+      -- Update scroll height
+      scrollChild:SetHeight(math.abs(yOffset) + PADDING)
+      scrollFrame.UpdateScrollThumb()
+    end
+
+    content.instructionsPanel:Show()
+    content.currentPanel = content.instructionsPanel
+  end)
+
+  table.insert(categories, instructionsButton)
+
   -- Select first category by default (changed to About)
   if aboutButton then
     aboutButton:GetScript("OnClick")(aboutButton)
