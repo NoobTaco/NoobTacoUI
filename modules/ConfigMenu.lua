@@ -2413,7 +2413,7 @@ local function InitializeConfigFrame()
   table.insert(categories, gameSettingsButton)
 
   -- Instructions button
-  instructionsButton = CreateEnhancedCategoryButton(sidebar, "Instructions", "Interface\\Icons\\INV_Misc_Book_09")
+  local instructionsButton = CreateEnhancedCategoryButton(sidebar, "Instructions", "Interface\\Icons\\INV_Misc_Book_09")
   instructionsButton:SetPoint("TOPLEFT", gameSettingsButton, "BOTTOMLEFT", 0, -4)
   instructionsButton:SetScript("OnClick", function(self)
     -- Clear previous selection
