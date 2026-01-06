@@ -47,4 +47,6 @@ luac.out
 # Build directories
 .release/
 
+
 .vscode
+*.code-workspace
