@@ -50,6 +50,56 @@ addon.AddonProfiles.BetterBlizzFrames = {
     "Navigate to the |cFFEBCB8BImport Profile|r section",
     "Paste the profile string and import"
   },
+  isCustomApply = true,
+  applyFunction = function()
+    -- Check if BetterBlizzFrames is loaded
+    if not C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
+      print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames not loaded.")
+      return
+    end
+
+    if not BBF or not BBF.ImportProfile then
+      print("|cFF16C3F2NoobTacoUI|r: BBF global or ImportProfile function missing.")
+      return
+    end
+
+    -- 1. Get the profile string
+    local profileString = addon.AddonProfiles.BetterBlizzFrames.profileString
+
+    -- 2. Import the profile
+    -- The second argument "fullProfile" matches the export type used in BBF
+    local data, err = BBF.ImportProfile(profileString, "fullProfile")
+
+    if err then
+      print("|cFF16C3F2NoobTacoUI|r: Error importing BBF profile: " .. tostring(err))
+      return
+    end
+
+    if not data then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to decode BBF profile data.")
+      return
+    end
+
+    -- 3. Apply to database
+    -- BBF.ImportProfile returns the data table ready to be assigned
+    BetterBlizzFramesDB = data
+
+    print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames profile applied successfully.")
+
+    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_BBF"] = {
+      text = "BetterBlizzFrames profile applied.\nA reload is required for changes to take effect.\nReload now?",
+      button1 = "Yes",
+      button2 = "No",
+      OnAccept = function()
+        ReloadUI()
+      end,
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show("NOOBTACOUI_RELOAD_UI_BBF")
+  end,
   profileString =
   "!BBF9PvZVTXXvCXq3MKgyajQVLCAz(ajnOicwYs2s5InjfLiLLiP5hw2ThmxT7qUB8YDMm7Uww(srnY5IGc0Bf5Gpu0l9IpKtPab6wbkAn0LMtffcf9ypW)c67nZSFthFqwy3zN595V3V3BuUpQSHMN2xLZ)CoRH2iI7EwCxV(Vq331JoQc1GWUZN(PfR64r4fLpSOo80INqSPNw0KWjRvCpcXU4aoHu0JcV1Xtt3R4isX7Cc1WAWzS5)cFIpPR1ic)ynUJLZq83VkBzpn(qIxvhB8)l5Z12JBrCmSpRpBHmVRQdze8I3Z0YG0ZXYBpoiVTS1oJW7qGt1OnXL6Z1jMJzeVkAUEL14hBz4z(pyZi3Tk0rmq2WDRpRGLJoNO5k28oECWo0NnnJEkHxHAt5vBuT9(p8G85ZLNvu3wZ1v849OGzOnH57P5zrD6sEQNpN0)c5j0L29HTOUF7uSvKpWGu2FWG9SSbdyzBRN9mnUr)ycyhDnBsE2mrNBNUL2F)QTpO1vU(ABTrE1)XMBaEW4xDIgVoOV45KJnnbnl1iA2EMIp)G85abEghkFKgCEK9bR0rehFt28rkrxHSjC4MSzY4Emzt77sA6qAfkvWN7qBr5GDYYRL1tj2LPCdc8Cqc0oXMu2A4UKtaD1Tp3Nbrve3twFTTx7Me2CmF44uwkXU1E)YhKd1SDKk42BXwIjCLkZIqAQqWWotwHSVcKAg3Yr4k7Wi221nanzHGWw4iCdJrC7FEKgwF3LER)0lcc9I7B00FSTfe7ZwwQqYqROva2L(S5J8th2RrP2pQvZJrFv(RV2nKEk8x3j)5ugiQq0m3TPt)le(oi2q5TxvE6LCmert1OCRNHPn27RXEt2S6MAodJIX3dEfKqOthDIMxDhdlDnpimXKEAhng(IOytC5brKSv0LgS6Ove8jEyuJ0Z3)c)47oB6wugZYX9t7qgzvMABWwmHnxi3kHF5aLPKXNdM7rGtQj41jEpmhi6jfYhiIrVws1TdeyAlCCYn89yACVZARzzieOYGJyiN67yCKMJMmMoxUCODDRuHcIS7RC1xQbBw3ZyqSo7Tds8MOaEbNqzeNMmm11185MAUD0EcXOpeJgL4xUzJhDu99R1v4x3r4x3s4IZdcq46Q3OtPg17(qXQ2uiGBd5PjSSn99STCiLB0Srv2SgA8hFeGEI5KDPuBplgKxfInf3YbHAasfiLGAIBuyAtE4FSPLGbXHZMoctPgXAOP38S54A6wA2rHmc79fO16ytlpcgUVaBvYt1gXSjfXNx8ZUrXFUbXM4rae8pzHYoGOYwTQAjLYUe2plv4QelcaPcdeNf830tpmeKxuIzS2jUu(jHcN54OK0s(gwuiY21tSxHRrMscMMrApvc2iorfUZ7XMZfskAHrtklbgXd(2uhLkUBADjykUwH59ZYJ(WBLJvWM662CqfWUZP2QLNeGsAJfVAri4r8QQ2GrvirOtgcfWsvnp5ZjGJ8jKUG34XO0xyaUe0s0MEAPrqKUhCKXlxuvaa1hW4IPlkCV5Ppbk4zArSnIdXHWWIsLgImla4Vv(1xBZGYgPdUkiSuHrms70h86seJxEjmv8AzlWDiX19ilqOiiODmzxATwMTIqAswtme3TqImhvvNcuixDeOoc96qyHOUkT3LeUvzDqvwu7Kr8HlnY1yYMnn2FjBBeaiqEv1xLyxZBW9TmkzFQ2zUiKlAjPGiS4eOHG4vq9Wu4XWINjS2DKFmegvDKrGv9dGWMSH9DhbrabCDGVxS0wA2AgwoL3hY2qjRua2rnQ3DjNzooQ4ngBc1kxkvA791S9LLAUmcI7OsnkbECaXjY5uEOkXUDhQTLXfc11sxQRMSvKg8igsvcnha5T0uqYsKInVWWKH43LrF6rnBC3dYjzgTduqAsvgpfyN4Igdi0fQ6h8ozWYeRmwYr3eGyBJa)xgbMQcdIs(teEi9It0rfBpKNAKjm0wFEqDxrn3RLcVExOCrDo1z3t14d6p2Mmut)mraiUH)b40fqMDadikdEEuh45wO183Es5MD728O38vF5Bx7oJ(9)9VBQPY9o1UZV8t(4)9ut9gb6tmVK0bDnoXWxNu1qgN0bG5frsLSzMqrM3nvqdgXhhPFfHtkisZTNlbiNPJMlxtrDNW09VzP347)Gp6v7EzhRHofPdkwwZZZM8(wg4lUCOVLTrr40gXGtFbyD7lEsf1tyZ6Q(optsrxDkYWewgB2oXEEh5ZHcjXx8JT4JSCHwxW1VqI1h(kaGeCaJo1YjHuWk0j8XbIY5bBUfxSMZd2r01T0pEM)iOLS5pgIhXhQve(npZZkcGoNHAlSG36x)pX1mtjoW8SylobGIeof49W7wkNZi89fWnCafuOWZg3a4TSPnPaHFBi4ROe6aL1PRf(qzY2ZHseGPNyaV95vv)o0wqY0hzEWREg4SNqwYUwUyOtLDb8AEyLIaiHx9fScpJshfc)iD9Szzjk1euawXluwDglbDzyPrxz(v68xzHQPH6)svkS0FHu5on569dkQgNTOXBFbIpc5mo6qfoaiEPe4L3Zh6AY7m8CmFraFTEwMSftsInI)6LdbO3JTCcRVJaWgehP1IlZFE1xc2azrlbdivdfMz4OjZ1NqHYJ180nX6FMtamscWi4BilfvHYDiIxzgdoFVETb2Q)iGJZ2BJ)3gBTd(F7aDHb0BI6aTzVdF0ETlT)rvB0TJOr0BSf(Zne)8wan4Lsdsh15(I(tgD431O7JAazbxFlfQ5eBnoBFUYaHPDbZLDSgsLeHff72lIIZ(artZa6XXbWleNYGmeFJUnBXwibRUybNZNLEdKYc9DcXELdyEI)IBPOE)tCwj7WFPrqzbKitwcHZRkHQuAxPl0KTAgZuCEaZ7Bbr0yTF0MeEqxoii8eTfUb1tZQGZMkYted9s0EwwBOlS2(btbiQcEyV4Y(UHnWzi023Iz7ktCix5QbPn1hXaypnzd7OG1NTQ8JEnKbNnGCouWXHyl5NNlFofxQK8KNxx0R4qcVf3cAM27mmr5NWwTvukh6Us(vZLX8Io4lG6dSEIbyCK7W4KHGeIQYPRmFeUsIeWzI4OCCjGjrt5uCU124pV564p3esEs3LS4Jph6fTIjbIim6z1pCIvrei(nJtHfMkoxkcRoPXofAvxiXUghkg977Y1gsD2Z(mbYuuBks27qZ1W2NLg4e6sFLx3SCigMbAwmSJ(bJJjaC9(eUhOJ2I(5xAGMb5ilDofhJv1NQtyE3d59G8QderrmNqcNlmwqEKQkqZihnue(HlIJMQvXWgdd2IoqqRWySyw9oLohJ2FNALaIZYbCT5MI5BDR8JbCdrHTMoI9bK0GYlIMtu7kCuipPW8fSElXww2B2KnTjBKyC05UB7E139abV4nftT46BMpfWNOBtiHjBRwHZw49NuzFKtDjbQvthBODIuyhMjBXrHefv(evCWENkawcdFsfOkt12qNAX8gYG5fs3heE4hb2OpoTmwdIqTXOus0ZansGySml1K8IsiUiqefMa0rUr2rdgVYBk9UNJbrdlAPBt0CK9OghetEYib9q0DZuSsuTdMGlKq7JXfsAnwkvVgXoOKOfpinyuRshwA36neGr7Ct18SuvYZILPk4g95vVFZ7QgY5gIpEBripKOWjYMr1ShPgM8hMIMesPfFLyQmnFc4zaGgaisOlzRkCEqxXQkP42FVOMCQEwydIzdkMxZWOxM0uZxWc1oZXb(BSi6inC6B6uO1l6Po33IaqdYAdGhDz)x38SE13WwjBNCjYHEPUa6PHS7)cNIj9hsXg0h2rNtioMXn7QWDbgpipcCQWdvHvXvxpt)jbWhlanB55h8oXqiA3C)EvLieY4GnxpFq(HsuAqr9uoC)(XJcA1UE1oDLyeRorglbFu0eyNWSnwm1W46sCfTAceXJRzT0GuRrw6sUclLvPd86jaEuu8zfcrWdts(O)ZFU)B16kzhjGkBjbho5ZMlX43cLZ0u2R5psZbNxlofA6qGLQyq7YOLLEJR(tLdlQLQJBxi5aI9WUcmzlpjWwrMt)XPyjayeHOvkZUSNAi1q)X4e)YhaTKeSF5SDUiNh(dYLDQxcOMXHzybCLUMso3LGAHrO4QMBATB)V(6V(7MAQPQD7)N8xIpTc0A(3awI6bryP)8C1U9xn90fHp7sxFoazaHrcKJ(JJ18sZk96CGyeTQMrY)6vn8Uis5MK(0exru4OoH8QfcmUH8ZvJlugGLYKMIyzCt1SjYSdMfFbhIVhxZoXn1HxT4horoQPtSJp9lKgASUX2wDpAxg2uSSRKKLuuTtNYM0GydnB((tqBslaxe5iQuRUKw765vh9y1jf10XQXVdn1O6JA6D2b4Tt6PgCLezflIMAoEs2ylqM4WOQD7)7a8FdJFNCT71OEf1DYjOFT9g5X5WNmJxTXF4pajcq04EyPzXT6aOYCc0qqjBpewbZdWPcNAa9cWN)64yHlsABPRB3cNjfADGm6yzjcPsDzOlMsIdMOwIlXD3QL6w7UnKxuf6pUf(Z1fLO34gQgbXRbtqZ6LYbckgVPKUFRNWeKpqRpoIMyt9T6HD62U5rhi52cMWfnKZ9rshfDYYrIBErc259NmGM6INcYWUV1qCwJj7w6WMvUR8oVVr0p3b7wAGA0cjUfcm1jH1pOTDPfTmuwwyvBrTCWRmygD5LLf)(rat24qyFPv67Z9RIvkiOS83ovavUez1lMKZQmfBPjzaKe4YWSmksySyJezFb3rSQbyGrtWoHRuIykK9OFWMLQywf1QoWfBcOJUTGsq0tVAMGYyqnHQVsskKAPIRljXvWiIZ5Gi4IdrB91U(1d5Xj18m9uelvRQJrqI2nVG8uKr49L7eBXYL37Zkk)RiO4X0JHFFJ1GqCwHGqPW52HQBwwzQRF9LDRvVrZEDpSEJQS5Wg8RevfqrCTq0ikJk1xaZt2Nt9zXkdphfOEeWpbnQazsKwAYP(anmjg)wslLmgzfzrOe0FvTA2xzUtw(yS4wOq6ZUyXE8(NYm8IqAWXrioQzJA9W2RePw3u0m66IEdV1o5NuBGh(eBZjhdRUl)yx)O6(NJFlKjjGiNK8FjQtgrevoi2wO)IBeo6VgaLbyCezjr36Q(ERjgQQigwney5ebJI4Lut)f)aHA7cAzI2dZNl6QDsFfPXTWjzJoDuECqr)K90PsCKdykZvsUquU(R7M9tmCKyCWJ7lfO9BlGj3CR8ph)74c)BG4Ld8TTBXPdSSj)))!BBF",
   version = "1.1",
