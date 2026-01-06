@@ -297,15 +297,37 @@ addon.AddonProfiles.SenseiClassResourceBar = {
 
     -- 4. Get active layout name
     local layoutName
-    local libEditMode = _G.LibStub and _G.LibStub("LibEditMode", true)
-    if libEditMode and libEditMode.GetActiveLayoutName then
-      layoutName = libEditMode:GetActiveLayoutName()
-    end
 
-    if not layoutName and C_EditMode and C_EditMode.GetActiveLayout then
-      local layoutInfo = C_EditMode.GetActiveLayout()
+    -- Try EditModeManagerFrame (Retail/Beta)
+    if _G.EditModeManagerFrame and _G.EditModeManagerFrame.GetActiveLayoutInfo then
+      local layoutInfo = _G.EditModeManagerFrame:GetActiveLayoutInfo()
       if layoutInfo then
         layoutName = layoutInfo.layoutName
+      end
+    end
+
+    -- Try LibEditMode
+    if not layoutName then
+      local libEditMode = _G.LibStub and _G.LibStub("LibEditMode", true)
+      if libEditMode and libEditMode.GetActiveLayoutName then
+        layoutName = libEditMode:GetActiveLayoutName()
+      end
+    end
+
+    -- Try C_EditMode API with correct structure
+    if not layoutName and C_EditMode and C_EditMode.GetLayouts then
+      local layouts = C_EditMode.GetLayouts()
+      if layouts and layouts.activeLayout and layouts.layouts and layouts.layouts[layouts.activeLayout] then
+        layoutName = layouts.layouts[layouts.activeLayout].layoutName
+      end
+    end
+
+    -- Legacy EditModeManagerFrame check (just in case)
+    if not layoutName and _G.EditModeManagerFrame then
+      if _G.EditModeManagerFrame.GetLayoutName then
+        layoutName = _G.EditModeManagerFrame:GetLayoutName()
+      elseif _G.EditModeManagerFrame.layoutInfo and _G.EditModeManagerFrame.layoutInfo.layoutName then
+        layoutName = _G.EditModeManagerFrame.layoutInfo.layoutName
       end
     end
 
