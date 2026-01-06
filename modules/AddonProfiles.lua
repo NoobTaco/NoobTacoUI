@@ -246,11 +246,108 @@ addon.AddonProfiles.SenseiClassResourceBar = {
   downloadUrl = "https://www.curseforge.com/wow/addons/senseiclassresourcebar",
   command = "/scrb",
   instructions = {
-    "Click the button below to copy the profile string",
-    "Type |cFFEBCB8B/scrb|r in chat to open Sensei Class Resource Bar config",
-    "Navigate to the |cFFEBCB8BProfiles|r section",
-    "Paste the profile string and import"
+    "Ensure you have an active Edit Mode profile selected.",
+    "Click the |cFFEBCB8BApply Profile|r button below.",
+    "Reload your UI (|cFFEBCB8B/reload|r) for changes to take effect."
   },
+  isCustomApply = true,
+  applyFunction = function()
+    -- Check if Sensei is loaded
+    if not C_AddOns.IsAddOnLoaded("SenseiClassResourceBar") then
+      print("|cFF16C3F2NoobTacoUI|r: Sensei Class Resource Bar not loaded.")
+      return
+    end
+
+    local LibDeflate = LibStub:GetLibrary("LibDeflate", true)
+    local LibSerialize = LibStub:GetLibrary("LibSerialize", true)
+
+    if not LibDeflate or not LibSerialize then
+      print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/LibSerialize) not found.")
+      return
+    end
+
+    -- 1. Get the profile string
+    local profileString = addon.AddonProfiles.SenseiClassResourceBar.profileString
+
+    -- 2. Extract the encoded data part (SenseiClassResourceBar:1:<data>)
+    local prefix, version, encoded = profileString:match("^([^:]+):(%d+):(.+)$")
+    if not encoded or prefix ~= "SenseiClassResourceBar" then
+      print("|cFF16C3F2NoobTacoUI|r: Invalid Sensei profile string format.")
+      return
+    end
+
+    -- 3. Decode and Deserialize
+    local decoded = LibDeflate:DecodeForPrint(encoded)
+    if not decoded then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+      return
+    end
+
+    local decompressed = LibDeflate:DecompressDeflate(decoded)
+    if not decompressed then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+      return
+    end
+
+    local success, data = LibSerialize:Deserialize(decompressed)
+    if not success or not data then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+      return
+    end
+
+    -- 4. Get active layout name
+    local layoutName
+    local libEditMode = _G.LibStub and _G.LibStub("LibEditMode", true)
+    if libEditMode and libEditMode.GetActiveLayoutName then
+      layoutName = libEditMode:GetActiveLayoutName()
+    end
+
+    if not layoutName and C_EditMode and C_EditMode.GetActiveLayout then
+      local layoutInfo = C_EditMode.GetActiveLayout()
+      if layoutInfo then
+        layoutName = layoutInfo.layoutName
+      end
+    end
+
+    if not layoutName then
+      layoutName = "Default"
+      print("|cFF16C3F2NoobTacoUI|r: Edit Mode layout not detected. Using 'Default'.")
+    end
+
+    -- 5. Apply to database
+    if not _G.SenseiClassResourceBarDB then _G.SenseiClassResourceBarDB = {} end
+
+    -- Apply BARS data (dbName -> barSettings)
+    if data.BARS then
+      for dbName, barSettings in pairs(data.BARS) do
+        if not _G.SenseiClassResourceBarDB[dbName] then
+          _G.SenseiClassResourceBarDB[dbName] = {}
+        end
+        _G.SenseiClassResourceBarDB[dbName][layoutName] = barSettings
+      end
+    end
+
+    -- Apply GLOBAL data
+    if data.GLOBAL then
+      _G.SenseiClassResourceBarDB["_Settings"] = data.GLOBAL
+    end
+
+    print("|cFF16C3F2NoobTacoUI|r: Sensei profile applied for layout: |cFFEBCB8B" .. layoutName .. "|r")
+
+    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_SENSEI"] = {
+      text = "Sensei Class Resource Bar profile applied.\nA reload is required for changes to take effect.\nReload now?",
+      button1 = "Yes",
+      button2 = "No",
+      OnAccept = function()
+        ReloadUI()
+      end,
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show("NOOBTACOUI_RELOAD_UI_SENSEI")
+  end,
   profileString =
   "SenseiClassResourceBar:1:ns5ZYTrrqy8sLscGXeK3GJXoy8MayOaSvsOGBCqRSuSQYYsz16KQOOkRz3T1ot5rZm1mJWr(yQCGZ6ripc(rGNGU0JqEeYzoKzwha)VdCuQ7D7VVFFDVv2mkQr8GFrD3bqMuKt0tJbJCIodIi6DI(ZV(TPKSJk0YjI8b2PCqT8GMXrHdGXSTSAIWOiAqyFDkr)mMHL66iCxIjmHOlaRRpoKzH8WEXHDeHnLJtj2ttL6Cq3uYL62bKQbPvckQeOR8gklh6seKEIyjhw4Cd)CnxnOOAGU6RTWlSTL6XeRU5eTxfQGXeZrne5rLdOuWrjuMiy6xulAK01XV2ryb9isguVrEEpHPEFoXovqSsD9ggdyn1B7A09)sLIjmB5TAKKNVT1o6LgQ84e3ChMsbwb1U8mNXh4aHLK2T1oDoO7SYwyzhzg(s)ehWobwnwjzcBAZw7N0kE(iIXPHdu5elygo7ywUL2vMdQ1hmvKf(CMLg2YjfHLr4oM5gU8yH5nMXsPL2xll0GX9Gw3u(pUOlHyAf1AEk(CkJdDDKZb)E6Nbuw2eoqvR5LxBnPym4l1xEmODrT3tu1DabXLG9(dqZjttKffCy48rmoFhM2LJmPy(EWiBOvgg7T)CFg03vYf9sXdE0Jv3B01(UVA8f8IkZ9gWfpzhjC(PACjiE1IVDKudNBLB2(jhUVlqF4phBYiCOQAdVdJ4StoHOZVYM7bm6PEY3BILZeGU3bj71z)wQnUEP9VYp6rpE7FAM3rn4ScbUIQ2ed8pV1gwoXqllFvZCkfiCl9SBM7J)iUfEZ0Dz55Ga)E8hWp6cDJlGFmUi(jbtFkEBvq562V3oUZV90KdpC7KK2yTH4sBGb4DWLxfVlUc(5dXvtDxgtiC8EdX1P4xsXngIH49Xh44o(vxCcvXBOw)8uYTLp1FYjSeptCmc)MxTi(D(CqvZ35ULw49xE4hCHdtCt1sL39TFsyBsoe63cWTXvM7iuthymLmzi(Wlid1N1xZgFLpQuci1s(nr)XEdtFWvtyP4nXBD5j)HlCz6Tj(TNrV)UgEB8tVEyHR9)ItEg4yLJdL5KlyC8WBmSo9sMj9j71lQXEB(xNbQsdBw40YvP3)J3b",
   version = "1.1",
