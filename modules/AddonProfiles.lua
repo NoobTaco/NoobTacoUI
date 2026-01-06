@@ -236,170 +236,28 @@ addon.AddonProfiles.XIV_Databar = {
 
 -- Sensei Class Resource Bar Profile
 -- Optimized for NoobTacoUI aesthetic
--- Version: 1.0
--- Last Updated: 2025-11-30
+-- Version: 1.1
+-- Last Updated: 2026-01-06
 addon.AddonProfiles.SenseiClassResourceBar = {
   name = "SenseiClassResourceBar",
   displayName = "Sensei Class Resource Bar",
   description =
-  "Apply the NoobTacoUI profile for Sensei Class Resource Bar. This will inject the settings directly into the addon's configuration for your current Edit Mode profile.",
+  "Import a pre-configured profile for Sensei Class Resource Bar that complements the NoobTacoUI aesthetic. This profile includes optimized resource bar styling and positioning.",
   downloadUrl = "https://www.curseforge.com/wow/addons/senseiclassresourcebar",
   command = "/scrb",
   instructions = {
-    "Ensure you have an active Edit Mode profile selected.",
-    "Click the |cFFEBCB8BApply Profile|r button below.",
-    "Reload your UI (|cFFEBCB8B/reload|r) for changes to take effect."
+    "Click the button below to copy the profile string",
+    "Type |cFFEBCB8B/scrb|r in chat to open Sensei Class Resource Bar config",
+    "Navigate to the |cFFEBCB8BProfiles|r section",
+    "Paste the profile string and import"
   },
-  isCustomApply = true,
-  applyFunction = function()
-    local profileName
-
-    -- 1. Try to use LibEditMode (same method as SenseiClassResourceBar)
-    -- This is the most reliable method as it matches the addon's own logic
-    local libEditMode = _G.LibStub and _G.LibStub("LibEditMode", true)
-    if libEditMode and libEditMode.GetActiveLayoutName then
-      profileName = libEditMode:GetActiveLayoutName()
-    end
-
-    -- 2. Fallback: Try to get profile from Edit Mode Manager Frame (Retail)
-    if not profileName then
-      local editModeManager = rawget(_G, "EditModeManagerFrame")
-      if editModeManager then
-        if editModeManager.GetLayoutName then
-          profileName = editModeManager:GetLayoutName()
-        elseif editModeManager.layoutInfo and editModeManager.layoutInfo.layoutName then
-          profileName = editModeManager.layoutInfo.layoutName
-        end
-      end
-    end
-
-    -- 3. Fallback: Try C_EditMode API
-    if not profileName and C_EditMode and C_EditMode.GetActiveLayout then
-      local layoutInfo = C_EditMode.GetActiveLayout()
-      if layoutInfo then
-        profileName = layoutInfo.layoutName
-      end
-    end
-
-    -- Fallback for Classic or if Edit Mode API fails
-    if not profileName then
-      profileName = "Default"
-      print("|cFF16C3F2NoobTacoUI|r: Edit Mode not detected. Using 'Default' profile.")
-    end
-
-    -- Check if SenseiClassResourceBar DB exists
-    if not _G.SenseiClassResourceBarDB then _G.SenseiClassResourceBarDB = {} end
-
-    -- Ensure sub-tables exist within the main DB
-    if not _G.SenseiClassResourceBarDB.SecondaryResourceBarDB then _G.SenseiClassResourceBarDB.SecondaryResourceBarDB = {} end
-    if not _G.SenseiClassResourceBarDB.PrimaryResourceBarDB then _G.SenseiClassResourceBarDB.PrimaryResourceBarDB = {} end
-    if not _G.SenseiClassResourceBarDB.healthBarDB then _G.SenseiClassResourceBarDB.healthBarDB = {} end
-
-    local data = addon.AddonProfiles.SenseiClassResourceBar.data
-
-    -- Deep copy to avoid reference issues
-    local function DeepCopy(orig)
-      local orig_type = type(orig)
-      local copy
-      if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in next, orig, nil do
-          copy[DeepCopy(orig_key)] = DeepCopy(orig_value)
-        end
-        setmetatable(copy, DeepCopy(getmetatable(orig)))
-      else -- number, string, boolean, etc
-        copy = orig
-      end
-      return copy
-    end
-
-    -- Write to the correct location: SenseiClassResourceBarDB[dbName][profileName]
-    _G.SenseiClassResourceBarDB.SecondaryResourceBarDB[profileName] = DeepCopy(data.SecondaryResourceBarDB)
-    _G.SenseiClassResourceBarDB.PrimaryResourceBarDB[profileName] = DeepCopy(data.PrimaryResourceBarDB)
-    _G.SenseiClassResourceBarDB.healthBarDB[profileName] = DeepCopy(data.healthBarDB)
-
-    print("|cFF16C3F2NoobTacoUI|r: Sensei Class Resource Bar profile applied for layout: |cFFEBCB8B" ..
-      profileName .. "|r")
-    print("Please reload your UI (|cFFEBCB8B/reload|r) to see changes.")
-  end,
-  data = {
-    SecondaryResourceBarDB = {
-      ["showTicks"] = true,
-      ["fontSize"] = 10,
-      ["point"] = "CENTER",
-      ["scale"] = 1,
-      ["smoothProgress"] = true,
-      ["hideBlizzardSecondaryResourceUi"] = false,
-      ["barVisible"] = "Has Target Selected OR In Combat",
-      ["showFragmentedPowerBarText"] = false,
-      ["fontOutline"] = "OUTLINE",
-      ["tickThickness"] = 1,
-      ["fillDirection"] = "Left to Right",
-      ["hideManaOnDps"] = false,
-      ["backgroundStyle"] = "SCRB Semi-transparent",
-      ["maskAndBorderStyle"] = "1 Pixel",
-      ["x"] = 1.11016845703125,
-      ["width"] = 294,
-      ["y"] = -268.056640625,
-      ["font"] = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Fonts\\Poppins-SemiBold.ttf",
-      ["showText"] = true,
-      ["useResourceAtlas"] = true,
-      ["height"] = 13,
-      ["textAlign"] = "CENTER",
-      ["widthMode"] = "Sync With Essential Cooldowns",
-      ["foregroundStyle"] = "NT_Nord13_Gradient",
-    },
-    PrimaryResourceBarDB = {
-      ["backgroundStyle"] = "SCRB Semi-transparent",
-      ["fontSize"] = 10,
-      ["point"] = "CENTER",
-      ["scale"] = 1,
-      ["showManaAsPercent"] = false,
-      ["smoothProgress"] = true,
-      ["barVisible"] = "Has Target Selected OR In Combat",
-      ["showFragmentedPowerBarText"] = false,
-      ["fontOutline"] = "NONE",
-      ["fillDirection"] = "Left to Right",
-      ["maskAndBorderStyle"] = "1 Pixel",
-      ["widthMode"] = "Sync With Essential Cooldowns",
-      ["width"] = 294,
-      ["y"] = -284.9992218017578,
-      ["x"] = 1.110443115234375,
-      ["showText"] = true,
-      ["height"] = 15,
-      ["useResourceAtlas"] = true,
-      ["textAlign"] = "CENTER",
-      ["font"] = "Interface\\AddOns\\NoobTacoUI-Media\\Media\\Fonts\\Poppins-SemiBold.ttf",
-      ["foregroundStyle"] = "NT_Nord13_Gradient",
-    },
-    healthBarDB = {
-      ["backgroundStyle"] = "SCRB Semi-transparent",
-      ["fontSize"] = 12,
-      ["point"] = "CENTER",
-      ["scale"] = 1,
-      ["smoothProgress"] = true,
-      ["barVisible"] = "Hidden",
-      ["showFragmentedPowerBarText"] = false,
-      ["fontOutline"] = "OUTLINE",
-      ["fillDirection"] = "Left to Right",
-      ["x"] = 0,
-      ["maskAndBorderStyle"] = "Thin",
-      ["hideBlizzardPlayerContainerUi"] = false,
-      ["width"] = 200,
-      ["y"] = 40,
-      ["font"] = "Fonts\\FRIZQT__.TTF",
-      ["showText"] = true,
-      ["widthMode"] = "Manual",
-      ["height"] = 15,
-      ["textAlign"] = "CENTER",
-      ["useClassColor"] = true,
-      ["foregroundStyle"] = "SCRB FG Fade Left",
-    }
-  },
-  version = "1.0",
+  profileString =
+  "SenseiClassResourceBar:1:ns5ZYTrrqy8sLscGXeK3GJXoy8MayOaSvsOGBCqRSuSQYYsz16KQOOkRz3T1ot5rZm1mJWr(yQCGZ6ripc(rGNGU0JqEeYzoKzwha)VdCuQ7D7VVFFDVv2mkQr8GFrD3bqMuKt0tJbJCIodIi6DI(ZV(TPKSJk0YjI8b2PCqT8GMXrHdGXSTSAIWOiAqyFDkr)mMHL66iCxIjmHOlaRRpoKzH8WEXHDeHnLJtj2ttL6Cq3uYL62bKQbPvckQeOR8gklh6seKEIyjhw4Cd)CnxnOOAGU6RTWlSTL6XeRU5eTxfQGXeZrne5rLdOuWrjuMiy6xulAK01XV2ryb9isguVrEEpHPEFoXovqSsD9ggdyn1B7A09)sLIjmB5TAKKNVT1o6LgQ84e3ChMsbwb1U8mNXh4aHLK2T1oDoO7SYwyzhzg(s)ehWobwnwjzcBAZw7N0kE(iIXPHdu5elygo7ywUL2vMdQ1hmvKf(CMLg2YjfHLr4oM5gU8yH5nMXsPL2xll0GX9Gw3u(pUOlHyAf1AEk(CkJdDDKZb)E6Nbuw2eoqvR5LxBnPym4l1xEmODrT3tu1DabXLG9(dqZjttKffCy48rmoFhM2LJmPy(EWiBOvgg7T)CFg03vYf9sXdE0Jv3B01(UVA8f8IkZ9gWfpzhjC(PACjiE1IVDKudNBLB2(jhUVlqF4phBYiCOQAdVdJ4StoHOZVYM7bm6PEY3BILZeGU3bj71z)wQnUEP9VYp6rpE7FAM3rn4ScbUIQ2ed8pV1gwoXqllFvZCkfiCl9SBM7J)iUfEZ0Dz55Ga)E8hWp6cDJlGFmUi(jbtFkEBvq562V3oUZV90KdpC7KK2yTH4sBGb4DWLxfVlUc(5dXvtDxgtiC8EdX1P4xsXngIH49Xh44o(vxCcvXBOw)8uYTLp1FYjSeptCmc)MxTi(D(CqvZ35ULw49xE4hCHdtCt1sL39TFsyBsoe63cWTXvM7iuthymLmzi(Wlid1N1xZgFLpQuci1s(nr)XEdtFWvtyP4nXBD5j)HlCz6Tj(TNrV)UgEB8tVEyHR9)ItEg4yLJdL5KlyC8WBmSo9sMj9j71lQXEB(xNbQsdBw40YvP3)J3b",
+  version = "1.1",
   author = "NoobTaco",
-  dateCreated = "2025-11-30"
+  dateCreated = "2026-01-06"
 }
+
 
 -- Helper function to get all available profiles
 function addon.GetAvailableProfiles()
