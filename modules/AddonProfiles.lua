@@ -123,6 +123,84 @@ addon.AddonProfiles.zBarButtonBG = {
     "Select |cFFEBCB8BzBarButtonBG|r and go to |cFFEBCB8BProfiles|r",
     "Paste the profile string and import"
   },
+  isCustomApply = true,
+  applyFunction = function()
+    -- Check if dependencies are loaded
+    if not zBarButtonBGAce or not zBarButtonBGAce.db then
+      print("|cFF16C3F2NoobTacoUI|r: zBarButtonBG not fully loaded.")
+      return
+    end
+
+    local LibDeflate = LibStub:GetLibrary("LibDeflate")
+    local AceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
+
+    if not LibDeflate or not AceSerializer then
+      print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/AceSerializer) not found.")
+      return
+    end
+
+    -- 1. Get the profile string
+    local profileString = addon.AddonProfiles.zBarButtonBG.profileString
+
+    -- 2. Decode the profile
+    local decoded = LibDeflate:DecodeForPrint(profileString)
+    if not decoded then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+      return
+    end
+
+    local decompressed = LibDeflate:DecompressDeflate(decoded)
+    if not decompressed then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+      return
+    end
+
+    local success, profileTable = AceSerializer:Deserialize(decompressed)
+    if not success or not profileTable then
+      print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+      return
+    end
+
+    -- 3. Switch to/Create "NoobTacoUI" profile
+    zBarButtonBGAce.db:SetProfile("NoobTacoUI")
+
+    -- 4. Apply settings
+    -- We assume the exported string contains the profile table content directly
+    -- zBarButtonBG's export is just 'self.db.profile', so we map it back
+    for key, value in pairs(profileTable) do
+      zBarButtonBGAce.db.profile[key] = value
+    end
+
+    -- 5. Force update the addon
+    -- We manually trigger the update functions found in zBarButtonBG's source
+    if zBarButtonBG and zBarButtonBG.enabled then
+      -- Update character settings reference
+      zBarButtonBG.charSettings = zBarButtonBGAce.db.profile
+
+      -- Re-create backgrounds if functions exist
+      if zBarButtonBG.removeActionBarBackgrounds and zBarButtonBG.createActionBarBackgrounds then
+        zBarButtonBG.removeActionBarBackgrounds()
+        zBarButtonBG.createActionBarBackgrounds()
+      end
+    end
+
+    print(
+      "|cFF16C3F2NoobTacoUI|r: zBarButtonBG profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+
+    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
+      text = "zBarButtonBG profile applied.\nA reload is recommended for all settings to take full effect.\nReload now?",
+      button1 = "Yes",
+      button2 = "No",
+      OnAccept = function()
+        ReloadUI()
+      end,
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show("NOOBTACOUI_RELOAD_UI")
+  end,
   profileString =
   "nsvBtQjpu0Fr7ockc(rXzT1oU4og680(LmtacivmxEscJZ2F9nHeqa1P9d(69MCoN75Cb7GJXOuOHjpKNlOYFIJMHr1CiDDL8lvW1nqfW1nruvEDLhgXXroyuH(NlXOe9NUyjgDHKYHiYf6hGOuwcmmk8qC8H3Ta8FLzYt4OfUQd1iLadj)SIIrO)VHWP6MGQm4kBmIgaNza0a3iWgs7Z0ptkzzFLwwCsQyPRrj9YWcyeWuVNa8mkFiyogOuQXOo3HQZE3g4(rlCTQAlOEvrkey0HVhVFx0B3rot3ItW1qs65mouJdvxT977P5Y1z)QriVqzkwp)wPyOEsLrY5zUsG3qI3iOBQicr7r2XyuooPxoA2Jk)n1mS65T(VXOpG66sM4fe9szOYBgOy7zwAKfQcKAPvWv1Z0IBeOHTtAnQJay6uJYijv02JNtYOBSXb956giVteNPzXqyB(r350KQ1IpsRRiP0jiEtPw5pmsAHieux9LjJ9(BPlAnVZq7LMOPOGkK0S1P6S)djZGH(uXZjSc6owwzkrc8X2RVDh41fDjZz(wh2P1Il1U6JsYDjcNU21D3BIpYH7v63u6VmxtN2n59VTT7bf3dKbgdio3TSmA3CmUdsv9lTEdiXa)zWZOS7tpyGpr(ZDw0VsS6g76S6JAeN40wA(pOrT9FCKRPZJqJCKvSnWzPRVV38vbZ9MfSiaN)IxRFU1BPNJN)s3zURc8w47QRSuJYZQK8Skt3YpOjXO9T)UEKy8F(",
   version = "1.0",
