@@ -12,6 +12,10 @@
 - **Resolution Detection**: The configuration menu now automatically detects and displays the physical screen resolution.
 - **Smart Diagnostic**: Updated "Print Current Scale" tool to recognize and name all standard and accessibility scaling modes.
 
+#### Addon Integrations 🆕
+
+- **zBarButtonBG Automatic Profile**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for zBarButtonBG.
+
 ### 🔧 Technical Improvements
 
 - **Environment Cleanup**: Removed redundant Windows metadata files (`Zone.Identifier`) to improve cross-platform compatibility.
@@ -275,7 +279,7 @@ This release introduces the foundation for addon integration with BetterBlizzFra
   - Enhance user experience with clear guidance
 - feat: Add General Settings panel with minimap button and addon compartment integration
 
-    ## New Features
+  ## New Features
 
 - General Settings Panel
   - Added new General Settings section to enhanced configuration menu
@@ -394,7 +398,7 @@ This release introduces the foundation for addon integration with BetterBlizzFra
 - feat: Implement sound dropdown selection for Collection Notifications  
      🎵 Add customizable sound selection for each notification type
 
-    ## New Features
+  ## New Features
 
   - **Sound Dropdowns**: Choose custom sounds for Pet, Mount, Toy, and Transmog notifications
   - **Test Buttons**: Preview selected sounds immediately with play buttons (▶)
