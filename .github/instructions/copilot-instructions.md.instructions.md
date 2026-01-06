@@ -178,3 +178,9 @@ When making changes:
 5. Include examples for reusable components
 
 This instruction set ensures consistency with the established Nord-themed, modular architecture while maintaining high code quality and user experience standards.
+
+# World of Warcraft Midnight Beta Rules
+- Always prioritize the `C_` namespaces (e.g., C_Spell, C_Item, C_Unit).
+- Reference API definitions located in the `wow-ui-source` folder.
+- If a function is marked as [Restricted] in the docs, warn me before using it in combat logic.
+- Use the current Midnight (12.0) documentation for all UI frame handles.
