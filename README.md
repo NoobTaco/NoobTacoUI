@@ -65,6 +65,7 @@ Access the main configuration panel using any of these methods:
 
 - **`/nt version`** - Display current addon version
 - **`/nt`** - Show help with available commands
+- **`/rl`** or **`/reloadui`** - Fast UI reload
 
 ## 📦 Installation
 

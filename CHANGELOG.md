@@ -24,6 +24,7 @@
 
 ### 🔧 Technical Improvements
 
+- **Helper Commands**: Added `/rl` and `/reloadui` as shortcuts for the default `/reload` command for faster UI reloading.
 - **Environment Cleanup**: Removed redundant Windows metadata files (`Zone.Identifier`) to improve cross-platform compatibility.
 - **CVar Safety**: Enhanced `uiScale` management to automatically ensure `useUiScale` is enabled.
 
