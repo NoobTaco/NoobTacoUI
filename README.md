@@ -12,15 +12,10 @@ It serves as a comprehensive media and configuration addon that provides high-qu
 
 Create a cohesive and professional look across your entire interface with built-in profile management.
 
-- **Addon Profiles**: One-click import of optimized profiles for popular addons:
-  - **Default WoW Edit Mode**: Optimized layout for the default UI.
-  - **BetterBlizzFrames**: Enhanced unit frame configurations.
-  - **Platynator**: Clean and functional nameplate profiles (now with one-click automatic application).
-  - **Cooldown Manager Tweaks**: Optimized tracking settings.
-  - **zBarButtonBG**: Custom styling for action bars (now with one-click automatic application).
-  - **XIV_Databar Continued**: Optimized bar styling and positioning (now with one-click automatic application).
-  - **Sensei Class Resource Bar**: Optimized resource bar styling.
-  - **Details! Damage Meter**: Optimized damage meter profile.
+- **Addon Profiles**: Guided, three-step setup for a perfect UI:
+  - **Step 1: Mandatory Edit Mode**: One-click export of optimized layout strings.
+  - **Step 2: Automated Application**: Apply all loaded addon profiles at once.
+  - **Full Addon Management**: Alphabetical list of all supported addons (BetterBlizzFrames, Platynator, XIV_Databar, etc.) with smart status badges (**NEW**, **UPDATE**, **NOT LOADED**).
 - **Pixel Perfect Scaling**: Built-in tools to set your UI scale perfectly for 4K, 1440p, and 1080p resolutions.
   - **Standard (1:1)**: Maximum screen real estate with mathematical sharpness.
   - **High Visibility (2:1)**: Doubled UI size for better accessibility while maintaining perfect clarity on high-DPI monitors.

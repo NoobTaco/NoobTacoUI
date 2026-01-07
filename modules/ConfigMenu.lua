@@ -130,7 +130,13 @@ frame:SetScript("OnEvent", function(self, event, loadedAddonName)
         showMinimapButton = true,
         enableAddonCompartment = true,
         minimapButtonAngle = 225, -- Default angle in degrees (bottom-left position)
+        AppliedProfiles = {},     -- Track last applied version of addon profiles
       }
+    end
+
+    -- Ensure AppliedProfiles exists for existing databases
+    if not NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles = {}
     end
 
     -- Ensure minimapButtonAngle exists for existing databases
@@ -693,6 +699,22 @@ local function CreateEnhancedCategoryButton(parent, text, iconData)
       self.Label:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
     end
   end)
+
+  -- Notification Dot (for updates)
+  button.NotificationDot = button:CreateTexture(nil, "OVERLAY")
+  button.NotificationDot:SetSize(8, 8)
+  button.NotificationDot:SetPoint("RIGHT", button, "RIGHT", -INNER_PADDING, 0)
+  button.NotificationDot:SetTexture("Interface\\COMMON\\Indicator-Dot")
+  button.NotificationDot:SetVertexColor(unpack(addon.UIAssets.Colors.Nord11)) -- Reddish color
+  button.NotificationDot:Hide()
+
+  function button:SetNotification(visible)
+    if visible then
+      self.NotificationDot:Show()
+    else
+      self.NotificationDot:Hide()
+    end
+  end
 
   return button
 end
@@ -1626,6 +1648,42 @@ local function InitializeConfigFrame()
     header.expandLabel:SetText("+")
     header.expandLabel:SetTextColor(unpack(addon.UIAssets.Colors.Nord9))
 
+    -- Status Badge (New/Update)
+    header.statusBadge = CreateFrame("Frame", nil, header)
+    header.statusBadge:SetSize(60, 18)
+    header.statusBadge:SetPoint("RIGHT", header.expandLabel, "LEFT", -8, 0)
+    header.statusBadge:Hide()
+
+    header.statusBadge.bg = header.statusBadge:CreateTexture(nil, "BACKGROUND")
+    header.statusBadge.bg:SetAllPoints()
+    header.statusBadge.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord14)) -- Green for NEW
+    header.statusBadge.bg:SetAlpha(0.8)
+
+    header.statusBadge.text = header.statusBadge:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(header.statusBadge.text, "small-text", 10)
+    header.statusBadge.text:SetPoint("CENTER")
+    header.statusBadge.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+    function header:SetStatus(status)
+      if status == "NEW" then
+        self.statusBadge.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord14)) -- Green
+        self.statusBadge.text:SetText("NEW")
+        self.statusBadge:Show()
+      elseif status == "UPDATE" then
+        self.statusBadge.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord13)) -- Yellow/Orange
+        self.statusBadge.text:SetText("UPDATE")
+        self.statusBadge:Show()
+      elseif status == "NOT_LOADED" then
+        self.statusBadge.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3)) -- Slate/Gray
+        self.statusBadge.text:SetText("NOT LOADED")
+        self.statusBadge:Show()
+      else
+        self.statusBadge:Hide()
+      end
+    end
+
+    container.header = header -- Attach header to container to avoid nil error
+
     -- Content Frame
     local content = CreateFrame("Frame", nil, container)
     content:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
@@ -1672,9 +1730,12 @@ local function InitializeConfigFrame()
     instructions:SetText(instructionsText)
     instructions:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
-    instructions:SetWidth(parent:GetWidth() - (INNER_PADDING * 3))
+    instructions:SetWidth(600) -- Fixed width for instruction layout
     local instrHeight = instructions:GetStringHeight()
     contentYOffset = contentYOffset - instrHeight - 20
+
+    container.content = content -- Attach content to container
+    container.contentHeight = math.abs(contentYOffset) + 20
 
     -- Copy Button
     local copyButton = CreateFrame("Button", nil, content)
@@ -1930,6 +1991,37 @@ local function InitializeConfigFrame()
       scrollFrame.scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Width minus scrollbar
     end
 
+    -- Function to check if any addon integration needs an update
+    local function HasAddonUpdates()
+      local profiles = addon.GetAvailableProfiles()
+      for _, profile in ipairs(profiles) do
+        if profile.name ~= "EditMode" then
+          local addonLoaded = false
+          if profile.name == "XIV_Databar" then
+            addonLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or
+                C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or
+                C_AddOns.IsAddOnLoaded("XIV_Databar-Continued")
+          else
+            addonLoaded = C_AddOns.IsAddOnLoaded(profile.name)
+          end
+
+          if addonLoaded then
+            local appliedProfiles = NoobTacoUIDB.GeneralSettings.AppliedProfiles
+            local lastAppliedVersion = appliedProfiles[profile.name]
+            if not lastAppliedVersion or lastAppliedVersion ~= profile.version then
+              return true
+            end
+          end
+        end
+      end
+      return false
+    end
+
+    -- Update sidebar notification dot
+    if addonIntegrationButton then
+      addonIntegrationButton:SetNotification(HasAddonUpdates())
+    end
+
     -- Clear existing content
     local scrollChild = content.addonIntegrationPanel.scrollChild
     for _, child in ipairs({ scrollChild:GetChildren() }) do
@@ -1947,13 +2039,150 @@ local function InitializeConfigFrame()
     local ltpLoaded = C_AddOns.IsAddOnLoaded("Leatrix_Plus")
     local detailsLoaded = C_AddOns.IsAddOnLoaded("Details")
 
-    local currentYOffset = -INNER_PADDING
+    -- 1. Manual Setup Container
+    local editModeContainer = CreateFrame("Frame", nil, scrollChild)
+    editModeContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+    editModeContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -INNER_PADDING, -INNER_PADDING)
+    editModeContainer:SetHeight(160)
 
-    -- Create a dummy anchor frame at the top
-    local anchor = CreateFrame("Frame", nil, scrollChild)
-    anchor:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", 0, 0)
-    anchor:SetSize(1, 1)
-    local lastElement = anchor
+    local emBg = editModeContainer:CreateTexture(nil, "BACKGROUND")
+    emBg:SetAllPoints()
+    emBg:SetColorTexture(1, 0.8, 0, 0.1)
+
+    local emBorder = CreateFrame("Frame", nil, editModeContainer, "BackdropTemplate")
+    emBorder:SetAllPoints()
+    emBorder:SetBackdrop({
+      edgeFile = "Interface\\Buttons\\WHITE8X8",
+      edgeSize = 2,
+    })
+    emBorder:SetBackdropBorderColor(1, 0.8, 0, 0.8)
+
+    local editModeTitle = editModeContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(editModeTitle, "header-secondary")
+    editModeTitle:SetPoint("TOPLEFT", editModeContainer, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+    editModeTitle:SetText("STEP 1: MANDATORY EDIT MODE SETUP")
+    editModeTitle:SetTextColor(1, 0.8, 0)
+
+    local editModeDesc = editModeContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(editModeDesc, "body-text")
+    editModeDesc:SetPoint("TOPLEFT", editModeTitle, "BOTTOMLEFT", 0, -10)
+    editModeDesc:SetPoint("RIGHT", editModeContainer, "RIGHT", -INNER_PADDING, 0)
+    editModeDesc:SetJustifyH("LEFT")
+    editModeDesc:SetText(
+      "To ensure NoobTacoUI works as intended, you MUST import the optimized layout. Click the button, copy the string (CTRL+C), then open WoW Edit Mode and click 'Import'. We recommend naming the profile 'NoobTacoUI', but you can use any name you prefer.")
+    editModeDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+
+    local editModeApplyBtn = CreateFrame("Button", nil, editModeContainer)
+    editModeApplyBtn:SetSize(180, 30)
+    editModeApplyBtn:SetPoint("BOTTOMLEFT", editModeContainer, "BOTTOMLEFT", INNER_PADDING, INNER_PADDING)
+
+    editModeApplyBtn.bg = editModeApplyBtn:CreateTexture(nil, "BACKGROUND")
+    editModeApplyBtn.bg:SetAllPoints()
+    editModeApplyBtn.bg:SetColorTexture(1, 0.8, 0)
+
+    editModeApplyBtn.text = editModeApplyBtn:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(editModeApplyBtn.text, "label-emphasis")
+    editModeApplyBtn.text:SetPoint("CENTER")
+    editModeApplyBtn.text:SetText("GET IMPORT STRING")
+    editModeApplyBtn.text:SetTextColor(0, 0, 0)
+
+    editModeApplyBtn:SetScript("OnClick", function()
+      local profile = addon.GetProfile("EditMode")
+      if profile and profile.applyFunction then
+        profile.applyFunction()
+      end
+    end)
+
+    -- 2. Apply All Container (Anchored to Manual Setup)
+    local applyAllContainer = CreateFrame("Frame", nil, scrollChild)
+    applyAllContainer:SetPoint("TOPLEFT", editModeContainer, "BOTTOMLEFT", 0, -20)
+    applyAllContainer:SetPoint("TOPRIGHT", editModeContainer, "BOTTOMRIGHT", 0, -20)
+    applyAllContainer:SetHeight(70)
+
+    local aaBg = applyAllContainer:CreateTexture(nil, "BACKGROUND")
+    aaBg:SetAllPoints()
+    aaBg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord14))
+    aaBg:SetAlpha(0.08)
+
+    local aaBorder = CreateFrame("Frame", nil, applyAllContainer, "BackdropTemplate")
+    aaBorder:SetAllPoints()
+    aaBorder:SetBackdrop({
+      edgeFile = "Interface\\Buttons\\WHITE8X8",
+      edgeSize = 2,
+    })
+    aaBorder:SetBackdropBorderColor(unpack(addon.UIAssets.Colors.Nord14))
+    aaBorder:SetAlpha(0.6)
+
+    local applyAllTitle = applyAllContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(applyAllTitle, "header-secondary")
+    applyAllTitle:SetPoint("TOPLEFT", applyAllContainer, "TOPLEFT", INNER_PADDING, -8)
+    applyAllTitle:SetText("STEP 2: AUTOMATED SETUP")
+    applyAllTitle:SetTextColor(unpack(addon.UIAssets.Colors.Nord14))
+
+    local applyAllBtn = CreateFrame("Button", nil, applyAllContainer)
+    applyAllBtn:SetSize(220, 30)
+    applyAllBtn:SetPoint("BOTTOMLEFT", applyAllContainer, "BOTTOMLEFT", INNER_PADDING, INNER_PADDING)
+
+    applyAllBtn.bg = applyAllBtn:CreateTexture(nil, "BACKGROUND")
+    applyAllBtn.bg:SetAllPoints()
+    applyAllBtn.bg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord14))
+
+    applyAllBtn.text = applyAllBtn:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(applyAllBtn.text, "label-emphasis")
+    applyAllBtn.text:SetPoint("CENTER")
+    applyAllBtn.text:SetText("APPLY ALL PROFILES")
+    applyAllBtn.text:SetTextColor(unpack(addon.UIAssets.Colors.Nord0))
+
+    applyAllBtn:SetScript("OnClick", function()
+      addon.ApplyAllProfiles()
+      if addonIntegrationButton and addonIntegrationButton.GetScript then
+        local onClick = addonIntegrationButton:GetScript("OnClick")
+        if onClick then onClick(addonIntegrationButton) end
+      end
+    end)
+
+    local applyAllDesc = applyAllContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(applyAllDesc, "small-text")
+    applyAllDesc:SetPoint("LEFT", applyAllBtn, "RIGHT", 12, 0)
+    applyAllDesc:SetPoint("RIGHT", applyAllContainer, "RIGHT", -INNER_PADDING, 0)
+    applyAllDesc:SetJustifyH("LEFT")
+    applyAllDesc:SetText("Import all detected profiles at once. Requires reload.")
+    applyAllDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+    -- 3. Individual Management Info
+    local infoContainer = CreateFrame("Frame", nil, scrollChild)
+    infoContainer:SetPoint("TOPLEFT", applyAllContainer, "BOTTOMLEFT", 0, -10)
+    infoContainer:SetPoint("TOPRIGHT", applyAllContainer, "BOTTOMRIGHT", 0, -10)
+    infoContainer:SetHeight(45)
+
+    local infoText = infoContainer:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(infoText, "body-text")
+    infoText:SetPoint("TOPLEFT", infoContainer, "TOPLEFT", INNER_PADDING, 0)
+    infoText:SetPoint("RIGHT", infoContainer, "RIGHT", -INNER_PADDING, 0)
+    infoText:SetJustifyH("LEFT")
+    infoText:SetText(
+      "|cFFA3BE8CTIP:|r You can also update or apply profiles for each addon individually in the list below. Simply look for the |cFFB2DFEE[NEW]|r or |cFFB2DFEE[UPDATE]|r badges and click the addon name to expand its options.")
+    infoText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
+
+    -- 4. Addon List Header
+    local tipDivider = addon.UIUtils:CreateDivider(scrollChild, "HORIZONTAL", 1)
+    tipDivider:SetPoint("TOPLEFT", infoContainer, "BOTTOMLEFT", 0, -5)
+    tipDivider:SetPoint("TOPRIGHT", infoContainer, "BOTTOMRIGHT", 0, -5)
+    tipDivider:SetAlpha(0.2)
+
+    local listHeader = scrollChild:CreateFontString(nil, "OVERLAY")
+    ApplyConfigFont(listHeader, "header-secondary")
+    listHeader:SetPoint("TOPLEFT", tipDivider, "BOTTOMLEFT", 0, -15)
+    listHeader:SetText("INDIVIDUAL ADDON PROFILES")
+    listHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9))
+
+    local bulkDivider = addon.UIUtils:CreateDivider(scrollChild, "HORIZONTAL", 1)
+    bulkDivider:SetPoint("TOPLEFT", listHeader, "BOTTOMLEFT", 0, -8)
+    bulkDivider:SetPoint("TOPRIGHT", infoContainer, "TOPRIGHT", 0, 0)
+    bulkDivider:SetAlpha(0.2)
+
+    local lastElement = bulkDivider
+    local currentYOffset = -15
 
     local function UpdateLayout()
       C_Timer.After(0.01, function()
@@ -1970,97 +2199,49 @@ local function InitializeConfigFrame()
       end)
     end
 
-    -- Default WoW Edit Mode Profile
-    local editModeProfile = addon.GetProfile("EditMode")
-    if editModeProfile then
-      local section = CreateCollapsibleAddonSection(scrollChild, "EditMode", editModeProfile, lastElement,
-        currentYOffset, UpdateLayout)
-      lastElement = section
-      currentYOffset = -4
-    end
+    local profiles = addon.GetAvailableProfiles()
 
-    if bbfLoaded then
-      local profile = addon.GetProfile("BetterBlizzFrames")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "BetterBlizzFrames", profile, lastElement,
-          currentYOffset, UpdateLayout)
-        lastElement = section
-        currentYOffset = -4 -- Spacing between sections
-      end
-    end
+    -- Sort profiles: EditMode first, then others by name
+    table.sort(profiles, function(a, b)
+      if a.name == "EditMode" then return true end
+      if b.name == "EditMode" then return false end
+      return (a.displayName or a.name) < (b.displayName or b.name)
+    end)
 
-    if platynatorLoaded then
-      local profile = addon.GetProfile("Platynator")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "Platynator", profile, lastElement, currentYOffset,
-          UpdateLayout)
-        lastElement = section
-        currentYOffset = -4
-      end
-    end
+    for _, profile in ipairs(profiles) do
+      if profile.name ~= "EditMode" then
+        local section = CreateCollapsibleAddonSection(scrollChild, profile.displayName or profile.name, profile,
+          lastElement, currentYOffset, UpdateLayout)
 
-    if cmtLoaded then
-      local profile = addon.GetProfile("CooldownManagerTweaks")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "Cooldown Manager Tweaks", profile, lastElement,
-          currentYOffset, UpdateLayout)
-        lastElement = section
-        currentYOffset = -4
-      end
-    end
+        -- Check if loaded
+        local addonLoaded = false
+        if profile.name == "XIV_Databar" then
+          addonLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or
+              C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or
+              C_AddOns.IsAddOnLoaded("XIV_Databar-Continued")
+        else
+          addonLoaded = C_AddOns.IsAddOnLoaded(profile.name)
+        end
 
-    if zbarLoaded then
-      local profile = addon.GetProfile("zBarButtonBG")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "zBarButtonBG", profile, lastElement,
-          currentYOffset, UpdateLayout)
+        if addonLoaded then
+          -- Check status
+          local appliedProfiles = NoobTacoUIDB.GeneralSettings.AppliedProfiles
+          local lastAppliedVersion = appliedProfiles[profile.name]
+          if not lastAppliedVersion then
+            section.header:SetStatus("NEW")
+          elseif lastAppliedVersion ~= profile.version then
+            section.header:SetStatus("UPDATE")
+          else
+            -- Already up to date
+          end
+        else
+          section.header:SetStatus("NOT_LOADED")
+          section.header.title:SetAlpha(0.6)
+        end
+
         lastElement = section
         currentYOffset = -4
       end
-    end
-
-    if xivLoaded then
-      local profile = addon.GetProfile("XIV_Databar")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "XIV_Databar", profile, lastElement,
-          currentYOffset, UpdateLayout)
-        lastElement = section
-        currentYOffset = -4
-      end
-    end
-
-    if scrbLoaded then
-      local profile = addon.GetProfile("SenseiClassResourceBar")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "SenseiClassResourceBar", profile, lastElement,
-          currentYOffset, UpdateLayout)
-        lastElement = section
-        currentYOffset = -4
-      end
-    end
-
-    if detailsLoaded then
-      local profile = addon.GetProfile("Details")
-      if profile then
-        local section = CreateCollapsibleAddonSection(scrollChild, "Details", profile, lastElement,
-          currentYOffset, UpdateLayout)
-        lastElement = section
-        currentYOffset = -4
-      end
-    end
-
-
-    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded and not scrbLoaded and not detailsLoaded then
-      -- Add message when neither addon is loaded
-      local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
-      ApplyConfigFont(noAddonText, "body-text")
-      noAddonText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
-      noAddonText:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
-      noAddonText:SetJustifyH("LEFT")
-      noAddonText:SetJustifyV("TOP")
-      noAddonText:SetText(
-        "No compatible addons detected. Install and enable supported addons (like BetterBlizzFrames or Sensei Class Resource Bar) to access profile import functionality.")
-      noAddonText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
     end
 
     UpdateLayout()

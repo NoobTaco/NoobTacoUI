@@ -21,8 +21,9 @@ addon.AddonProfiles.EditMode = {
   command = "Open Edit Mode",
   instructions = {
     "Click the |cFFEBCB8BApply Profile|r button below.",
-    "This will automatically detect your game version and apply the correct profile.",
-    "A reload may be required."
+    "Copy the profile string (CTRL+C) from the popup.",
+    "Open WoW Edit Mode (ESC > Edit Mode).",
+    "Click Import from the layout dropdown and paste the string."
   },
   isCustomApply = true,
   applyFunction = function()
@@ -104,32 +105,41 @@ addon.AddonProfiles.BetterBlizzFrames = {
     "Paste the profile string and import"
   },
   isCustomApply = true,
-  applyFunction = function()
+  applyFunction = function(isBulk)
     -- Check if BetterBlizzFrames is loaded
     if not C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
-      print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames not loaded.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames not loaded.")
+      end
       return
     end
 
     if not BBF or not BBF.ImportProfile then
-      print("|cFF16C3F2NoobTacoUI|r: BBF global or ImportProfile function missing.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: BBF global or ImportProfile function missing.")
+      end
       return
     end
 
     -- 1. Get the profile string
-    local profileString = addon.AddonProfiles.BetterBlizzFrames.profileString
+    local profileData = addon.AddonProfiles.BetterBlizzFrames
+    local profileString = profileData.profileString
 
     -- 2. Import the profile
     -- The second argument "fullProfile" matches the export type used in BBF
     local data, err = BBF.ImportProfile(profileString, "fullProfile")
 
     if err then
-      print("|cFF16C3F2NoobTacoUI|r: Error importing BBF profile: " .. tostring(err))
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Error importing BBF profile: " .. tostring(err))
+      end
       return
     end
 
     if not data then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to decode BBF profile data.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to decode BBF profile data.")
+      end
       return
     end
 
@@ -137,21 +147,28 @@ addon.AddonProfiles.BetterBlizzFrames = {
     -- BBF.ImportProfile returns the data table ready to be assigned
     BetterBlizzFramesDB = data
 
-    print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames profile applied successfully.")
+    -- 4. Track application
+    if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles["BetterBlizzFrames"] = profileData.version
+    end
 
-    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_BBF"] = {
-      text = "BetterBlizzFrames profile applied.\nA reload is required for changes to take effect.\nReload now?",
-      button1 = "Yes",
-      button2 = "No",
-      OnAccept = function()
-        ReloadUI()
-      end,
-      timeout = 0,
-      whileDead = true,
-      hideOnEscape = true,
-      preferredIndex = 3,
-    }
-    StaticPopup_Show("NOOBTACOUI_RELOAD_UI_BBF")
+    if not isBulk then
+      print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames profile applied successfully.")
+
+      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_BBF"] = {
+        text = "BetterBlizzFrames profile applied.\nA reload is required for changes to take effect.\nReload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+          ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_BBF")
+    end
   end,
   profileString =
   "!BBF9PvZVTXXvCXq3MKgyajQVLCAz(ajnOicwYs2s5InjfLiLLiP5hw2ThmxT7qUB8YDMm7Uww(srnY5IGc0Bf5Gpu0l9IpKtPab6wbkAn0LMtffcf9ypW)c67nZSFthFqwy3zN595V3V3BuUpQSHMN2xLZ)CoRH2iI7EwCxV(Vq331JoQc1GWUZN(PfR64r4fLpSOo80INqSPNw0KWjRvCpcXU4aoHu0JcV1Xtt3R4isX7Cc1WAWzS5)cFIpPR1ic)ynUJLZq83VkBzpn(qIxvhB8)l5Z12JBrCmSpRpBHmVRQdze8I3Z0YG0ZXYBpoiVTS1oJW7qGt1OnXL6Z1jMJzeVkAUEL14hBz4z(pyZi3Tk0rmq2WDRpRGLJoNO5k28oECWo0NnnJEkHxHAt5vBuT9(p8G85ZLNvu3wZ1v849OGzOnH57P5zrD6sEQNpN0)c5j0L29HTOUF7uSvKpWGu2FWG9SSbdyzBRN9mnUr)ycyhDnBsE2mrNBNUL2F)QTpO1vU(ABTrE1)XMBaEW4xDIgVoOV45KJnnbnl1iA2EMIp)G85abEghkFKgCEK9bR0rehFt28rkrxHSjC4MSzY4Emzt77sA6qAfkvWN7qBr5GDYYRL1tj2LPCdc8Cqc0oXMu2A4UKtaD1Tp3Nbrve3twFTTx7Me2CmF44uwkXU1E)YhKd1SDKk42BXwIjCLkZIqAQqWWotwHSVcKAg3Yr4k7Wi221nanzHGWw4iCdJrC7FEKgwF3LER)0lcc9I7B00FSTfe7ZwwQqYqROva2L(S5J8th2RrP2pQvZJrFv(RV2nKEk8x3j)5ugiQq0m3TPt)le(oi2q5TxvE6LCmert1OCRNHPn27RXEt2S6MAodJIX3dEfKqOthDIMxDhdlDnpimXKEAhng(IOytC5brKSv0LgS6Ove8jEyuJ0Z3)c)47oB6wugZYX9t7qgzvMABWwmHnxi3kHF5aLPKXNdM7rGtQj41jEpmhi6jfYhiIrVws1TdeyAlCCYn89yACVZARzzieOYGJyiN67yCKMJMmMoxUCODDRuHcIS7RC1xQbBw3ZyqSo7Tds8MOaEbNqzeNMmm11185MAUD0EcXOpeJgL4xUzJhDu99R1v4x3r4x3s4IZdcq46Q3OtPg17(qXQ2uiGBd5PjSSn99STCiLB0Srv2SgA8hFeGEI5KDPuBplgKxfInf3YbHAasfiLGAIBuyAtE4FSPLGbXHZMoctPgXAOP38S54A6wA2rHmc79fO16ytlpcgUVaBvYt1gXSjfXNx8ZUrXFUbXM4rae8pzHYoGOYwTQAjLYUe2plv4QelcaPcdeNf830tpmeKxuIzS2jUu(jHcN54OK0s(gwuiY21tSxHRrMscMMrApvc2iorfUZ7XMZfskAHrtklbgXd(2uhLkUBADjykUwH59ZYJ(WBLJvWM662CqfWUZP2QLNeGsAJfVAri4r8QQ2GrvirOtgcfWsvnp5ZjGJ8jKUG34XO0xyaUe0s0MEAPrqKUhCKXlxuvaa1hW4IPlkCV5Ppbk4zArSnIdXHWWIsLgImla4Vv(1xBZGYgPdUkiSuHrms70h86seJxEjmv8AzlWDiX19ilqOiiODmzxATwMTIqAswtme3TqImhvvNcuixDeOoc96qyHOUkT3LeUvzDqvwu7Kr8HlnY1yYMnn2FjBBeaiqEv1xLyxZBW9TmkzFQ2zUiKlAjPGiS4eOHG4vq9Wu4XWINjS2DKFmegvDKrGv9dGWMSH9DhbrabCDGVxS0wA2AgwoL3hY2qjRua2rnQ3DjNzooQ4ngBc1kxkvA791S9LLAUmcI7OsnkbECaXjY5uEOkXUDhQTLXfc11sxQRMSvKg8igsvcnha5T0uqYsKInVWWKH43LrF6rnBC3dYjzgTduqAsvgpfyN4Igdi0fQ6h8ozWYeRmwYr3eGyBJa)xgbMQcdIs(teEi9It0rfBpKNAKjm0wFEqDxrn3RLcVExOCrDo1z3t14d6p2Mmut)mraiUH)b40fqMDadikdEEuh45wO183Es5MD728O38vF5Bx7oJ(9)9VBQPY9o1UZV8t(4)9ut9gb6tmVK0bDnoXWxNu1qgN0bG5frsLSzMqrM3nvqdgXhhPFfHtkisZTNlbiNPJMlxtrDNW09VzP347)Gp6v7EzhRHofPdkwwZZZM8(wg4lUCOVLTrr40gXGtFbyD7lEsf1tyZ6Q(optsrxDkYWewgB2oXEEh5ZHcjXx8JT4JSCHwxW1VqI1h(kaGeCaJo1YjHuWk0j8XbIY5bBUfxSMZd2r01T0pEM)iOLS5pgIhXhQve(npZZkcGoNHAlSG36x)pX1mtjoW8SylobGIeof49W7wkNZi89fWnCafuOWZg3a4TSPnPaHFBi4ROe6aL1PRf(qzY2ZHseGPNyaV95vv)o0wqY0hzEWREg4SNqwYUwUyOtLDb8AEyLIaiHx9fScpJshfc)iD9Szzjk1euawXluwDglbDzyPrxz(v68xzHQPH6)svkS0FHu5on569dkQgNTOXBFbIpc5mo6qfoaiEPe4L3Zh6AY7m8CmFraFTEwMSftsInI)6LdbO3JTCcRVJaWgehP1IlZFE1xc2azrlbdivdfMz4OjZ1NqHYJ180nX6FMtamscWi4BilfvHYDiIxzgdoFVETb2Q)iGJZ2BJ)3gBTd(F7aDHb0BI6aTzVdF0ETlT)rvB0TJOr0BSf(Zne)8wan4Lsdsh15(I(tgD431O7JAazbxFlfQ5eBnoBFUYaHPDbZLDSgsLeHff72lIIZ(artZa6XXbWleNYGmeFJUnBXwibRUybNZNLEdKYc9DcXELdyEI)IBPOE)tCwj7WFPrqzbKitwcHZRkHQuAxPl0KTAgZuCEaZ7Bbr0yTF0MeEqxoii8eTfUb1tZQGZMkYted9s0EwwBOlS2(btbiQcEyV4Y(UHnWzi023Iz7ktCix5QbPn1hXaypnzd7OG1NTQ8JEnKbNnGCouWXHyl5NNlFofxQK8KNxx0R4qcVf3cAM27mmr5NWwTvukh6Us(vZLX8Io4lG6dSEIbyCK7W4KHGeIQYPRmFeUsIeWzI4OCCjGjrt5uCU124pV564p3esEs3LS4Jph6fTIjbIim6z1pCIvrei(nJtHfMkoxkcRoPXofAvxiXUghkg977Y1gsD2Z(mbYuuBks27qZ1W2NLg4e6sFLx3SCigMbAwmSJ(bJJjaC9(eUhOJ2I(5xAGMb5ilDofhJv1NQtyE3d59G8QderrmNqcNlmwqEKQkqZihnue(HlIJMQvXWgdd2IoqqRWySyw9oLohJ2FNALaIZYbCT5MI5BDR8JbCdrHTMoI9bK0GYlIMtu7kCuipPW8fSElXww2B2KnTjBKyC05UB7E139abV4nftT46BMpfWNOBtiHjBRwHZw49NuzFKtDjbQvthBODIuyhMjBXrHefv(evCWENkawcdFsfOkt12qNAX8gYG5fs3heE4hb2OpoTmwdIqTXOus0ZansGySml1K8IsiUiqefMa0rUr2rdgVYBk9UNJbrdlAPBt0CK9OghetEYib9q0DZuSsuTdMGlKq7JXfsAnwkvVgXoOKOfpinyuRshwA36neGr7Ct18SuvYZILPk4g95vVFZ7QgY5gIpEBripKOWjYMr1ShPgM8hMIMesPfFLyQmnFc4zaGgaisOlzRkCEqxXQkP42FVOMCQEwydIzdkMxZWOxM0uZxWc1oZXb(BSi6inC6B6uO1l6Po33IaqdYAdGhDz)x38SE13WwjBNCjYHEPUa6PHS7)cNIj9hsXg0h2rNtioMXn7QWDbgpipcCQWdvHvXvxpt)jbWhlanB55h8oXqiA3C)EvLieY4GnxpFq(HsuAqr9uoC)(XJcA1UE1oDLyeRorglbFu0eyNWSnwm1W46sCfTAceXJRzT0GuRrw6sUclLvPd86jaEuu8zfcrWdts(O)ZFU)B16kzhjGkBjbho5ZMlX43cLZ0u2R5psZbNxlofA6qGLQyq7YOLLEJR(tLdlQLQJBxi5aI9WUcmzlpjWwrMt)XPyjayeHOvkZUSNAi1q)X4e)YhaTKeSF5SDUiNh(dYLDQxcOMXHzybCLUMso3LGAHrO4QMBATB)V(6V(7MAQPQD7)N8xIpTc0A(3awI6bryP)8C1U9xn90fHp7sxFoazaHrcKJ(JJ18sZk96CGyeTQMrY)6vn8Uis5MK(0exru4OoH8QfcmUH8ZvJlugGLYKMIyzCt1SjYSdMfFbhIVhxZoXn1HxT4horoQPtSJp9lKgASUX2wDpAxg2uSSRKKLuuTtNYM0GydnB((tqBslaxe5iQuRUKw765vh9y1jf10XQXVdn1O6JA6D2b4Tt6PgCLezflIMAoEs2ylqM4WOQD7)7a8FdJFNCT71OEf1DYjOFT9g5X5WNmJxTXF4pajcq04EyPzXT6aOYCc0qqjBpewbZdWPcNAa9cWN)64yHlsABPRB3cNjfADGm6yzjcPsDzOlMsIdMOwIlXD3QL6w7UnKxuf6pUf(Z1fLO34gQgbXRbtqZ6LYbckgVPKUFRNWeKpqRpoIMyt9T6HD62U5rhi52cMWfnKZ9rshfDYYrIBErc259NmGM6INcYWUV1qCwJj7w6WMvUR8oVVr0p3b7wAGA0cjUfcm1jH1pOTDPfTmuwwyvBrTCWRmygD5LLf)(rat24qyFPv67Z9RIvkiOS83ovavUez1lMKZQmfBPjzaKe4YWSmksySyJezFb3rSQbyGrtWoHRuIykK9OFWMLQywf1QoWfBcOJUTGsq0tVAMGYyqnHQVsskKAPIRljXvWiIZ5Gi4IdrB91U(1d5Xj18m9uelvRQJrqI2nVG8uKr49L7eBXYL37Zkk)RiO4X0JHFFJ1GqCwHGqPW52HQBwwzQRF9LDRvVrZEDpSEJQS5Wg8RevfqrCTq0ikJk1xaZt2Nt9zXkdphfOEeWpbnQazsKwAYP(anmjg)wslLmgzfzrOe0FvTA2xzUtw(yS4wOq6ZUyXE8(NYm8IqAWXrioQzJA9W2RePw3u0m66IEdV1o5NuBGh(eBZjhdRUl)yx)O6(NJFlKjjGiNK8FjQtgrevoi2wO)IBeo6VgaLbyCezjr36Q(ERjgQQigwney5ebJI4Lut)f)aHA7cAzI2dZNl6QDsFfPXTWjzJoDuECqr)K90PsCKdykZvsUquU(R7M9tmCKyCWJ7lfO9BlGj3CR8ph)74c)BG4Ld8TTBXPdSSj)))!BBF",
@@ -178,25 +195,32 @@ addon.AddonProfiles.Platynator = {
     "Paste the profile string and import"
   },
   isCustomApply = true,
-  applyFunction = function()
+  applyFunction = function(isBulk)
     -- Check if Platynator is loaded
     if not C_AddOns.IsAddOnLoaded("Platynator") then
-      print("|cFF16C3F2NoobTacoUI|r: Platynator not loaded.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Platynator not loaded.")
+      end
       return
     end
 
     if not C_EncodingUtil then
-      print("|cFF16C3F2NoobTacoUI|r: C_EncodingUtil not available (requires Retail).")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: C_EncodingUtil not available (requires Retail).")
+      end
       return
     end
 
-    -- 1. Get the profile string
-    local profileString = addon.AddonProfiles.Platynator.profileString
+    -- 1. Get the profile data
+    local profileData = addon.AddonProfiles.Platynator
+    local profileString = profileData.profileString
 
     -- 2. Decode JSON
     local success, import = pcall(C_EncodingUtil.DeserializeJSON, profileString)
     if not success or not import then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize Platynator profile string.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize Platynator profile string.")
+      end
       return
     end
 
@@ -253,21 +277,28 @@ addon.AddonProfiles.Platynator = {
     -- 7. Switch Profile
     PLATYNATOR_CURRENT_PROFILE = profileName
 
-    print("|cFF16C3F2NoobTacoUI|r: Platynator profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+    -- 8. Track application
+    if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles["Platynator"] = profileData.version
+    end
 
-    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_PLATYNATOR"] = {
-      text = "Platynator profile applied.\nA reload is required for changes to take effect.\nReload now?",
-      button1 = "Yes",
-      button2 = "No",
-      OnAccept = function()
-        ReloadUI()
-      end,
-      timeout = 0,
-      whileDead = true,
-      hideOnEscape = true,
-      preferredIndex = 3,
-    }
-    StaticPopup_Show("NOOBTACOUI_RELOAD_UI_PLATYNATOR")
+    if not isBulk then
+      print("|cFF16C3F2NoobTacoUI|r: Platynator profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+
+      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_PLATYNATOR"] = {
+        text = "Platynator profile applied.\nA reload is required for changes to take effect.\nReload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+          ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_PLATYNATOR")
+    end
   end,
   profileString =
   '{"stack_region_scale_y":1.1,"design_all":[],"closer_to_screen_edges":true,"cast_scale":1.1,"simplified_nameplates":{"minor":true,"minion":true,"instancesNormal":true},"stacking_nameplates":true,"designs_assigned":{"enemySimplified":"NoobTacoUI-Simplified","friend":"NoobTacoUI-Simplified","enemy":"NoobTacoUI-Simplified"},"target_scale":1.2,"version":1,"not_target_alpha":1,"show_friendly_in_instances_1":"always","cast_alpha":1,"addon":"Platynator","apply_cvars":true,"current_skin":"blizzard","stack_region_scale_x":1.2,"global_scale":1,"style":"NoobTacoUI-Simplified","show_nameplates_only_needed":false,"click_region_scale_x":1,"click_region_scale_y":1,"kind":"profile","designs":{"NoobTacoUI-Simplified":{"highlights":[{"anchor":["BOTTOM",0,-14],"color":{"a":0.46875014901161196,"b":0.9294118285179138,"g":0.8980392813682556,"r":0.8980392813682556},"layer":0,"height":1.18,"scale":0.51,"kind":"target","asset":"glow","width":1}],"specialBars":[],"addon":"Platynator","auras":[{"direction":"RIGHT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"showPandemic":true,"height":1,"anchor":["BOTTOMLEFT",-63,37],"kind":"debuffs","textScale":1,"filters":{"important":true,"fromYou":true}},{"direction":"LEFT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"anchor":["BOTTOMLEFT",-90,2],"height":1,"kind":"buffs","textScale":1,"filters":{"dispelable":true,"important":true}},{"direction":"RIGHT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"anchor":["BOTTOMRIGHT",90,2],"height":1,"kind":"crowdControl","textScale":1,"filters":{"fromYou":false}}],"font":{"outline":true,"shadow":true,"asset":"RobotoCondensed-Bold"},"version":1,"bars":[],"kind":"style","markers":[{"layer":3,"anchor":["BOTTOMLEFT",-82,0],"scale":0.9,"kind":"quest","asset":"normal/quest-boss-blizzard","color":{"r":1,"g":1,"b":1}},{"layer":3,"anchor":["BOTTOM",0,32],"scale":1.45,"kind":"raid","asset":"normal/blizzard-raid","color":{"r":1,"g":1,"b":1}}],"texts":[{"showWhenWowDoes":true,"truncate":false,"scale":1.27,"layer":2,"autoColors":[{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"colors":{"neutral":{"r":1,"g":1,"b":0},"hostile":{"r":1,"g":0,"b":0},"friendly":{"r":0,"g":1,"b":0},"unfriendly":{"b":0,"g":0.5058823529411765,"r":1}},"kind":"reaction"}],"color":{"b":0.9686275124549866,"g":0.9686275124549866,"r":0.9686275124549866},"anchor":["BOTTOM",0,7],"kind":"creatureName","widthLimit":130,"align":"CENTER"},{"widthLimit":124,"truncate":true,"align":"CENTER","layer":2,"showWhenWowDoes":true,"anchor":["BOTTOM",0,-4],"kind":"guild","color":{"r":1,"g":1,"b":1},"scale":0.91}]},"NoobTacoUI":{"highlights":[{"color":{"a":1,"r":1,"g":1,"b":1},"anchor":[],"layer":0,"height":1,"scale":1,"kind":"target","asset":"arrows","width":1}],"specialBars":[],"texts":[{"showWhenWowDoes":false,"truncate":true,"color":{"b":1,"g":1,"r":1},"layer":2,"autoColors":[],"align":"LEFT","anchor":["RIGHT",64,0],"kind":"creatureName","scale":0.8,"widthLimit":124},{"color":{"r":1,"g":1,"b":1},"layer":2,"widthLimit":0,"truncate":true,"anchor":["TOPLEFT",-60,-9],"kind":"castSpellName","scale":0.7,"align":"LEFT"},{"widthLimit":0,"truncate":false,"scale":0.8,"layer":2,"displayTypes":["percentage"],"anchor":["RIGHT",60,0],"kind":"health","color":{"r":1,"g":1,"b":1},"align":"RIGHT"}],"font":{"outline":false,"shadow":true,"asset":"Poppins-Bold"},"bars":[{"absorb":{"color":{"a":1,"b":1,"g":1,"r":1},"asset":"wide/blizzard-absorb"},"scale":1,"layer":1,"border":{"color":{"a":1,"r":0,"g":0,"b":0},"height":1,"asset":"thin","width":1},"autoColors":[{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"colors":[],"kind":"classColors"},{"combatOnly":false,"colors":{"transition":{"a":1,"b":0.4392157196998596,"g":0.529411792755127,"r":0.8156863451004028},"warning":{"a":1,"b":0.415686309337616,"g":0.3803921937942505,"r":0.7490196228027344},"offtank":{"a":1,"b":0.8156863451004028,"g":0.7529412508010864,"r":0.5333333611488342},"safe":{"a":1,"b":0.6745098233222961,"g":0.5058823823928833,"r":0.3686274588108063}},"kind":"threat","useSafeColor":true,"instancesOnly":false},{"colors":{"unfriendly":{"a":1,"b":0.4392157196998596,"g":0.529411792755127,"r":0.8156863451004028},"neutral":{"a":1,"b":0.545098066329956,"g":0.7960785031318665,"r":0.9215686917304992},"friendly":{"a":1,"b":0.5490196347236633,"g":0.7450980544090271,"r":0.6392157077789307},"hostile":{"a":1,"b":0.415686309337616,"g":0.3803921937942505,"r":0.7490196228027344}},"kind":"reaction"}],"marker":{"asset":"none"},"kind":"health","anchor":[],"background":{"color":{"a":0.44,"r":1,"g":1,"b":1},"applyColor":false,"asset":"black"},"relativeTo":0,"foreground":{"asset":"white"}},{"marker":{"asset":"wide/glow"},"layer":1,"border":{"color":{"a":1,"r":0,"g":0,"b":0},"height":0.75,"asset":"thin","width":1},"autoColors":[{"colors":{"cast":{"b":0.1529411764705883,"g":0.09411764705882352,"r":1},"channel":{"b":1,"g":0.2627450980392157,"r":0.0392156862745098}},"kind":"importantCast"},{"colors":{"cast":{"r":0.9882352941176472,"g":0.5490196078431373,"b":0},"interrupted":{"r":0.9882352941176472,"g":0.211764705882353,"b":0.8784313725490196},"uninterruptable":{"r":0.5137254901960784,"g":0.7529411764705882,"b":0.7647058823529411},"channel":{"r":0.2431372549019608,"g":0.7764705882352941,"b":0.2156862745098039}},"kind":"cast"}],"foreground":{"asset":"white"},"anchor":["TOP",0,-7],"kind":"cast","scale":1,"background":{"color":{"a":0,"r":0.7803922295570374,"g":0.7803922295570374,"b":0.7803922295570374},"applyColor":true,"asset":"grey"}}],"markers":[{"color":{"r":1,"g":1,"b":1},"anchor":["LEFT",-78,0],"scale":1,"layer":3,"asset":"normal/quest-blizzard","kind":"quest"},{"color":{"r":1,"g":0.9019608497619628,"b":0.9019608497619628},"anchor":["TOP",0,-10],"scale":0.8,"layer":3,"asset":"normal/shield-soft","kind":"cannotInterrupt"},{"color":{"r":1,"g":1,"b":1},"anchor":["LEFT",-83,0],"scale":1,"layer":3,"asset":"special/blizzard-elite-midnight","kind":"elite"},{"color":{"r":1,"g":1,"b":1},"anchor":["BOTTOM",0,12],"scale":1.25,"layer":3,"asset":"normal/blizzard-raid","kind":"raid"}],"auras":[{"direction":"RIGHT","scale":1,"textScale":1,"sorting":{"reversed":false,"kind":"duration"},"showCountdown":true,"showPandemic":true,"anchor":["BOTTOMLEFT",-62,9],"kind":"debuffs","height":1,"filters":{"fromYou":true,"important":true}},{"direction":"LEFT","scale":1,"textScale":1,"sorting":{"reversed":false,"kind":"duration"},"height":1,"anchor":["LEFT",-100,0],"kind":"buffs","showCountdown":true,"filters":{"dispelable":true,"important":true}},{"direction":"RIGHT","scale":1,"textScale":1,"sorting":{"reversed":false,"kind":"duration"},"height":1,"anchor":["RIGHT",87,0],"kind":"crowdControl","showCountdown":true,"filters":{"fromYou":false}}]},"_custom":{"highlights":[{"scale":0.51,"color":{"a":0.46875014901161196,"r":0.8980392813682556,"g":0.8980392813682556,"b":0.9294118285179138},"kind":"target","anchor":["BOTTOM",0,-14],"height":1.18,"layer":0,"asset":"glow","width":1}],"specialBars":[],"addon":"Platynator","auras":[{"direction":"RIGHT","scale":1,"showCountdown":true,"filters":{"fromYou":true,"important":true},"height":1,"textScale":1,"anchor":["BOTTOMLEFT",-63,37],"kind":"debuffs","showPandemic":true,"sorting":{"reversed":false,"kind":"duration"}},{"direction":"LEFT","scale":1,"showCountdown":true,"filters":{"dispelable":true,"important":true},"textScale":1,"height":1,"kind":"buffs","anchor":["BOTTOMLEFT",-90,2],"sorting":{"reversed":false,"kind":"duration"}},{"direction":"RIGHT","scale":1,"showCountdown":true,"filters":{"fromYou":false},"textScale":1,"height":1,"kind":"crowdControl","anchor":["BOTTOMRIGHT",90,2],"sorting":{"reversed":false,"kind":"duration"}}],"font":{"outline":true,"shadow":true,"asset":"RobotoCondensed-Bold"},"version":1,"kind":"style","bars":[],"markers":[{"scale":0.9,"anchor":["BOTTOMLEFT",-82,0],"color":{"b":1,"g":1,"r":1},"kind":"quest","asset":"normal/quest-boss-blizzard","layer":3},{"scale":1.45,"anchor":["BOTTOM",0,32],"color":{"b":1,"g":1,"r":1},"kind":"raid","asset":"normal/blizzard-raid","layer":3}],"texts":[{"showWhenWowDoes":true,"truncate":false,"align":"CENTER","layer":2,"autoColors":[{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"r":0.4313725490196079,"g":0.4313725490196079,"b":0.4313725490196079}},"kind":"tapped"},{"colors":{"unfriendly":{"r":1,"g":0.5058823529411765,"b":0},"neutral":{"b":0,"g":1,"r":1},"friendly":{"b":0,"g":1,"r":0},"hostile":{"b":0,"g":0,"r":1}},"kind":"reaction"}],"scale":1.27,"anchor":["BOTTOM",0,7],"kind":"creatureName","widthLimit":130,"color":{"r":0.9686275124549866,"g":0.9686275124549866,"b":0.9686275124549866}},{"widthLimit":124,"truncate":true,"scale":0.91,"layer":2,"align":"CENTER","anchor":["BOTTOM",0,-4],"kind":"guild","color":{"b":1,"g":1,"r":1},"showWhenWowDoes":true}]}},"show_nameplates":{"player":true,"npc":true,"enemy":true}}',
@@ -319,10 +350,12 @@ addon.AddonProfiles.zBarButtonBG = {
     "Paste the profile string and import"
   },
   isCustomApply = true,
-  applyFunction = function()
+  applyFunction = function(isBulk)
     -- Check if dependencies are loaded
     if not zBarButtonBGAce or not zBarButtonBGAce.db then
-      print("|cFF16C3F2NoobTacoUI|r: zBarButtonBG not fully loaded.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: zBarButtonBG not fully loaded.")
+      end
       return
     end
 
@@ -330,29 +363,38 @@ addon.AddonProfiles.zBarButtonBG = {
     local AceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
 
     if not LibDeflate or not AceSerializer then
-      print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/AceSerializer) not found.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/AceSerializer) not found.")
+      end
       return
     end
 
-    -- 1. Get the profile string
-    local profileString = addon.AddonProfiles.zBarButtonBG.profileString
+    -- 1. Get the profile data
+    local profileData = addon.AddonProfiles.zBarButtonBG
+    local profileString = profileData.profileString
 
     -- 2. Decode the profile
     local decoded = LibDeflate:DecodeForPrint(profileString)
     if not decoded then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+      end
       return
     end
 
     local decompressed = LibDeflate:DecompressDeflate(decoded)
     if not decompressed then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+      end
       return
     end
 
     local success, profileTable = AceSerializer:Deserialize(decompressed)
     if not success or not profileTable then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+      end
       return
     end
 
@@ -379,22 +421,30 @@ addon.AddonProfiles.zBarButtonBG = {
       end
     end
 
-    print(
-      "|cFF16C3F2NoobTacoUI|r: zBarButtonBG profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+    -- 6. Track application
+    if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles["zBarButtonBG"] = profileData.version
+    end
 
-    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
-      text = "zBarButtonBG profile applied.\nA reload is recommended for all settings to take full effect.\nReload now?",
-      button1 = "Yes",
-      button2 = "No",
-      OnAccept = function()
-        ReloadUI()
-      end,
-      timeout = 0,
-      whileDead = true,
-      hideOnEscape = true,
-      preferredIndex = 3,
-    }
-    StaticPopup_Show("NOOBTACOUI_RELOAD_UI")
+    if not isBulk then
+      print(
+        "|cFF16C3F2NoobTacoUI|r: zBarButtonBG profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+
+      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
+        text =
+        "zBarButtonBG profile applied.\nA reload is recommended for all settings to take full effect.\nReload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+          ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI")
+    end
   end,
   profileString =
   "nsvBtQjpu0Fr7ockc(rXzT1oU4og680(LmtacivmxEscJZ2F9nHeqa1P9d(69MCoN75Cb7GJXOuOHjpKNlOYFIJMHr1CiDDL8lvW1nqfW1nruvEDLhgXXroyuH(NlXOe9NUyjgDHKYHiYf6hGOuwcmmk8qC8H3Ta8FLzYt4OfUQd1iLadj)SIIrO)VHWP6MGQm4kBmIgaNza0a3iWgs7Z0ptkzzFLwwCsQyPRrj9YWcyeWuVNa8mkFiyogOuQXOo3HQZE3g4(rlCTQAlOEvrkey0HVhVFx0B3rot3ItW1qs65mouJdvxT977P5Y1z)QriVqzkwp)wPyOEsLrY5zUsG3qI3iOBQicr7r2XyuooPxoA2Jk)n1mS65T(VXOpG66sM4fe9szOYBgOy7zwAKfQcKAPvWv1Z0IBeOHTtAnQJay6uJYijv02JNtYOBSXb956giVteNPzXqyB(r350KQ1IpsRRiP0jiEtPw5pmsAHieux9LjJ9(BPlAnVZq7LMOPOGkK0S1P6S)djZGH(uXZjSc6owwzkrc8X2RVDh41fDjZz(wh2P1Il1U6JsYDjcNU21D3BIpYH7v63u6VmxtN2n59VTT7bf3dKbgdio3TSmA3CmUdsv9lTEdiXa)zWZOS7tpyGpr(ZDw0VsS6g76S6JAeN40wA(pOrT9FCKRPZJqJCKvSnWzPRVV38vbZ9MfSiaN)IxRFU1BPNJN)s3zURc8w47QRSuJYZQK8Skt3YpOjXO9T)UEKy8F(",
@@ -420,7 +470,7 @@ addon.AddonProfiles.XIV_Databar = {
     "The profile will be imported and applied automatically."
   },
   isCustomApply = true,
-  applyFunction = function()
+  applyFunction = function(isBulk)
     -- Check which folder name is used for XIV_Databar
     local xivFolder = ""
     if C_AddOns.IsAddOnLoaded("XIV_Databar") then
@@ -432,19 +482,24 @@ addon.AddonProfiles.XIV_Databar = {
     end
 
     if xivFolder == "" then
-      print("|cFF16C3F2NoobTacoUI|r: XIV_Databar Continued not loaded.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: XIV_Databar Continued not loaded.")
+      end
       return
     end
 
     -- XIV_Databar uses the folder name as its AceAddon name
     local XIVBar = LibStub("AceAddon-3.0"):GetAddon(xivFolder, true)
     if not XIVBar or not XIVBar.ImportProfile then
-      print("|cFF16C3F2NoobTacoUI|r: XIVBar addon object or ImportProfile function missing.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: XIVBar addon object or ImportProfile function missing.")
+      end
       return
     end
 
-    -- 1. Get the profile string
-    local profileString = addon.AddonProfiles.XIV_Databar.profileString
+    -- 1. Get the profile data
+    local profileData = addon.AddonProfiles.XIV_Databar
+    local profileString = profileData.profileString
 
     -- Pre-initialize talent module frames to prevent crash if switcher is enabled in the new profile
     local talentModule = XIVBar:GetModule("TalentModule", true)
@@ -452,33 +507,40 @@ addon.AddonProfiles.XIV_Databar = {
       talentModule:CreateLoadoutFrames()
     end
 
-    -- Define the reload prompt once
-    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_XIVBAR"] = {
-      text = "XIV_Databar profile applied.\nA reload is required for changes to take effect.\nReload now?",
-      button1 = "Yes",
-      button2 = "No",
-      OnAccept = function()
-        ReloadUI()
-      end,
-      timeout = 0,
-      whileDead = true,
-      hideOnEscape = true,
-      preferredIndex = 3,
-    }
+    -- 2. Track application
+    if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles["XIV_Databar"] = profileData.version
+    end
 
-    -- 2. Import the profile with pcall to catch any addon-specific refresh errors
+    -- 3. Import the profile with pcall to catch any addon-specific refresh errors
     local success, result = pcall(function() return XIVBar:ImportProfile(profileString) end)
 
-    if success and result then
-      print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied successfully.")
-      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
-    elseif not success then
-      -- If it crashed (like the talent module error), settings are likely still partially changed
-      -- Proceed with reload prompt as it's the only way for the user to recover
-      print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
-      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
-    else
-      print("|cFF16C3F2NoobTacoUI|r: Failed to import XIV_Databar profile (invalid data).")
+    if not isBulk then
+      -- Define the reload prompt once
+      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_XIVBAR"] = {
+        text = "XIV_Databar profile applied.\nA reload is required for changes to take effect.\nReload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+          ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+
+      if success and result then
+        print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied successfully.")
+        StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
+      elseif not success then
+        -- If it crashed (like the talent module error), settings are likely still partially changed
+        -- Proceed with reload prompt as it's the only way for the user to recover
+        print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
+        StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
+      else
+        print("|cFF16C3F2NoobTacoUI|r: Failed to import XIV_Databar profile (invalid data).")
+      end
     end
   end,
   profileString =
@@ -507,10 +569,12 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     "Reload your UI (|cFFEBCB8B/reload|r) for changes to take effect."
   },
   isCustomApply = true,
-  applyFunction = function()
+  applyFunction = function(isBulk)
     -- Check if Sensei is loaded
     if not C_AddOns.IsAddOnLoaded("SenseiClassResourceBar") then
-      print("|cFF16C3F2NoobTacoUI|r: Sensei Class Resource Bar not loaded.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Sensei Class Resource Bar not loaded.")
+      end
       return
     end
 
@@ -518,36 +582,47 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     local LibSerialize = LibStub:GetLibrary("LibSerialize", true)
 
     if not LibDeflate or not LibSerialize then
-      print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/LibSerialize) not found.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/LibSerialize) not found.")
+      end
       return
     end
 
-    -- 1. Get the profile string
-    local profileString = addon.AddonProfiles.SenseiClassResourceBar.profileString
+    -- 1. Get the profile data
+    local profileData = addon.AddonProfiles.SenseiClassResourceBar
+    local profileString = profileData.profileString
 
     -- 2. Extract the encoded data part (SenseiClassResourceBar:1:<data>)
     local prefix, version, encoded = profileString:match("^([^:]+):(%d+):(.+)$")
     if not encoded or prefix ~= "SenseiClassResourceBar" then
-      print("|cFF16C3F2NoobTacoUI|r: Invalid Sensei profile string format.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Invalid Sensei profile string format.")
+      end
       return
     end
 
     -- 3. Decode and Deserialize
     local decoded = LibDeflate:DecodeForPrint(encoded)
     if not decoded then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+      end
       return
     end
 
     local decompressed = LibDeflate:DecompressDeflate(decoded)
     if not decompressed then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+      end
       return
     end
 
     local success, data = LibSerialize:Deserialize(decompressed)
     if not success or not data then
-      print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+      end
       return
     end
 
@@ -589,7 +664,9 @@ addon.AddonProfiles.SenseiClassResourceBar = {
 
     if not layoutName then
       layoutName = "Default"
-      print("|cFF16C3F2NoobTacoUI|r: Edit Mode layout not detected. Using 'Default'.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Edit Mode layout not detected. Using 'Default'.")
+      end
     end
 
     -- 5. Apply to database
@@ -610,21 +687,29 @@ addon.AddonProfiles.SenseiClassResourceBar = {
       _G.SenseiClassResourceBarDB["_Settings"] = data.GLOBAL
     end
 
-    print("|cFF16C3F2NoobTacoUI|r: Sensei profile applied for layout: |cFFEBCB8B" .. layoutName .. "|r")
+    -- 6. Track application
+    if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles["SenseiClassResourceBar"] = profileData.version
+    end
 
-    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_SENSEI"] = {
-      text = "Sensei Class Resource Bar profile applied.\nA reload is required for changes to take effect.\nReload now?",
-      button1 = "Yes",
-      button2 = "No",
-      OnAccept = function()
-        ReloadUI()
-      end,
-      timeout = 0,
-      whileDead = true,
-      hideOnEscape = true,
-      preferredIndex = 3,
-    }
-    StaticPopup_Show("NOOBTACOUI_RELOAD_UI_SENSEI")
+    if not isBulk then
+      print("|cFF16C3F2NoobTacoUI|r: Sensei profile applied for layout: |cFFEBCB8B" .. layoutName .. "|r")
+
+      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_SENSEI"] = {
+        text =
+        "Sensei Class Resource Bar profile applied.\nA reload is required for changes to take effect.\nReload now?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+          ReloadUI()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_SENSEI")
+    end
   end,
   profileString =
   "SenseiClassResourceBar:1:ns5ZYTrrqy8sLscGXeK3GJXoy8MayOaSvsOGBCqRSuSQYYsz16KQOOkRz3T1ot5rZm1mJWr(yQCGZ6ripc(rGNGU0JqEeYzoKzwha)VdCuQ7D7VVFFDVv2mkQr8GFrD3bqMuKt0tJbJCIodIi6DI(ZV(TPKSJk0YjI8b2PCqT8GMXrHdGXSTSAIWOiAqyFDkr)mMHL66iCxIjmHOlaRRpoKzH8WEXHDeHnLJtj2ttL6Cq3uYL62bKQbPvckQeOR8gklh6seKEIyjhw4Cd)CnxnOOAGU6RTWlSTL6XeRU5eTxfQGXeZrne5rLdOuWrjuMiy6xulAK01XV2ryb9isguVrEEpHPEFoXovqSsD9ggdyn1B7A09)sLIjmB5TAKKNVT1o6LgQ84e3ChMsbwb1U8mNXh4aHLK2T1oDoO7SYwyzhzg(s)ehWobwnwjzcBAZw7N0kE(iIXPHdu5elygo7ywUL2vMdQ1hmvKf(CMLg2YjfHLr4oM5gU8yH5nMXsPL2xll0GX9Gw3u(pUOlHyAf1AEk(CkJdDDKZb)E6Nbuw2eoqvR5LxBnPym4l1xEmODrT3tu1DabXLG9(dqZjttKffCy48rmoFhM2LJmPy(EWiBOvgg7T)CFg03vYf9sXdE0Jv3B01(UVA8f8IkZ9gWfpzhjC(PACjiE1IVDKudNBLB2(jhUVlqF4phBYiCOQAdVdJ4StoHOZVYM7bm6PEY3BILZeGU3bj71z)wQnUEP9VYp6rpE7FAM3rn4ScbUIQ2ed8pV1gwoXqllFvZCkfiCl9SBM7J)iUfEZ0Dz55Ga)E8hWp6cDJlGFmUi(jbtFkEBvq562V3oUZV90KdpC7KK2yTH4sBGb4DWLxfVlUc(5dXvtDxgtiC8EdX1P4xsXngIH49Xh44o(vxCcvXBOw)8uYTLp1FYjSeptCmc)MxTi(D(CqvZ35ULw49xE4hCHdtCt1sL39TFsyBsoe63cWTXvM7iuthymLmzi(Wlid1N1xZgFLpQuci1s(nr)XEdtFWvtyP4nXBD5j)HlCz6Tj(TNrV)UgEB8tVEyHR9)ItEg4yLJdL5KlyC8WBmSo9sMj9j71lQXEB(xNbQsdBw40YvP3)J3b",
@@ -633,10 +718,9 @@ addon.AddonProfiles.SenseiClassResourceBar = {
   dateCreated = "2026-01-06"
 }
 
---[[
 -- Details! Profile
 -- Optimized for NoobTacoUI aesthetic
--- Version: 1.0
+-- Version: 1.1
 -- Last Updated: 2026-01-07
 addon.AddonProfiles.Details = {
   name = "Details",
@@ -651,74 +735,83 @@ addon.AddonProfiles.Details = {
     "A reload may be required for all settings to take effect."
   },
   isCustomApply = true,
-  applyFunction = function()
+  applyFunction = function(isBulk)
     -- Check if Details is loaded
     if not C_AddOns.IsAddOnLoaded("Details") then
-      print("|cFF16C3F2NoobTacoUI|r: Details! Damage Meter not loaded.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Details! Damage Meter not loaded.")
+      end
       return
     end
 
     -- Details global is usually _detalhes or Details
     local DetailsAddon = _G.Details or _G._detalhes
     if not DetailsAddon then
-      print("|cFF16C3F2NoobTacoUI|r: Details! engine not found.")
+      if not isBulk then
+        print("|cFF16C3F2NoobTacoUI|r: Details! engine not found.")
+      end
       return
     end
 
-    -- 1. Get the profile string
-    local profileString = addon.AddonProfiles.Details.profileString
+    -- 1. Get the profile data
+    local profileData = addon.AddonProfiles.Details
+    local profileString = profileData.profileString
 
     -- 2. Import the profile
-    -- Details uses a specific format for imports.
-    -- We'll use the internal ImportProfile if available, or show a dialog as fallback.
     local success = false
     if DetailsAddon.ImportProfile then
-      -- Profile string, profile name, silenty (true), overwrite (true)
       success = DetailsAddon:ImportProfile(profileString, "NoobTacoUI", true, true)
     end
 
-    if success then
-      print("|cFF16C3F2NoobTacoUI|r: Details! profile 'NoobTacoUI' applied successfully.")
+    -- 3. Track application
+    if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
+      NoobTacoUIDB.GeneralSettings.AppliedProfiles["Details"] = profileData.version
+    end
 
-      StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_DETAILS"] = {
-        text = "Details! profile applied.\nA reload is recommended for changes to take effect.\nReload now?",
-        button1 = "Yes",
-        button2 = "No",
-        OnAccept = function()
-          ReloadUI()
-        end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3,
-      }
-      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_DETAILS")
-    else
-      -- Fallback: Show manual import dialog
-      StaticPopupDialogs["NOOBTACOUI_DETAILS_COPY"] = {
-        text =
-        "Automatic import failed or not supported.\nCTRL+C to copy the profile string.\nThen paste into Details! > Options > Profiles > Import.",
-        button1 = "Close",
-        hasEditBox = true,
-        editBoxWidth = 400,
-        OnShow = function(self)
-          self.EditBox:SetText(profileString)
-          self.EditBox:SetFocus()
-          self.EditBox:HighlightText()
-        end,
-        EditBoxOnEnterPressed = function(self)
-          self:GetParent():Hide()
-        end,
-        EditBoxOnEscapePressed = function(self)
-          self:GetParent():Hide()
-        end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3,
-      }
-      StaticPopup_Show("NOOBTACOUI_DETAILS_COPY")
-      print("|cFF16C3F2NoobTacoUI|r: Please Copy (Ctrl+C) the string and import manually in Details! options.")
+    if not isBulk then
+      if success then
+        print("|cFF16C3F2NoobTacoUI|r: Details! profile 'NoobTacoUI' applied successfully.")
+
+        StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_DETAILS"] = {
+          text = "Details! profile applied.\nA reload is required for changes to take effect.\nReload now?",
+          button1 = "Yes",
+          button2 = "No",
+          OnAccept = function()
+            ReloadUI()
+          end,
+          timeout = 0,
+          whileDead = true,
+          hideOnEscape = true,
+          preferredIndex = 3,
+        }
+        StaticPopup_Show("NOOBTACOUI_RELOAD_UI_DETAILS")
+      else
+        -- Fallback: Show manual import dialog
+        StaticPopupDialogs["NOOBTACOUI_DETAILS_COPY"] = {
+          text =
+          "Automatic import failed or not supported.\nCTRL+C to copy the profile string.\nThen paste into Details! > Options > Profiles > Import.",
+          button1 = "Close",
+          hasEditBox = true,
+          editBoxWidth = 400,
+          OnShow = function(self)
+            self.EditBox:SetText(profileString)
+            self.EditBox:SetFocus()
+            self.EditBox:HighlightText()
+          end,
+          EditBoxOnEnterPressed = function(self)
+            self:GetParent():Hide()
+          end,
+          EditBoxOnEscapePressed = function(self)
+            self:GetParent():Hide()
+          end,
+          timeout = 0,
+          whileDead = true,
+          hideOnEscape = true,
+          preferredIndex = 3,
+        }
+        StaticPopup_Show("NOOBTACOUI_DETAILS_COPY")
+        print("|cFF16C3F2NoobTacoUI|r: Please Copy (Ctrl+C) the string and import manually in Details! options.")
+      end
     end
   end,
   profileString =
@@ -728,10 +821,7 @@ addon.AddonProfiles.Details = {
   dateCreated = "2026-01-06"
 }
 
-
 -- Helper function to get all available profiles
-]]
-
 function addon.GetAvailableProfiles()
   local profiles = {}
   for key, profile in pairs(addon.AddonProfiles) do
@@ -745,4 +835,51 @@ end
 -- Helper function to get a specific profile by name
 function addon.GetProfile(profileName)
   return addon.AddonProfiles[profileName]
+end
+
+-- Apply all available addon profiles at once (excluding Edit Mode)
+function addon.ApplyAllProfiles()
+  local profiles = addon.GetAvailableProfiles()
+  local appliedCount = 0
+
+  for _, profile in ipairs(profiles) do
+    -- Skip Edit Mode as it requires manual steps
+    if profile.name ~= "EditMode" and profile.applyFunction then
+      -- Only apply if the addon is loaded
+      local addonLoaded = false
+      if profile.name == "XIV_Databar" then
+        addonLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or
+            C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or
+            C_AddOns.IsAddOnLoaded("XIV_Databar-Continued")
+      else
+        addonLoaded = C_AddOns.IsAddOnLoaded(profile.name)
+      end
+
+      if addonLoaded then
+        profile.applyFunction(true) -- Pass true for isBulk
+        appliedCount = appliedCount + 1
+      end
+    end
+  end
+
+  if appliedCount > 0 then
+    print("|cFF16C3F2NoobTacoUI|r: Successfully applied |cFF00FF00" .. appliedCount .. "|r addon profiles.")
+
+    -- Show a single consolidated reload prompt
+    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_BULK"] = {
+      text = "Multiple addon profiles applied.\nA reload is required for all changes to take effect.\nReload now?",
+      button1 = "Yes",
+      button2 = "No",
+      OnAccept = function()
+        ReloadUI()
+      end,
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show("NOOBTACOUI_RELOAD_UI_BULK")
+  else
+    print("|cFF16C3F2NoobTacoUI|r: No loaded addon profiles found to apply.")
+  end
 end

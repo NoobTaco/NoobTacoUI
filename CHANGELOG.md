@@ -12,14 +12,12 @@
 - **Resolution Detection**: The configuration menu now automatically detects and displays the physical screen resolution.
 - **Smart Diagnostic**: Updated "Print Current Scale" tool to recognize and name all standard and accessibility scaling modes.
 
-#### Addon Integrations 🆕
-
-- **Default WoW UI Edit Mode Profile**: Added one-click "Apply Profile" button that provides the correct Edit Mode layout string (Retail or Midnight) via a copy-paste dialog.
-- **zBarButtonBG Automatic Profile**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for zBarButtonBG.
-- **BetterBlizzFrames One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for BetterBlizzFrames.
-- **Platynator One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Platynator.
-- **Sensei Class Resource Bar One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Sensei Class Resource Bar.
-- **Details! Damage Meter Profile**: Added one-click "Apply Profile" button that programmatically imports the NoobTacoUI profile for Details! Damage Meter, with a manual fallback option.
+- **Addon Integration UI Overhaul**:
+  - **Guided Flow**: Reorganized the panel into a clear, step-by-step process: **Step 1 (Manual Edit Mode)** -> **Step 2 (Automated Apply All)** -> **Individual Addon Management**.
+  - **Visual Prominence**: Implemented high-contrast "Gold" theme for the mandatory Edit Mode setup and a matching "Green" theme for automated application.
+  - **Alphabetical Addon List**: All supported addons are now listed alphabetically with clear status badges (**[NEW]**, **[UPDATE]**, **[NOT LOADED]**).
+  - **Robust Layout**: Restructured the panel using relative anchoring to prevent window stacking issues and ensure perfect alignment across all resolutions.
+  - **Improved Instructions**: Refined the manual setup steps with clear naming recommendations ("NoobTacoUI").
 - **XIV_Databar Continued Automatic Application**: Added one-click "Apply Profile" button with robust folder detection (supports Continued/Main variants) and crash-prevention for the Talent Module during import.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
