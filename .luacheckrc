@@ -31,6 +31,7 @@ globals = {
   "BetterBlizzFramesDB",
   "PLATYNATOR_CONFIG",
   "PLATYNATOR_CURRENT_PROFILE",
+  "StaticPopupDialogs",
 }
 
 -- Allow access to WoW API globals (read-only)
@@ -45,7 +46,7 @@ read_globals = {
   "C_PetJournal", "C_MountJournal", "C_ToyBox", "GetAchievementInfo",
   "PlaySoundFile", "C_Timer",
   "BBF",
-  "EditModeManagerFrame", "C_EditMode", "Enum", "ReloadUI", "GetBuildInfo", "StaticPopupDialogs", "StaticPopup_Show",
+  "EditModeManagerFrame", "C_EditMode", "Enum", "ReloadUI", "GetBuildInfo", "StaticPopup_Show", "CopyToClipboard",
   "EditModeImportLayoutDialog",
   -- Add other WoW API functions here as needed
 }
