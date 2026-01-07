@@ -19,6 +19,12 @@
   - **Robust Layout**: Restructured the panel using relative anchoring to prevent window stacking issues and ensure perfect alignment across all resolutions.
   - **Improved Instructions**: Refined the manual setup steps with clear naming recommendations ("NoobTacoUI").
 - **XIV_Databar Continued Automatic Application**: Added one-click "Apply Profile" button with robust folder detection (supports Continued/Main variants) and crash-prevention for the Talent Module during import.
+- **Config Menu UI Refactor**:
+  - **Unified Design**: Completely redesigned all configuration sub-menus (About, General, audio, Game Settings, Instructions) to match the modern "Nord" aesthetic of the Addon Integration panel.
+  - **Anchored Layouts**: Implemented robust, anchored container layouts for every panel to prevent text overlap and ensure perfect alignment across all resolutions.
+  - **Dynamic Sizing**: Added dynamic vertical resizing for all containers (About, Help Text, Warnings) to gracefully handle content changes without clipping.
+  - **Visual Hierarchy**: Standardized typography, padding, borders, and background colors (`Nord1`/`Nord3`) across the entire addon for a cohesive professional feel.
+  - **Game Settings Warning**: Added a specialized "Red" (Nord11) themed warning box for critical CVar settings to clearly communicate caution.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
 ### 🔧 Technical Improvements

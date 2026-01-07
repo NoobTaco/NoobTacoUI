@@ -1018,18 +1018,38 @@ local function InitializeConfigFrame()
       descText:SetText(baseDescription .. versionInfo)
       descText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
-      -- Features section (positioned below the description content)
-      local featuresHeader = scrollChild:CreateFontString(nil, "OVERLAY")
+      -- Features section in a container
+      local featuresContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
+      featuresContainer:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", -8, -SECTION_SPACING - 10)
+      featuresContainer:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      featuresContainer:SetHeight(200) -- Fallback height
+
+      -- Container background and border styling
+      local fbg = featuresContainer:CreateTexture(nil, "BACKGROUND")
+      fbg:SetAllPoints()
+      fbg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+      fbg:SetAlpha(0.3)
+
+      local fborder = CreateFrame("Frame", nil, featuresContainer, "BackdropTemplate")
+      fborder:SetAllPoints()
+      fborder:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+      })
+      fborder:SetBackdropBorderColor(unpack(addon.UIAssets.Colors.Nord3))
+      fborder:SetAlpha(0.4)
+
+      local featuresHeader = featuresContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(featuresHeader, "header-secondary")
-      featuresHeader:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -SECTION_SPACING)
+      featuresHeader:SetPoint("TOPLEFT", featuresContainer, "TOPLEFT", INNER_PADDING, -8)
       featuresHeader:SetText("Key Features")
-      featuresHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+      featuresHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9))
 
       -- Features list
-      local featuresList = scrollChild:CreateFontString(nil, "OVERLAY")
+      local featuresList = featuresContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(featuresList, "body-text")
       featuresList:SetPoint("TOPLEFT", featuresHeader, "BOTTOMLEFT", 0, -8)
-      featuresList:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+      featuresList:SetPoint("RIGHT", featuresContainer, "RIGHT", -INNER_PADDING, 0)
       featuresList:SetJustifyH("LEFT")
       featuresList:SetJustifyV("TOP")
       featuresList:SetSpacing(3)
@@ -1044,17 +1064,34 @@ local function InitializeConfigFrame()
         "• Lightweight and performance-optimized architecture")
       featuresList:SetTextColor(unpack(addon.UIAssets.Colors.Nord5))
 
-      -- Support section
-      local supportHeader = scrollChild:CreateFontString(nil, "OVERLAY")
+      -- Support section in a container
+      local supportContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
+      supportContainer:SetPoint("TOPLEFT", featuresContainer, "BOTTOMLEFT", 0, -SECTION_SPACING - 10)
+      supportContainer:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      supportContainer:SetHeight(100) -- Fallback height
+
+      -- Container background and border styling
+      local sbg = supportContainer:CreateTexture(nil, "BACKGROUND")
+      sbg:SetAllPoints()
+      sbg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+      sbg:SetAlpha(0.05)
+
+      local sborder = CreateFrame("Frame", nil, supportContainer, "BackdropTemplate")
+      sborder:SetAllPoints()
+      sborder:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+      })
+      local supportHeader = supportContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(supportHeader, "header-secondary")
-      supportHeader:SetPoint("TOPLEFT", featuresList, "BOTTOMLEFT", 0, -SECTION_SPACING)
+      supportHeader:SetPoint("TOPLEFT", supportContainer, "TOPLEFT", INNER_PADDING, -8)
       supportHeader:SetText("Support & Community")
       supportHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
 
-      local supportText = scrollChild:CreateFontString(nil, "OVERLAY")
+      local supportText = supportContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(supportText, "body-text")
       supportText:SetPoint("TOPLEFT", supportHeader, "BOTTOMLEFT", 0, -8)
-      supportText:SetPoint("RIGHT", scrollChild, "RIGHT", -12, 0) -- Account for thinner scrollbar (was -20)
+      supportText:SetPoint("RIGHT", supportContainer, "RIGHT", -INNER_PADDING, 0)
       supportText:SetJustifyH("LEFT")
       supportText:SetJustifyV("TOP")
       supportText:SetSpacing(3)
@@ -1063,13 +1100,24 @@ local function InitializeConfigFrame()
         "Bug reports and feature requests are welcome and help improve the addon for everyone.")
       supportText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
+      -- Function to update container heights based on content
+      local function UpdateContainerHeights()
+        -- Update Features Container
+        local fHeight = math.abs(-(featuresList:GetBottom() or 0) + (featuresContainer:GetTop() or 0)) + INNER_PADDING
+        featuresContainer:SetHeight(fHeight)
+
+        -- Update Support Container (it's anchored to featuresContainer)
+        local sHeight = math.abs(-(supportText:GetBottom() or 0) + (supportContainer:GetTop() or 0)) + INNER_PADDING
+        supportContainer:SetHeight(sHeight)
+      end
+
       -- Set the scroll child height dynamically based on content
       local function UpdateScrollChildHeight()
+        UpdateContainerHeights()
         local totalHeight = 0
-        -- Calculate height from logo bottom or support text bottom, whichever is lower
-        local logoBottom = -(logo:GetBottom() or 0) + (scrollChild:GetTop() or 0)
-        local supportBottom = -(supportText:GetBottom() or 0) + (scrollChild:GetTop() or 0)
-        totalHeight = math.max(logoBottom, supportBottom) + SECTION_SPACING
+        -- Calculate height from support container bottom
+        local supportBottom = -(supportContainer:GetBottom() or 0) + (scrollChild:GetTop() or 0)
+        totalHeight = supportBottom + SECTION_SPACING
         scrollChild:SetHeight(totalHeight)
         scrollFrame.UpdateScrollThumb()
       end
@@ -1120,26 +1168,23 @@ local function InitializeConfigFrame()
         local collectionContainer = addon.UIUtils:CreateThemedFrame(content.audioPanel, "Frame")
         collectionContainer:SetPoint("TOPLEFT", collectionHeader, "BOTTOMLEFT", -8, -12)
         collectionContainer:SetPoint("TOPRIGHT", content.audioPanel, "TOPRIGHT", -8, -12)
-        collectionContainer:SetHeight(250) -- Increased height to accommodate chat messages section
+        collectionContainer:SetHeight(280) -- Increased height to accommodate all options
 
-        -- Apply subtle Nord1 background with slight transparency
+        -- Apply subtle Nord1 background
         local bgTexture = collectionContainer:CreateTexture(nil, "BACKGROUND")
         bgTexture:SetAllPoints()
         bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
         bgTexture:SetAlpha(0.3)
 
-        -- Add a subtle border using Nord3
-        local borderTexture = collectionContainer:CreateTexture(nil, "BORDER")
-        borderTexture:SetAllPoints()
-        borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-        borderTexture:SetAlpha(0.4)
-
-        -- Create inset for the border effect
-        local insetTexture = collectionContainer:CreateTexture(nil, "ARTWORK")
-        insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
-        insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
-        insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-        insetTexture:SetAlpha(0.3)
+        -- Improved border using BackdropTemplate
+        local border = CreateFrame("Frame", nil, collectionContainer, "BackdropTemplate")
+        border:SetAllPoints()
+        border:SetBackdrop({
+          edgeFile = "Interface\\Buttons\\WHITE8X8",
+          edgeSize = 1,
+        })
+        border:SetBackdropBorderColor(unpack(addon.UIAssets.Colors.Nord3))
+        border:SetAlpha(0.5)
 
         local yOffset = -20                 -- Start with more padding inside container
         local configurableElements = {}
@@ -2286,41 +2331,39 @@ local function InitializeConfigFrame()
 
       -- Create scrollable content for the panel
       local scrollFrame = CreateNordScrollFrame(content.generalPanel)
-      scrollFrame:SetPoint("TOPLEFT", content.generalPanel, "TOPLEFT", PADDING, -60)
+      scrollFrame:SetPoint("TOPLEFT", content.generalPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
       scrollFrame:SetPoint("BOTTOMRIGHT", content.generalPanel, "BOTTOMRIGHT", -PADDING, PADDING)
 
       local scrollChild = scrollFrame.scrollChild
+      scrollChild:SetSize(scrollFrame:GetWidth() - 12, 1) -- Set initial width
 
       -- Add minimap & interface section
-      local interfaceHeader = addon.UIUtils:CreateCategoryHeader(content.generalPanel, "Minimap & Interface")
-      interfaceHeader:SetPoint("TOPLEFT", content.generalPanel.Divider, "BOTTOMLEFT", 0, -SECTION_SPACING)
+      local interfaceHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Minimap & Interface")
+      interfaceHeader:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, 0)
       -- Use same color as selected button for consistency and better readability
       interfaceHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord9)) -- Blue-gray frost color
 
       -- Create a subtle background container for the interface options
-      local interfaceContainer = addon.UIUtils:CreateThemedFrame(content.generalPanel, "Frame")
+      local interfaceContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
       interfaceContainer:SetPoint("TOPLEFT", interfaceHeader, "BOTTOMLEFT", -8, -12)
-      interfaceContainer:SetPoint("TOPRIGHT", content.generalPanel, "TOPRIGHT", -8, -12)
-      interfaceContainer:SetHeight(150) -- Appropriate height for two checkboxes
+      interfaceContainer:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      interfaceContainer:SetHeight(250) -- Will be adjusted dynamically
 
-      -- Apply subtle Nord1 background with slight transparency
+      -- Apply subtle Nord1 background
       local bgTexture = interfaceContainer:CreateTexture(nil, "BACKGROUND")
       bgTexture:SetAllPoints()
       bgTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
       bgTexture:SetAlpha(0.3)
 
-      -- Add a subtle border using Nord3
-      local borderTexture = interfaceContainer:CreateTexture(nil, "BORDER")
-      borderTexture:SetAllPoints()
-      borderTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord3))
-      borderTexture:SetAlpha(0.4)
-
-      -- Create inset for the border effect
-      local insetTexture = interfaceContainer:CreateTexture(nil, "ARTWORK")
-      insetTexture:SetPoint("TOPLEFT", borderTexture, "TOPLEFT", 1, -1)
-      insetTexture:SetPoint("BOTTOMRIGHT", borderTexture, "BOTTOMRIGHT", -1, 1)
-      insetTexture:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
-      insetTexture:SetAlpha(0.3)
+      -- Improved border using BackdropTemplate
+      local border = CreateFrame("Frame", nil, interfaceContainer, "BackdropTemplate")
+      border:SetAllPoints()
+      border:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+      })
+      border:SetBackdropBorderColor(unpack(addon.UIAssets.Colors.Nord3))
+      border:SetAlpha(0.5)
 
       local yOffset = -20 -- Start with more padding inside container
       local checkboxRefs = {}
@@ -2403,7 +2446,7 @@ local function InitializeConfigFrame()
 
       local helpText = interfaceContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(helpText, "body-text")
-      helpText:SetPoint("TOPLEFT", interfaceContainer, "TOPLEFT", INNER_PADDING, yOffset)
+      helpText:SetPoint("TOPLEFT", helpHeader, "BOTTOMLEFT", 0, -8)
       helpText:SetPoint("RIGHT", interfaceContainer, "RIGHT", -INNER_PADDING, 0)
       helpText:SetJustifyH("LEFT")
       helpText:SetJustifyV("TOP")
@@ -2414,8 +2457,23 @@ local function InitializeConfigFrame()
       )
       helpText:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
-      -- Update scroll area
-      scrollFrame.UpdateScrollThumb()
+      -- Update container height dynamically
+      C_Timer.After(0.1, function()
+        -- Ensure scroll child width is updated if frame resized
+        scrollChild:SetWidth(scrollFrame:GetWidth() - 12)
+
+        local top = interfaceContainer:GetTop() or 0
+        local bottom = helpText:GetBottom() or 0
+        local height = math.abs(top - bottom) + INNER_PADDING
+        interfaceContainer:SetHeight(height)
+
+        -- Update scroll child height based on container bottom
+        local containerTop = scrollChild:GetTop() or 0
+        local containerBottom = interfaceContainer:GetBottom() or 0
+        local scrollHeight = math.abs(containerTop - containerBottom) + PADDING
+        scrollChild:SetHeight(scrollHeight)
+        scrollFrame.UpdateScrollThumb()
+      end)
 
       -- Store checkbox references for refresh function
       content.generalPanel.RefreshCheckboxes = function()
@@ -2471,7 +2529,7 @@ local function InitializeConfigFrame()
 
       -- Create scrollable content for the panel
       local scrollFrame = CreateNordScrollFrame(content.gameSettingsPanel)
-      scrollFrame:SetPoint("TOPLEFT", content.gameSettingsPanel, "TOPLEFT", PADDING, -60)
+      scrollFrame:SetPoint("TOPLEFT", content.gameSettingsPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
       scrollFrame:SetPoint("BOTTOMRIGHT", content.gameSettingsPanel, "BOTTOMRIGHT", -PADDING, PADDING)
 
       local scrollChild = scrollFrame.scrollChild
@@ -2480,38 +2538,87 @@ local function InitializeConfigFrame()
       local yOffset = 0
 
       -- WARNING Section
-      local warningText = scrollChild:CreateFontString(nil, "OVERLAY")
+      local warningContainer = CreateFrame("Frame", nil, scrollChild)
+      warningContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      warningContainer:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+
+      -- Background (Nord11 Red with low alpha)
+      local wBg = warningContainer:CreateTexture(nil, "BACKGROUND")
+      wBg:SetAllPoints()
+      wBg:SetColorTexture(0.75, 0.38, 0.42, 0.1)
+
+      -- Border
+      local wBorder = CreateFrame("Frame", nil, warningContainer, "BackdropTemplate")
+      wBorder:SetAllPoints()
+      wBorder:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 2,
+      })
+      wBorder:SetBackdropBorderColor(0.75, 0.38, 0.42, 0.8)
+
+      local warningText = warningContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(warningText, "body-text")
-      warningText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
-      warningText:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      warningText:SetPoint("TOPLEFT", warningContainer, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+      warningText:SetPoint("RIGHT", warningContainer, "RIGHT", -INNER_PADDING, 0)
       warningText:SetJustifyH("LEFT")
       warningText:SetText(
         "|cFFBF616AWARNING:|r Changing these settings (CVars) can affect other UI elements and game behavior. Use with caution.")
-      yOffset = yOffset - 40
+
+      -- Calculate height (wait for width to be applied)
+      C_Timer.After(0.01, function()
+        local textHeight = warningText:GetStringHeight()
+        warningContainer:SetHeight(textHeight + (INNER_PADDING * 2))
+      end)
+
+      -- Initial estimate to prevent overlap before timer
+      warningContainer:SetHeight(50)
+      yOffset = yOffset - 50 - 20
 
       -- Resolution Scaling Section
-      local scalingHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Pixel Perfect (scaling)")
-      scalingHeader:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
-      yOffset = yOffset - SECTION_SPACING - 10
+      local scalingHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Pixel Perfect Scaling")
+      scalingHeader:SetPoint("TOPLEFT", warningContainer, "BOTTOMLEFT", 0, -20)
 
-      local scalingDesc = scrollChild:CreateFontString(nil, "OVERLAY")
+      -- Scaling Container
+      local scalingContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
+      scalingContainer:SetPoint("TOPLEFT", scalingHeader, "BOTTOMLEFT", -INNER_PADDING, -12)
+      scalingContainer:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      scalingContainer:SetHeight(280)
+
+      -- Container background and border styling
+      local scbg = scalingContainer:CreateTexture(nil, "BACKGROUND")
+      scbg:SetAllPoints()
+      scbg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord1))
+      scbg:SetAlpha(0.3)
+
+      local scborder = CreateFrame("Frame", nil, scalingContainer, "BackdropTemplate")
+      scborder:SetAllPoints()
+      scborder:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+      })
+      scborder:SetBackdropBorderColor(unpack(addon.UIAssets.Colors.Nord3))
+      scborder:SetAlpha(0.5)
+
+      local containerYOffset = -INNER_PADDING
+
+      local scalingDesc = scalingContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(scalingDesc, "body-text")
-      scalingDesc:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
-      scalingDesc:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      scalingDesc:SetPoint("TOPLEFT", scalingContainer, "TOPLEFT", INNER_PADDING, containerYOffset)
+      scalingDesc:SetPoint("RIGHT", scalingContainer, "RIGHT", -INNER_PADDING, 0)
       scalingDesc:SetJustifyH("LEFT")
       scalingDesc:SetText(
         "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 mapping) keep things crisp while being much easier to read on high-DPI monitors.")
       scalingDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
-      yOffset = yOffset - 40
+      containerYOffset = containerYOffset - 45
 
       -- Resolution Detection
-      local resText = scrollChild:CreateFontString(nil, "OVERLAY")
+      local resText = scalingContainer:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(resText, "label-standard")
-      resText:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      resText:SetPoint("TOPLEFT", scalingContainer, "TOPLEFT", INNER_PADDING, containerYOffset)
       local width, height = GetPhysicalScreenSize()
       local resDisplay = width .. "x" .. height
       resText:SetText("Detected Resolution: |cFF88C0D0" .. resDisplay .. "|r")
-      yOffset = yOffset - 30
+      containerYOffset = containerYOffset - 35
 
       -- Helper function to set scale and prompt reload
       local function SetUIScale(scale, label)
@@ -2536,9 +2643,9 @@ local function InitializeConfigFrame()
       end
 
       local function CreateScalingRow(label, standardScale, highVisScale)
-        local row = CreateFrame("Frame", nil, scrollChild)
-        row:SetSize(scrollChild:GetWidth() - (INNER_PADDING * 2), 40)
-        row:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+        local row = CreateFrame("Frame", nil, scalingContainer)
+        row:SetSize(scalingContainer:GetWidth() - (INNER_PADDING * 2), 40)
+        row:SetPoint("TOPLEFT", scalingContainer, "TOPLEFT", INNER_PADDING, containerYOffset)
 
         local labelText = row:CreateFontString(nil, "OVERLAY")
         ApplyConfigFont(labelText, "label-standard")
@@ -2555,7 +2662,7 @@ local function InitializeConfigFrame()
         btnHighVis:SetPoint("LEFT", btnStandard, "RIGHT", 10, 0)
         btnHighVis:SetScript("OnClick", function() SetUIScale(highVisScale, label .. " High Visibility") end)
 
-        yOffset = yOffset - 45
+        containerYOffset = containerYOffset - 45
         return row
       end
 
@@ -2563,11 +2670,14 @@ local function InitializeConfigFrame()
       CreateScalingRow("1440p", 0.533333333, 1.066666666)
       CreateScalingRow("1080p", 0.711111111, 1.422222222)
 
+      scalingContainer:SetHeight(math.abs(containerYOffset) + INNER_PADDING)
+      yOffset = yOffset - scalingContainer:GetHeight() - 20
+
       yOffset = yOffset - 10
 
       -- Current Setting Button
       local btnCurrent = addon.UIUtils:CreateThemedButton(scrollChild, "Print Current Scale", 160, 30)
-      btnCurrent:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      btnCurrent:SetPoint("TOPLEFT", scalingContainer, "BOTTOMLEFT", 0, -20)
       btnCurrent:SetScript("OnClick", function()
         local currentScale = tonumber(GetCVar("uiScale"))
         local scaleText = string.format("%.9f", currentScale)
@@ -2593,9 +2703,12 @@ local function InitializeConfigFrame()
 
       yOffset = yOffset - 50
 
-      -- Update scroll child height
-      scrollChild:SetHeight(math.abs(yOffset) + PADDING)
-      scrollFrame.UpdateScrollThumb()
+      -- Update scroll child height (dynamic)
+      C_Timer.After(0.1, function()
+        local totalHeight = math.abs(-(btnCurrent:GetBottom() or 0) + (scrollChild:GetTop() or 0)) + PADDING
+        scrollChild:SetHeight(totalHeight)
+        scrollFrame.UpdateScrollThumb()
+      end)
     end
 
     content.gameSettingsPanel:Show()
@@ -2631,7 +2744,7 @@ local function InitializeConfigFrame()
 
       -- Create scrollable content for the panel
       local scrollFrame = CreateNordScrollFrame(content.instructionsPanel)
-      scrollFrame:SetPoint("TOPLEFT", content.instructionsPanel, "TOPLEFT", PADDING, -60)
+      scrollFrame:SetPoint("TOPLEFT", content.instructionsPanel.Divider, "BOTTOMLEFT", 0, -INNER_PADDING)
       scrollFrame:SetPoint("BOTTOMRIGHT", content.instructionsPanel, "BOTTOMRIGHT", -PADDING, PADDING)
 
       local scrollChild = scrollFrame.scrollChild
@@ -2655,15 +2768,39 @@ local function InitializeConfigFrame()
         return fs
       end
 
-      -- Leatrix Plus Guide
-      local ltpHeader = addon.UIUtils:CreateCategoryHeader(scrollChild, "Leatrix Plus Setup")
-      ltpHeader:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
-      yOffset = yOffset - 30
+      -- Leatrix Plus Guide in a container
+      local ltpContainer = addon.UIUtils:CreateThemedFrame(scrollChild, "Frame")
+      ltpContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, yOffset)
+      ltpContainer:SetPoint("RIGHT", scrollChild, "RIGHT", -INNER_PADDING, 0)
+      ltpContainer:SetHeight(200)
 
-      AddText(
-        "Because automated profile application is not reliable for Leatrix Plus, please follow these steps to configure it manually to match the NoobTacoUI aesthetic.",
-        "body-text", addon.UIAssets.Colors.Nord4)
-      yOffset = yOffset - 10
+      -- Container background and border styling
+      local lbg = ltpContainer:CreateTexture(nil, "BACKGROUND")
+      lbg:SetAllPoints()
+      lbg:SetColorTexture(unpack(addon.UIAssets.Colors.Nord8))
+      lbg:SetAlpha(0.05)
+
+      local lborder = CreateFrame("Frame", nil, ltpContainer, "BackdropTemplate")
+      lborder:SetAllPoints()
+      lborder:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+      })
+      lborder:SetBackdropBorderColor(unpack(addon.UIAssets.Colors.Nord8))
+      lborder:SetAlpha(0.3)
+
+      local ltpHeader = addon.UIUtils:CreateCategoryHeader(ltpContainer, "Leatrix Plus Setup")
+      ltpHeader:SetPoint("TOPLEFT", ltpContainer, "TOPLEFT", INNER_PADDING, -12) -- Increased top padding
+      ltpHeader:SetTextColor(unpack(addon.UIAssets.Colors.Nord8))
+
+      local ltpDesc = ltpContainer:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(ltpDesc, "body-text")
+      ltpDesc:SetPoint("TOPLEFT", ltpHeader, "BOTTOMLEFT", 0, -8)
+      ltpDesc:SetPoint("RIGHT", ltpContainer, "RIGHT", -INNER_PADDING, 0)
+      ltpDesc:SetJustifyH("LEFT")
+      ltpDesc:SetText(
+        "Because automated profile application is not reliable for Leatrix Plus, please follow these steps to configure it manually to match the NoobTacoUI aesthetic.")
+      ltpDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord4))
 
       local steps = {
         "1. Open Leatrix Plus settings: Type |cFFEBCB8B/ltp|r",
@@ -2673,10 +2810,26 @@ local function InitializeConfigFrame()
         "5. Frames > Manage Widget: |cFFA3BE8CON|r (Top Center)"
       }
 
-      for _, step in ipairs(steps) do
-        AddText(step, "body-text", addon.UIAssets.Colors.Nord6)
-        yOffset = yOffset + 2 -- reduce spacing for list
+      local lastStep = ltpDesc
+      for i, step in ipairs(steps) do
+        local fs = ltpContainer:CreateFontString(nil, "OVERLAY")
+        ApplyConfigFont(fs, "body-text")
+        fs:SetPoint("TOPLEFT", lastStep, "BOTTOMLEFT", 0, (i == 1 and -12 or -4))
+        fs:SetPoint("RIGHT", ltpContainer, "RIGHT", -INNER_PADDING, 0)
+        fs:SetJustifyH("LEFT")
+        fs:SetText(step)
+        fs:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+        lastStep = fs
       end
+
+      -- Update container height based on last step
+      C_Timer.After(0.1, function()
+        local bottom = -(lastStep:GetBottom() or 0) + (ltpContainer:GetTop() or 0)
+        ltpContainer:SetHeight(bottom + INNER_PADDING)
+        yOffset = yOffset - ltpContainer:GetHeight() - SECTION_SPACING
+        scrollChild:SetHeight(math.abs(yOffset) + PADDING)
+        scrollFrame.UpdateScrollThumb()
+      end)
 
       -- Update scroll height
       scrollChild:SetHeight(math.abs(yOffset) + PADDING)
