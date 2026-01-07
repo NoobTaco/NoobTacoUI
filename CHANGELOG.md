@@ -14,6 +14,7 @@
 
 #### Addon Integrations 🆕
 
+- **Default WoW UI Edit Mode Profile**: Added one-click "Apply Profile" button that provides the correct Edit Mode layout string (Retail or Midnight) via a copy-paste dialog.
 - **zBarButtonBG Automatic Profile**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for zBarButtonBG.
 - **BetterBlizzFrames One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for BetterBlizzFrames.
 - **Platynator One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Platynator.

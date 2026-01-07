@@ -20,17 +20,70 @@ addon.AddonProfiles.EditMode = {
   downloadUrl = "N/A",
   command = "Open Edit Mode",
   instructions = {
-    "Click the button below to copy the layout string",
-    "Open Edit Mode (ESC > Edit Mode)",
-    "Click the dropdown menu for layouts",
-    "Select |cFFEBCB8BImport|r",
-    "Paste the layout string and import"
+    "Click the |cFFEBCB8BApply Profile|r button below.",
+    "This will automatically detect your game version and apply the correct profile.",
+    "A reload may be required."
   },
-  profileString =
+  isCustomApply = true,
+  applyFunction = function()
+    local _, _, _, tocVersion = GetBuildInfo()
+    local isMidnight = (tocVersion >= 120000)
+
+    -- Select appropriate profile string
+    local profileString
+    local clientName
+    if isMidnight then
+      profileString = addon.AddonProfiles.EditMode.profileStringMidnight
+      clientName = "Midnight (12.0+)"
+    else
+      profileString = addon.AddonProfiles.EditMode.profileStringRetail
+      clientName = "Retail"
+    end
+
+    if not profileString or profileString == "" then
+      print("|cFF16C3F2NoobTacoUI|r: Profile string is empty.")
+      return
+    end
+
+    -- Copy to Clipboard fallback (Manual Copy)
+    -- CopyToClipboard is receiving ADDON_ACTION_FORBIDDEN, so we must show a dialog
+
+    StaticPopupDialogs["NOOBTACOUI_EDITMODE_COPY"] = {
+      text = "CTRL+C to copy the " .. clientName .. " profile string.\nThen paste into Edit Mode > Import.",
+      button1 = "Close",
+      hasEditBox = true,
+      editBoxWidth = 400,
+      OnShow = function(self)
+        self.EditBox:SetText(profileString)
+        self.EditBox:SetFocus()
+        self.EditBox:HighlightText()
+      end,
+      EditBoxOnEnterPressed = function(self)
+        self:GetParent():Hide()
+      end,
+      EditBoxOnEscapePressed = function(self)
+        self:GetParent():Hide()
+      end,
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show("NOOBTACOUI_EDITMODE_COPY")
+
+    print("|cFF16C3F2NoobTacoUI|r: Detected " .. clientName .. " client.")
+    print("|cFF16C3F2NoobTacoUI|r: Please Copy (Ctrl+C) the string from the popup window.")
+    print("|cFF16C3F2NoobTacoUI|r: 1. Open Edit Mode (ESC > Edit Mode)")
+    print("|cFF16C3F2NoobTacoUI|r: 2. Click Layout Dropdown > Import")
+    print("|cFF16C3F2NoobTacoUI|r: 3. Paste (Ctrl+V) and Import")
+  end,
+  profileStringRetail =
   "1 43 0 0 0 0 0 UIParent 870.0 -1117.5 -1 ##$$%/&%'%)$+$,$ 0 1 0 1 1 UIParent 0.0 -1082.0 -1 ##$$%/&%'%(#,$ 0 2 0 7 7 UIParent -0.0 122.0 -1 ##$$%/&%'%(#,$ 0 3 0 3 3 UIParent 1708.7 -365.0 -1 ##$$%/&%'%(#,# 0 4 0 7 7 UIParent 896.1 242.0 -1 ##$$%/&$'%(&,# 0 5 0 4 4 UIParent 161.7 168.6 -1 ##$$%/&('%(#,$ 0 6 0 4 4 UIParent 154.1 168.3 -1 ##$$%/&('%(#,$ 0 7 0 4 4 UIParent 154.6 165.5 -1 ##$$%/&('%(#,$ 0 10 0 7 7 UIParent -450.7 40.3 -1 #$$$&&'% 0 11 0 3 3 UIParent 6.3 -291.1 -1 ##$$&''%,# 0 12 0 7 7 UIParent -171.3 162.0 -1 ##$$&('% 1 -1 0 7 7 UIParent 0.8 247.8 -1 #%$#%# 2 -1 0 2 2 UIParent 0.0 0.0 -1 ##$#%( 3 0 0 7 7 UIParent -253.4 266.2 -1 $#3# 3 1 0 7 7 UIParent 253.5 264.5 -1 %$3# 3 2 0 8 8 UIParent -416.2 262.5 -1 %#&#3# 3 3 0 0 0 UIParent 18.5 -459.5 -1 '$(#)#-?.;/#1#3# 3 4 0 0 0 UIParent 19.4 -515.2 -1 ,%-'.//#0#1$2( 3 5 0 2 2 UIParent -241.3 -263.8 -1 &$*$3' 3 6 0 2 2 UIParent -11.4 -460.4 -1 -#.#/#4& 3 7 1 4 4 UIParent 0.0 0.0 -1 3# 4 -1 0 7 7 UIParent -0.3 144.2 -1 # 5 -1 0 7 7 UIParent 411.4 42.2 -1 # 6 0 1 2 0 MinimapCluster -10.0 -10.0 -1 ##$#%#&.(()( 6 1 0 4 4 UIParent -262.1 -102.4 -1 ##$$%#'((*)( 7 -1 0 1 1 UIParent 7.0 -162.0 -1 # 8 -1 0 4 4 UIParent -636.5 -346.3 -1 #($%%%&$ 9 -1 0 4 4 UIParent -320.0 -440.0 -1 # 10 -1 1 0 0 UIParent 16.0 -116.0 -1 # 11 -1 0 8 8 UIParent -26.3 51.1 -1 # 12 -1 0 5 5 UIParent -6.1 10.2 -1 #@$#%# 13 -1 0 1 1 UIParent -930.3 -2.0 -1 ##$#%&&, 14 -1 0 6 8 MicroMenuContainer 3.6 -0.4 -1 ##$#%$ 15 0 0 0 0 UIParent 866.8 -1153.2 -1 # 15 1 0 0 0 UIParent 866.8 -1164.1 -1 # 16 -1 0 7 7 UIParent -239.0 53.6 -1 #( 17 -1 1 1 1 UIParent 0.0 -100.0 -1 ## 18 -1 1 5 5 UIParent 0.0 0.0 -1 #- 19 -1 0 4 4 UIParent 0.0 415.8 -1 ## 20 0 0 4 4 UIParent 0.6 -314.4 -1 ##$)%$&('%(-($)#+$,$-$ 20 1 0 7 7 UIParent 0.1 180.6 -1 ##$+%$&('%(-($)#+$,$-$ 20 2 0 4 4 UIParent 0.5 -234.9 -1 ##$$%$&*'%(-($)#+$,$-$ 20 3 0 1 1 UIParent 472.0 -670.6 -1 #$$$%#&('((-($)#*#+$,$-$",
-  version = "1.0",
+  profileStringMidnight =
+  "2 50 0 0 0 4 4 UIParent 0.0 -480.0 -1 ##$$%/&$'%)$+$,$ 0 1 0 6 0 MainActionBar 0.0 4.0 -1 ##$$%/&$'%(#,$ 0 2 0 8 2 MultiBarBottomLeft 0.0 4.0 -1 ##$$%/&$'%(#,$ 0 3 0 1 1 UIParent -681.3 -242.0 -1 ##$$%/&%'%(#,# 0 4 0 7 7 UIParent 896.1 242.0 -1 ##$$%/&$'%(&,# 0 5 0 4 4 UIParent 161.7 168.6 -1 ##$$%/&('%(#,$ 0 6 0 4 4 UIParent 154.1 168.3 -1 ##$$%/&('%(#,$ 0 7 0 4 4 UIParent 154.6 165.5 -1 ##$$%/&('%(#,$ 0 10 0 6 0 MultiBarBottomRight 0.0 4.0 -1 ##$$&&'% 0 11 0 3 3 UIParent 6.3 -291.1 -1 ##$$&''%,# 0 12 0 4 4 UIParent -240.0 -420.0 -1 ##$$&('% 1 -1 0 1 1 UIParent -0.0 -902.8 -1 ##$#%# 2 -1 0 2 2 UIParent 0.0 0.0 -1 ##$#%( 3 0 0 1 1 UIParent -258.0 -797.0 -1 $#3# 3 1 0 0 0 UIParent 1102.0 -797.0 -1 %$3# 3 2 0 7 7 UIParent 273.5 68.0 -1 %#&#3# 3 3 0 0 0 UIParent 502.0 -422.0 -1 '$(#)#-;.=/#1#3#5$6(7-7$ 3 4 0 0 0 UIParent 19.4 -515.2 -1 ,%-'.//#0#1$2(5#6(7-7$ 3 5 0 2 2 UIParent -296.4 -242.4 -1 &$*#3' 3 6 0 2 2 UIParent -11.4 -460.4 -1 -#.#/#4&5#6(7-7$ 3 7 1 4 4 UIParent 0.0 0.0 -1 3# 4 -1 0 7 7 UIParent 0.0 402.0 -1 # 5 -1 0 7 7 UIParent 253.0 362.0 -1 # 6 0 1 2 0 MinimapCluster -10.0 -10.0 -1 ##$#%#&.(()( 6 1 0 0 0 UIParent 623.0 -472.0 -1 ##$$%#'((()(-$ 6 2 0 2 8 PlayerFrame -20.0 14.0 -1 ##$#%#&*(()(+#,-,$ 7 -1 0 1 1 UIParent 7.0 -162.0 -1 # 8 -1 0 4 4 UIParent -636.5 -346.3 -1 #($%%%&$ 9 -1 0 7 7 UIParent -242.0 62.0 -1 # 10 -1 1 0 0 UIParent 16.0 -116.0 -1 # 11 -1 0 1 1 UIParent 533.0 -682.0 -1 # 12 -1 0 1 1 UIParent 828.0 -242.0 -1 #@$#%# 13 -1 0 1 1 UIParent -930.3 -2.0 -1 ##$#%&&, 14 -1 0 7 7 UIParent -515.2 1041.6 -1 ##$#%$ 15 0 0 7 7 UIParent 0.0 22.0 -1 # 15 1 0 1 1 UIParent 0.0 -1062.0 -1 # 16 -1 0 7 7 UIParent -239.0 53.6 -1 #( 17 -1 1 1 1 UIParent 0.0 -100.0 -1 ## 18 -1 1 5 5 UIParent 0.0 0.0 -1 #- 19 -1 0 4 4 UIParent 0.0 415.8 -1 ## 20 0 0 0 0 UIParent 815.0 -821.0 -1 ##$)%$&('%(-($)#+$,$-$ 20 1 0 0 0 UIParent 816.0 -874.0 -1 ##$/%$&&''(-($)#+$,$-$ 20 2 0 0 0 UIParent 822.3 -751.0 -1 ##$$%$&''%(-($)$+$,$-$ 20 3 0 8 2 PlayerFrame -20.0 -12.0 -1 #$$$%#&''#(-($)$*#+$,$-$.P 21 -1 0 1 1 UIParent -280.0 -942.0 -1 #$$# 22 0 0 7 7 UIParent 0.0 742.0 -1 ##$$%#&('((#)U*$+$,$ 22 1 1 1 1 UIParent 0.0 -40.0 -1 &('()U*#+$ 22 2 1 1 1 UIParent 0.0 -90.0 -1 &('()U*#+$ 22 3 1 1 1 UIParent 0.0 -130.0 -1 &('()U*#+$ 23 -1 0 1 1 UIParent 808.0 -862.0 -1 ##$#%$&#'t(#)U+$,$-'.(/6",
+  version = "1.1",
   author = "NoobTaco",
-  dateCreated = "2025-11-28"
+  dateCreated = "2026-01-06"
 }
 
 -- BetterBlizzFrames Profile
@@ -180,13 +233,13 @@ addon.AddonProfiles.Platynator = {
     -- 6. Apply Settings
     config.style = "NoobTacoUI"
     if not config.designs_assigned then
-        config.designs_assigned = {
-          ["friend"] = "_name-only",
-          ["enemy"] = "NoobTacoUI",
-          ["enemySimplified"] = "_hare_simplified"
-        }
+      config.designs_assigned = {
+        ["friend"] = "_name-only",
+        ["enemy"] = "NoobTacoUI",
+        ["enemySimplified"] = "_hare_simplified"
+      }
     else
-        config.designs_assigned["enemy"] = "NoobTacoUI"
+      config.designs_assigned["enemy"] = "NoobTacoUI"
     end
 
     -- 7. Switch Profile

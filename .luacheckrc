@@ -45,6 +45,8 @@ read_globals = {
   "C_PetJournal", "C_MountJournal", "C_ToyBox", "GetAchievementInfo",
   "PlaySoundFile", "C_Timer",
   "BBF",
+  "EditModeManagerFrame", "C_EditMode", "Enum", "ReloadUI", "GetBuildInfo", "StaticPopupDialogs", "StaticPopup_Show",
+  "EditModeImportLayoutDialog",
   -- Add other WoW API functions here as needed
 }
 
