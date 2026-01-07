@@ -29,6 +29,8 @@ globals = {
   "NoobTacoDB",
   "NoobTacoUIAddon",
   "BetterBlizzFramesDB",
+  "PLATYNATOR_CONFIG",
+  "PLATYNATOR_CURRENT_PROFILE",
 }
 
 -- Allow access to WoW API globals (read-only)
