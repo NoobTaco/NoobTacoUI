@@ -15,7 +15,7 @@ Create a cohesive and professional look across your entire interface with built-
 - **Addon Profiles**: One-click import of optimized profiles for popular addons:
   - **Default WoW Edit Mode**: Optimized layout for the default UI.
   - **BetterBlizzFrames**: Enhanced unit frame configurations.
-  - **Platynator**: Clean and functional nameplate profiles.
+  - **Platynator**: Clean and functional nameplate profiles (now with one-click automatic application).
   - **Cooldown Manager Tweaks**: Optimized tracking settings.
   - **zBarButtonBG**: Custom styling for action bars (now with one-click automatic application).
   - **XIV_Databar Continued**: Optimized bar styling and positioning.
