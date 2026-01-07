@@ -39,6 +39,11 @@ local function IsCata()
   return version and version:match("^4%.")
 end
 
+local function IsMidnight()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion and tocVersion >= 120000
+end
+
 -- Check if we need texture fallback (only for MoP and potentially other problematic versions)
 local function NeedsTextureFallback()
   -- Only use texture fallback for MoP specifically
@@ -632,7 +637,11 @@ function addon.UIUtils:CreateSoundTestButton(parent, size)
   button.Icon = button:CreateTexture(nil, "OVERLAY")
   button.Icon:SetSize((size and (size * 0.75) or 18), (size and (size * 0.75) or 18))
   button.Icon:SetPoint("CENTER", 1, 0) -- Slight offset for visual balance
-  button.Icon:SetAtlas("common-icon-sound")
+  if IsMidnight() and C_Texture.GetAtlasInfo("common-icon-sound") then
+    button.Icon:SetAtlas("common-icon-sound")
+  else
+    button.Icon:SetTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
+  end
   button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord0))
 
   -- Hover effects - texture approach
