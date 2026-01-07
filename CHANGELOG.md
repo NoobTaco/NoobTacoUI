@@ -20,6 +20,7 @@
 - **Platynator One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Platynator.
 - **Sensei Class Resource Bar One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Sensei Class Resource Bar.
 - **Details! Damage Meter Profile**: Added one-click "Apply Profile" button that programmatically imports the NoobTacoUI profile for Details! Damage Meter, with a manual fallback option.
+- **XIV_Databar Continued Automatic Application**: Added one-click "Apply Profile" button with robust folder detection (supports Continued/Main variants) and crash-prevention for the Talent Module during import.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
 ### 🔧 Technical Improvements

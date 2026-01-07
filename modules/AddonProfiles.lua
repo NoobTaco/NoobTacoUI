@@ -415,11 +415,72 @@ addon.AddonProfiles.XIV_Databar = {
   downloadUrl = "https://www.curseforge.com/wow/addons/xiv-databar-continued",
   command = "/xivbar config",
   instructions = {
-    "Click the button below to copy the profile string",
-    "Type |cFFEBCB8B/xivbar config|r in chat to open XIV_Databar config",
-    "Navigate to the |cFFEBCB8BProfiles|r section",
-    "Paste the profile string and import"
+    "Click the |cFFEBCB8BApply Profile|r button below.",
+    "Type |cFFEBCB8B/xivbar config|r in chat to open XIV_Databar config if needed.",
+    "The profile will be imported and applied automatically."
   },
+  isCustomApply = true,
+  applyFunction = function()
+    -- Check which folder name is used for XIV_Databar
+    local xivFolder = ""
+    if C_AddOns.IsAddOnLoaded("XIV_Databar") then
+      xivFolder = "XIV_Databar"
+    elseif C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") then
+      xivFolder = "XIV_Databar_Continued"
+    elseif C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") then
+      xivFolder = "XIV_Databar-Continued"
+    end
+
+    if xivFolder == "" then
+      print("|cFF16C3F2NoobTacoUI|r: XIV_Databar Continued not loaded.")
+      return
+    end
+
+    -- XIV_Databar uses the folder name as its AceAddon name
+    local XIVBar = LibStub("AceAddon-3.0"):GetAddon(xivFolder, true)
+    if not XIVBar or not XIVBar.ImportProfile then
+      print("|cFF16C3F2NoobTacoUI|r: XIVBar addon object or ImportProfile function missing.")
+      return
+    end
+
+    -- 1. Get the profile string
+    local profileString = addon.AddonProfiles.XIV_Databar.profileString
+
+    -- Pre-initialize talent module frames to prevent crash if switcher is enabled in the new profile
+    local talentModule = XIVBar:GetModule("TalentModule", true)
+    if talentModule and talentModule.CreateLoadoutFrames and talentModule.talentFrame then
+      talentModule:CreateLoadoutFrames()
+    end
+
+    -- Define the reload prompt once
+    StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_XIVBAR"] = {
+      text = "XIV_Databar profile applied.\nA reload is required for changes to take effect.\nReload now?",
+      button1 = "Yes",
+      button2 = "No",
+      OnAccept = function()
+        ReloadUI()
+      end,
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+
+    -- 2. Import the profile with pcall to catch any addon-specific refresh errors
+    local success, result = pcall(function() return XIVBar:ImportProfile(profileString) end)
+
+    if success and result then
+      print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied successfully.")
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
+    elseif not success then
+      -- If it crashed (like the talent module error), settings are likely still partially changed
+      -- Proceed with reload prompt as it's the only way for the user to recover
+      print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
+      StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
+    else
+      print("|cFF16C3F2NoobTacoUI|r: Failed to import XIV_Databar profile (invalid data).")
+    end
+  end,
   profileString =
   "9v1sZnkoq4Fo7Pjfymg8X4xtMQg)OcS7SNyIm02Oncjwj5xZH8BF7wcBh7KzpHqDR(5x)1fHf5fzTA1gUaOJGKTwaZpzR5LRuAltykwxKzabuAHQNaM2wBSkjyq1TfzBbjOzcNzuCjEZ4PlYN(Cr2XLB2yaBXIGIS1m9kLHB5kzr2OL55lN7UCotVLlVOcRQIl3wSiQi70TVE2oHWuQbqwmYDXyvZAM9jEfqX3odmvS)p)gjudcMLVhwDB4iuLVcvKcnQQDciRLv6DwNhe8T1xmiEXp4v26IfHrdIPeTCNodygLCPuCIuPujuAkVLkDJVcWWW9HKymgOdPy1P77A)x0mCjRKIUlQ3ZREOt5qNQHKIyknEm5NA1EW5hTRyCwRzXrdshomPF4Wbj4N(fB(sCu3lFIEd(8Z1QUiLvmljoTFyssAqCuV0Ou3R6t2E2GK0W0HHPjrbjd7nCajza5VFNK1)oj(yihoADza(RfptbWgL0MX)fqLvevHLnXSRx1ZRqr2kvBlxA(sg0WhPevKjQFh077CdzUfHdd6fLGikT6vq)2l5AM0GnAgb0E7L5mRMFevlPxyYWISPwqlzcNE7reT(pmV9Y7G0fl6ffheIP2Zqf0kuNAaPfTJdWqUlkof7M58g4at86NzG(XdtWU0Qhw(q2d5pqbHX6vC6Xwny(OlhmifZbuQahr2dFWIdIrey2yLPHxENWWbrb9rH4LvcVTvAd0WKFiYctthgJv4jQgedIZY3lVFV4(O8CvdgcQnyvsDalIEwaYv9gMGnTVQbMDdZwtf8FGJyFwviinjarvtaOT6ai6k1tjva59khIPaMdt0mq6YqeUUfAiZmmiYNDNv3hzOvE7Lzcwdqid)8mXhLz1SkW8kxiUsM5M5n1Qd5kLWYBppuqthe0KjWM8DQluSk1oB2bUTet0PxL4v673k3XQWLDmgXb37pRlYqi3DU5dCkFg9lrPXKvyB7xWtg)8eIe0Q5GChzWT74IZeB8nCqF2XerrznZ6yWRvTo2eq4(YkRPpnmUKSZf2WE(y)RZxMpHu4F3bgNbArY4r3wtBXoljszYuLCMGM49JXDfvYFiH6JTTJX5AK4ZZBsm3tL05)rTJMiPJInBjJwRqQJ76yUAqdLTJ8g8DUdFjVujVj(DsD13AM2f7776cybxdYYt31hi6PLYNPfaND9FVcXiFcY5y7ih2z9vJLxJ7LkYcE3nhufzrb9sVE1seQJxf4wcSL40(iaDgANrSTuUCPeSKg0EgyIgZ5RYiAZX42ntxJvBZPYgcs6GhL0YU7CWvQ3Eb(Q409yp6Cr0ICAZOfzewfhz3dp2SQH28RXvjeJN30E6S)sj21a3NcwOL2O5wFzoH)28)pfIR7vstUcB6hqCt3yZJcXsjgGBU0l(Hs7a4Ozz6g)QSdmTeB4t2PzR5cU9KpVUZzFtSxC(8yLs3vGS3osHkuXem8QFwB(PbxAGiPSj(RULTIM9alJIacCHqAC6pBHsTgH3ytho2sTdQCHRDgKmOF)eA1JM6GfzFNZQqR7cHI)7p",
   version = "1.1",

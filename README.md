@@ -18,7 +18,7 @@ Create a cohesive and professional look across your entire interface with built-
   - **Platynator**: Clean and functional nameplate profiles (now with one-click automatic application).
   - **Cooldown Manager Tweaks**: Optimized tracking settings.
   - **zBarButtonBG**: Custom styling for action bars (now with one-click automatic application).
-  - **XIV_Databar Continued**: Optimized bar styling and positioning.
+  - **XIV_Databar Continued**: Optimized bar styling and positioning (now with one-click automatic application).
   - **Sensei Class Resource Bar**: Optimized resource bar styling.
   - **Details! Damage Meter**: Optimized damage meter profile.
 - **Pixel Perfect Scaling**: Built-in tools to set your UI scale perfectly for 4K, 1440p, and 1080p resolutions.
