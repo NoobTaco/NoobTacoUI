@@ -1871,7 +1871,7 @@ local function InitializeConfigFrame()
         end
 
         -- Global Enable Toggle with improved styling
-        local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(collectionContainer, 22) -- Slightly larger
+        local enableCheckbox = addon.UIUtils:CreateThemedCheckbox(collectionContainer, 26) -- Slightly larger
         enableCheckbox:SetPoint("TOPLEFT", collectionContainer, "TOPLEFT", 16, yOffset)
         enableCheckbox:SetChecked(GetCollectionSetting("enabled") ~= false)
         checkboxRefs.enable = enableCheckbox
@@ -1919,7 +1919,7 @@ local function InitializeConfigFrame()
             rowBg:SetAlpha(0.2)
           end)
 
-          local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(rowFrame, 18)
+          local typeCheckbox = addon.UIUtils:CreateThemedCheckbox(rowFrame, 22)
           typeCheckbox:SetPoint("LEFT", rowFrame, "LEFT", 8, 0)
 
           -- Set default if not set
@@ -2118,7 +2118,7 @@ local function InitializeConfigFrame()
           chatRowBg:SetAlpha(0.15)
         end)
 
-        local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(chatRowFrame, 18)
+        local chatCheckbox = addon.UIUtils:CreateThemedCheckbox(chatRowFrame, 22)
         chatCheckbox:SetPoint("LEFT", chatRowFrame, "LEFT", 8, 0)
 
         -- Set default if not set

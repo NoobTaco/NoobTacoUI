@@ -295,7 +295,7 @@ end
 -- Create a checkbox with Nord theming
 function addon.UIUtils:CreateThemedCheckbox(parent, size)
   local checkbox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
-  checkbox:SetSize(size or 18, size or 18)
+  checkbox:SetSize(size or 22, size or 22)
 
   -- Override the template's textures with Nord colors if needed
   -- This would require custom textures, but we can enhance the existing ones
@@ -632,7 +632,7 @@ function addon.UIUtils:CreateSoundTestButton(parent, size)
   button.Icon = button:CreateTexture(nil, "OVERLAY")
   button.Icon:SetSize((size and (size * 0.75) or 18), (size and (size * 0.75) or 18))
   button.Icon:SetPoint("CENTER", 1, 0) -- Slight offset for visual balance
-  button.Icon:SetTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
+  button.Icon:SetAtlas("common-icon-sound")
   button.Icon:SetVertexColor(unpack(addon.UIAssets.Colors.Nord0))
 
   -- Hover effects - texture approach

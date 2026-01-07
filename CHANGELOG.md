@@ -26,6 +26,7 @@
   - **Improved Navigation**: Reordered configuration categories (About → Addon Integration → Audio → Game Settings → General → Instructions) for a more logical user flow.
   - **Visual Hierarchy**: Standardized typography, padding, borders, and background colors (`Nord1`/`Nord3`) across the entire addon for a cohesive professional feel.
   - **Game Settings Warning**: Added a specialized "Red" (Nord11) themed warning box for critical CVar settings to clearly communicate caution.
+  - **Audio Settings Polish**: Updated the "Play Sample" icon to match the WoW Cooldowns musical note style and increased checkbox sizes for better clickability.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
 ### 🔧 Technical Improvements
