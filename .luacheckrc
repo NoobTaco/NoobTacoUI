@@ -24,6 +24,7 @@ globals = {
   "SLASH_NTMINIMAP1",
   "SLASH_NTDEBUG1",
   "SLASH_NTREFRESH1",
+  "SLASH_RELOADUI1", "SLASH_RELOADUI2",
   "SlashCmdList", -- Slash command handler table (writable)
   -- Configuration menu globals
   "NoobTacoDB",
