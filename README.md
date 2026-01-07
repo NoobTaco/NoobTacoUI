@@ -20,6 +20,7 @@ Create a cohesive and professional look across your entire interface with built-
   - **zBarButtonBG**: Custom styling for action bars (now with one-click automatic application).
   - **XIV_Databar Continued**: Optimized bar styling and positioning.
   - **Sensei Class Resource Bar**: Optimized resource bar styling.
+  - **Details! Damage Meter**: Optimized damage meter profile.
 - **Pixel Perfect Scaling**: Built-in tools to set your UI scale perfectly for 4K, 1440p, and 1080p resolutions.
   - **Standard (1:1)**: Maximum screen real estate with mathematical sharpness.
   - **High Visibility (2:1)**: Doubled UI size for better accessibility while maintaining perfect clarity on high-DPI monitors.

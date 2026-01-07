@@ -19,6 +19,7 @@
 - **BetterBlizzFrames One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for BetterBlizzFrames.
 - **Platynator One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Platynator.
 - **Sensei Class Resource Bar One-Click Update**: Added one-click "Apply Profile" button that programmatically decodes and applies the NoobTacoUI profile for Sensei Class Resource Bar.
+- **Details! Damage Meter Profile**: Added one-click "Apply Profile" button that programmatically imports the NoobTacoUI profile for Details! Damage Meter, with a manual fallback option.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
 
 ### 🔧 Technical Improvements

@@ -1945,6 +1945,7 @@ local function InitializeConfigFrame()
     local xivLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued")
     local scrbLoaded = C_AddOns.IsAddOnLoaded("SenseiClassResourceBar")
     local ltpLoaded = C_AddOns.IsAddOnLoaded("Leatrix_Plus")
+    local detailsLoaded = C_AddOns.IsAddOnLoaded("Details")
 
     local currentYOffset = -INNER_PADDING
 
@@ -2038,8 +2039,18 @@ local function InitializeConfigFrame()
       end
     end
 
+    if detailsLoaded then
+      local profile = addon.GetProfile("Details")
+      if profile then
+        local section = CreateCollapsibleAddonSection(scrollChild, "Details", profile, lastElement,
+          currentYOffset, UpdateLayout)
+        lastElement = section
+        currentYOffset = -4
+      end
+    end
 
-    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded and not scrbLoaded then
+
+    if not bbfLoaded and not platynatorLoaded and not cmtLoaded and not zbarLoaded and not xivLoaded and not scrbLoaded and not detailsLoaded then
       -- Add message when neither addon is loaded
       local noAddonText = scrollChild:CreateFontString(nil, "OVERLAY")
       ApplyConfigFont(noAddonText, "body-text")
