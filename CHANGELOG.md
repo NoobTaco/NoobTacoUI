@@ -1,6 +1,6 @@
 # NoobTacoUI
 
-## [v1.4.3](https://github.com/NoobTaco/NoobTacoUI/tree/v1.4.3) (Unreleased)
+## [v1.4.3](https://github.com/NoobTaco/NoobTacoUI/tree/v1.4.3) (2026-01-07)
 
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI/compare/v1.4.2...v1.4.3)
 
@@ -31,7 +31,13 @@
 - **Edit Mode Profile Update**: Ported the "Midnight" Edit Mode profile layout to Retail (v10.x), ensuring users get the same visual experience across versions without compatibility issues.
 - **Developer Tools**: Added `Convert-MidnightProfile.ps1` and `convert-midnight-profile.sh` scripts to automate the conversion of Midnight Edit Mode profiles to Retail format.
 
-### 🔧 Technical Improvements
+### � Bug Fixes
+
+- **Edit Mode**: Hidden the Edit Mode profile setup block on non-retail (Classic) clients to prevent confusion.
+- **Audio Settings**: Implemented icon fallback for "Play Sample" button in audio menu (Classic uses generic icon).
+- **Addon Integration**: Resolved "Apply All" button overlap issues in the management panel.
+
+### �🔧 Technical Improvements
 
 - **Helper Commands**: Added `/rl` and `/reloadui` as shortcuts for the default `/reload` command for faster UI reloading.
 - **Environment Cleanup**: Removed redundant Windows metadata files (`Zone.Identifier`) to improve cross-platform compatibility.
@@ -281,9 +287,6 @@ This release introduces the foundation for addon integration with BetterBlizzFra
   - Document technical architecture and user experience
   - Include testing guidelines and cross-version compatibility notes
   - Ready for testing on other WoW versions
-- **Fix**: Hidden the Edit Mode profile setup block on non-retail (Classic) clients to prevent confusion.
-- **Fix**: Implemented icon fallback for "Play Sample" button in audio menu (Classic uses generic icon).
-- **Fix**: Resolved "Apply All" button overlap issues in Addon Integration panel.
 - Style: Clean up whitespace and line formatting in AddonCompartment functions
 - Fix: Resolve nil function error in AddonCompartment functions
   - Replace GetGeneralSetting/GetDBValue calls with direct database access
