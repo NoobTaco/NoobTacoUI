@@ -281,6 +281,9 @@ This release introduces the foundation for addon integration with BetterBlizzFra
   - Document technical architecture and user experience
   - Include testing guidelines and cross-version compatibility notes
   - Ready for testing on other WoW versions
+- **Fix**: Hidden the Edit Mode profile setup block on non-retail (Classic) clients to prevent confusion.
+- **Fix**: Implemented icon fallback for "Play Sample" button in audio menu (Classic uses generic icon).
+- **Fix**: Resolved "Apply All" button overlap issues in Addon Integration panel.
 - Style: Clean up whitespace and line formatting in AddonCompartment functions
 - Fix: Resolve nil function error in AddonCompartment functions
   - Replace GetGeneralSetting/GetDBValue calls with direct database access

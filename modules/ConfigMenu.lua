@@ -1562,64 +1562,72 @@ local function InitializeConfigFrame()
     local ltpLoaded = C_AddOns.IsAddOnLoaded("Leatrix_Plus")
     local detailsLoaded = C_AddOns.IsAddOnLoaded("Details")
 
-    -- 1. Manual Setup Container
-    local editModeContainer = CreateFrame("Frame", nil, scrollChild)
-    editModeContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
-    editModeContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -INNER_PADDING, -INNER_PADDING)
-    editModeContainer:SetHeight(160)
+    -- 1. Manual Setup Container (Retail Only)
+    local editModeContainer
+    if IsRetail() then
+      editModeContainer = CreateFrame("Frame", nil, scrollChild)
+      editModeContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+      editModeContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -INNER_PADDING, -INNER_PADDING)
+      editModeContainer:SetHeight(160)
 
-    local emBg = editModeContainer:CreateTexture(nil, "BACKGROUND")
-    emBg:SetAllPoints()
-    emBg:SetColorTexture(1, 0.8, 0, 0.1)
+      local emBg = editModeContainer:CreateTexture(nil, "BACKGROUND")
+      emBg:SetAllPoints()
+      emBg:SetColorTexture(1, 0.8, 0, 0.1)
 
-    local emBorder = CreateFrame("Frame", nil, editModeContainer, "BackdropTemplate")
-    emBorder:SetAllPoints()
-    emBorder:SetBackdrop({
-      edgeFile = "Interface\\Buttons\\WHITE8X8",
-      edgeSize = 2,
-    })
-    emBorder:SetBackdropBorderColor(1, 0.8, 0, 0.8)
+      local emBorder = CreateFrame("Frame", nil, editModeContainer, "BackdropTemplate")
+      emBorder:SetAllPoints()
+      emBorder:SetBackdrop({
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 2,
+      })
+      emBorder:SetBackdropBorderColor(1, 0.8, 0, 0.8)
 
-    local editModeTitle = editModeContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(editModeTitle, "header-secondary")
-    editModeTitle:SetPoint("TOPLEFT", editModeContainer, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
-    editModeTitle:SetText("STEP 1: MANDATORY EDIT MODE SETUP")
-    editModeTitle:SetTextColor(1, 0.8, 0)
+      local editModeTitle = editModeContainer:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(editModeTitle, "header-secondary")
+      editModeTitle:SetPoint("TOPLEFT", editModeContainer, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+      editModeTitle:SetText("STEP 1: MANDATORY EDIT MODE SETUP")
+      editModeTitle:SetTextColor(1, 0.8, 0)
 
-    local editModeDesc = editModeContainer:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(editModeDesc, "body-text")
-    editModeDesc:SetPoint("TOPLEFT", editModeTitle, "BOTTOMLEFT", 0, -10)
-    editModeDesc:SetPoint("RIGHT", editModeContainer, "RIGHT", -INNER_PADDING, 0)
-    editModeDesc:SetJustifyH("LEFT")
-    editModeDesc:SetText(
-      "To ensure NoobTacoUI works as intended, you MUST import the optimized layout. Click the button, copy the string (CTRL+C), then open WoW Edit Mode and click 'Import'. We recommend naming the profile 'NoobTacoUI', but you can use any name you prefer.")
-    editModeDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
+      local editModeDesc = editModeContainer:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(editModeDesc, "body-text")
+      editModeDesc:SetPoint("TOPLEFT", editModeTitle, "BOTTOMLEFT", 0, -10)
+      editModeDesc:SetPoint("RIGHT", editModeContainer, "RIGHT", -INNER_PADDING, 0)
+      editModeDesc:SetJustifyH("LEFT")
+      editModeDesc:SetText(
+        "To ensure NoobTacoUI works as intended, you MUST import the optimized layout. Click the button, copy the string (CTRL+C), then open WoW Edit Mode and click 'Import'. We recommend naming the profile 'NoobTacoUI', but you can use any name you prefer.")
+      editModeDesc:SetTextColor(unpack(addon.UIAssets.Colors.Nord6))
 
-    local editModeApplyBtn = CreateFrame("Button", nil, editModeContainer)
-    editModeApplyBtn:SetSize(180, 30)
-    editModeApplyBtn:SetPoint("BOTTOMLEFT", editModeContainer, "BOTTOMLEFT", INNER_PADDING, INNER_PADDING)
+      local editModeApplyBtn = CreateFrame("Button", nil, editModeContainer)
+      editModeApplyBtn:SetSize(180, 30)
+      editModeApplyBtn:SetPoint("BOTTOMLEFT", editModeContainer, "BOTTOMLEFT", INNER_PADDING, INNER_PADDING)
 
-    editModeApplyBtn.bg = editModeApplyBtn:CreateTexture(nil, "BACKGROUND")
-    editModeApplyBtn.bg:SetAllPoints()
-    editModeApplyBtn.bg:SetColorTexture(1, 0.8, 0)
+      editModeApplyBtn.bg = editModeApplyBtn:CreateTexture(nil, "BACKGROUND")
+      editModeApplyBtn.bg:SetAllPoints()
+      editModeApplyBtn.bg:SetColorTexture(1, 0.8, 0)
 
-    editModeApplyBtn.text = editModeApplyBtn:CreateFontString(nil, "OVERLAY")
-    ApplyConfigFont(editModeApplyBtn.text, "label-emphasis")
-    editModeApplyBtn.text:SetPoint("CENTER")
-    editModeApplyBtn.text:SetText("GET IMPORT STRING")
-    editModeApplyBtn.text:SetTextColor(0, 0, 0)
+      editModeApplyBtn.text = editModeApplyBtn:CreateFontString(nil, "OVERLAY")
+      ApplyConfigFont(editModeApplyBtn.text, "label-emphasis")
+      editModeApplyBtn.text:SetPoint("CENTER")
+      editModeApplyBtn.text:SetText("GET IMPORT STRING")
+      editModeApplyBtn.text:SetTextColor(0, 0, 0)
 
-    editModeApplyBtn:SetScript("OnClick", function()
-      local profile = addon.GetProfile("EditMode")
-      if profile and profile.applyFunction then
-        profile.applyFunction()
-      end
-    end)
+      editModeApplyBtn:SetScript("OnClick", function()
+        local profile = addon.GetProfile("EditMode")
+        if profile and profile.applyFunction then
+          profile.applyFunction()
+        end
+      end)
+    end
 
-    -- 2. Apply All Container (Anchored to Manual Setup)
+    -- 2. Apply All Container (Anchored to Manual Setup or Top)
     local applyAllContainer = CreateFrame("Frame", nil, scrollChild)
-    applyAllContainer:SetPoint("TOPLEFT", editModeContainer, "BOTTOMLEFT", 0, -20)
-    applyAllContainer:SetPoint("TOPRIGHT", editModeContainer, "BOTTOMRIGHT", 0, -20)
+    if editModeContainer then
+      applyAllContainer:SetPoint("TOPLEFT", editModeContainer, "BOTTOMLEFT", 0, -20)
+      applyAllContainer:SetPoint("TOPRIGHT", editModeContainer, "BOTTOMRIGHT", 0, -20)
+    else
+      applyAllContainer:SetPoint("TOPLEFT", scrollChild, "TOPLEFT", INNER_PADDING, -INNER_PADDING)
+      applyAllContainer:SetPoint("TOPRIGHT", scrollChild, "TOPRIGHT", -INNER_PADDING, -INNER_PADDING)
+    end
     applyAllContainer:SetHeight(70)
 
     local aaBg = applyAllContainer:CreateTexture(nil, "BACKGROUND")
@@ -1639,7 +1647,11 @@ local function InitializeConfigFrame()
     local applyAllTitle = applyAllContainer:CreateFontString(nil, "OVERLAY")
     ApplyConfigFont(applyAllTitle, "header-secondary")
     applyAllTitle:SetPoint("TOPLEFT", applyAllContainer, "TOPLEFT", INNER_PADDING, -8)
-    applyAllTitle:SetText("STEP 2: AUTOMATED SETUP")
+    if editModeContainer then
+      applyAllTitle:SetText("STEP 2: AUTOMATED SETUP")
+    else
+      applyAllTitle:SetText("STEP 1: AUTOMATED SETUP")
+    end
     applyAllTitle:SetTextColor(unpack(addon.UIAssets.Colors.Nord14))
 
     local applyAllBtn = CreateFrame("Button", nil, applyAllContainer)
