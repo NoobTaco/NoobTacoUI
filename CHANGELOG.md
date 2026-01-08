@@ -28,6 +28,8 @@
   - **Game Settings Warning**: Added a specialized "Red" (Nord11) themed warning box for critical CVar settings to clearly communicate caution.
   - **Audio Settings Polish**: Updated the "Play Sample" icon to match the WoW Cooldowns musical note style (on Midnight 12.0+) with smart fallback to the classic "Next Page" icon for Retail compatibility. Also increased checkbox sizes for better clickability.
 - **BetterBlizzFrames Profile Update**: Updated the BetterBlizzFrames profile string to the latest version for improved layout and styling.
+- **Edit Mode Profile Update**: Ported the "Midnight" Edit Mode profile layout to Retail (v10.x), ensuring users get the same visual experience across versions without compatibility issues.
+- **Developer Tools**: Added `Convert-MidnightProfile.ps1` and `convert-midnight-profile.sh` scripts to automate the conversion of Midnight Edit Mode profiles to Retail format.
 
 ### 🔧 Technical Improvements
 
