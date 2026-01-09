@@ -56,7 +56,7 @@ addon.UIAssets = {
   -- Logo and branding
   Logo = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo",
 
-  -- Background textures using your Nord theme
+  -- Background textures using your NoobTaco theme
   Background = {
     Main = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord0",
     Panel = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord1",
@@ -72,7 +72,7 @@ addon.UIAssets = {
     AccentGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord8_grd",
   },
 
-  -- Colors extracted from Nord theme
+  -- Colors extracted from NoobTaco theme
   Colors = {
     -- Polar Night (dark backgrounds)
     Nord0 = { 0.18, 0.20, 0.25, 1 }, -- #2e3440
@@ -118,13 +118,13 @@ addon.UIAssets = {
 -- Utility functions for creating consistent UI elements
 addon.UIUtils = {}
 
--- Font system for consistent Poppins typography with Nord-appropriate weights
+-- Font system for consistent Poppins typography with NoobTaco-appropriate weights
 local function GetUIFont(fontType, size)
   local LSM = LibStub("LibSharedMedia-3.0")
   local fontWeight
   size = size or 12
 
-  -- Nord typography hierarchy with appropriate Poppins weights
+  -- NoobTaco typography hierarchy with appropriate Poppins weights
   if fontType == "header-primary" then
     fontWeight = "Poppins-Bold" -- Primary headers (main titles)
     size = size or 16

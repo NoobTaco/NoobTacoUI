@@ -26,7 +26,7 @@ Create a cohesive and professional look across your entire interface with built-
 All media is automatically registered with **LibSharedMedia-3.0** and available in any compatible addon.
 
 - **Google Fonts**: A curated collection of fonts optimized for readability (Montserrat, Roboto, Lato, Dosis, Exo2, Mukta, Poppins).
-- **Nord Theme Textures**: 32 high-quality status bar textures (Solid and Gradient) based on the popular Nord color palette.
+- **NoobTaco Theme Textures**: 32 high-quality status bar textures (Solid and Gradient) based on the popular NoobTaco color palette.
 - **High-Quality Audio**: Professional sound effects designed for notifications, rare mob scans, and UI interactions.
 
 ### 🔔 Collection Notifications
@@ -40,7 +40,7 @@ Never miss a new addition to your collection with the advanced notification syst
 
 ### ⚙️ Modern Configuration
 
-A completely redesigned, professional menu system featuring the Nord theme.
+A completely redesigned, professional menu system featuring the NoobTaco theme.
 
 - **Easy Access**: Open via Minimap button, Addon Compartment, or chat commands.
 - **Interactive Preview**: Test audio and view media before applying changes.

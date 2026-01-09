@@ -1,6 +1,7 @@
 # NoobTacoUI
 
 ## [Unreleased]
+- **Theme Migration**: Successfully transitioned the default UI color theme from "Nord" to "NoobTaco" across the entire addon suite and documentation.
 
 ### 🎯 Major Features Added
 

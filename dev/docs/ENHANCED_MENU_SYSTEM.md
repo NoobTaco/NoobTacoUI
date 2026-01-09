@@ -43,12 +43,12 @@ The NoobTacoUI-Media addon features a completely redesigned configuration interf
 - **Memory Efficiency**: Reduces initial memory footprint and addon load time.
 - **On-Demand Creation**: UI elements are instantiated only when needed via `InitializeConfigFrame()`.
 
-### Custom Nord-Themed Scroll Frame
+### Custom NoobTaco-Themed Scroll Frame
 
 #### Features
 
 - **Thin Design**: 8px wide scrollbar (50% thinner than standard WoW scrollbars)
-- **Nord Colors**:
+- **NoobTaco Colors**:
   - Track: Nord0 (darkest gray)
   - Thumb: Nord2 (medium gray) with Nord8 (cyan) hover highlight
   - Buttons: Nord1 (dark gray)
@@ -123,9 +123,9 @@ local content = scrollFrame.scrollChild
 
 ## UI Design Principles
 
-### Nord Theme Integration
+### NoobTaco Theme Integration
 
-- **Color Palette**: Complete Nord color scheme implementation
+- **NoobTaco Theme Integration**: Complete NoobTaco color scheme implementation
 - **Consistent Usage**:
   - Nord0-Nord3: Backgrounds and containers
   - Nord4-Nord6: Text and content

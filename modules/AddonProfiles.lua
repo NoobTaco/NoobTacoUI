@@ -88,7 +88,7 @@ addon.AddonProfiles.EditMode = {
 }
 
 -- BetterBlizzFrames Profile
--- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Optimized for NoobTacoUI aesthetic with NoobTaco theme compatibility
 -- Version: 1.1
 -- Last Updated: 2026-01-06
 addon.AddonProfiles.BetterBlizzFrames = {
@@ -178,7 +178,7 @@ addon.AddonProfiles.BetterBlizzFrames = {
 }
 
 -- Platynator Profile
--- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Optimized for NoobTacoUI aesthetic with NoobTaco theme compatibility
 -- Version: 1.1
 -- Last Updated: 2025-12-17
 addon.AddonProfiles.Platynator = {
@@ -309,7 +309,7 @@ addon.AddonProfiles.Platynator = {
 
 
 -- Cooldown Manager Tweaks Profile
--- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Optimized for NoobTacoUI aesthetic with NoobTaco theme compatibility
 -- Version: 1.0
 -- Last Updated: 2025-11-27
 addon.AddonProfiles.CooldownManagerTweaks = {
@@ -333,7 +333,7 @@ addon.AddonProfiles.CooldownManagerTweaks = {
 }
 
 -- zBarButtonBG Profile
--- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Optimized for NoobTacoUI aesthetic with NoobTaco theme compatibility
 -- Version: 1.0
 -- Last Updated: 2025-11-29
 addon.AddonProfiles.zBarButtonBG = {
@@ -454,7 +454,7 @@ addon.AddonProfiles.zBarButtonBG = {
 }
 
 -- XIV_Databar Continued Profile
--- Optimized for NoobTacoUI aesthetic with Nord theme compatibility
+-- Optimized for NoobTacoUI aesthetic with NoobTaco theme compatibility
 -- Version: 1.0
 -- Last Updated: 2026-01-05
 addon.AddonProfiles.XIV_Databar = {

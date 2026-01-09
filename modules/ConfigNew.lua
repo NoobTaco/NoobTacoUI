@@ -4,6 +4,15 @@
 local addonName, addon = ...
 _G.NoobTacoUIAddon = addon -- Maintain compatibility with other modules
 
+-- Bridge to NoobTaco-Config library
+local ConfigLib = LibStub("NoobTaco-Config-1.0", true)
+if ConfigLib then
+  addon.ConfigLayout = ConfigLib.Layout
+  addon.ConfigRenderer = ConfigLib.Renderer
+  addon.ConfigState = ConfigLib.State
+  addon.ConfigTheme = ConfigLib.Theme
+end
+
 local LDB = LibStub("LibDataBroker-1.1")
 local LibDBIcon = LibStub("LibDBIcon-1.0")
 local L = addon.L or function(s) return s end -- Localization placeholder
@@ -115,21 +124,40 @@ end
 -- Schema Definitions
 -------------------------------------------------------------------------------
 
-local function GetGeneralSettingsSchema()
-  return {
+-------------------------------------------------------------------------------
+-- Persistent Schemas
+-------------------------------------------------------------------------------
+addon.ConfigSchemas = {}
+
+local function BuildSchemas()
+  if addon.ConfigSchemas.General then return end -- Already built
+
+  -- Helper options for known sounds
+  local soundOptions = {
+    { label = "Game: Pet Collected",      value = "NT_Pet" },
+    { label = "Game: Mount Collected",    value = "NT_Mount_Collection" },
+    { label = "Game: Toy Collected",      value = "NT_Toy_Collection" },
+    { label = "Game: Transmog Collected", value = "NT_Transmog" },
+    { label = "Game: Quest Complete",     value = "NT_Quest_Complete" },
+    { label = "Interface: Achievement",   value = 569143 }, -- SoundID
+  }
+
+  -- General Settings
+  addon.ConfigSchemas.General = {
     type = "group",
     children = {
       { type = "header", label = "General Settings" },
       {
         type = "checkbox",
         label = "Show Minimap Button",
-        id = "GeneralSettings.hide", -- LibDBIcon uses 'hide' to control visibility (inverted logic)
-        default = false,
+        invertValue = true,
+        id = "GeneralSettings.hide",
+        default = true,
         onChange = function(val)
           if val then
-            LibDBIcon:Hide("NoobTacoUI")
-          else
             LibDBIcon:Show("NoobTacoUI")
+          else
+            LibDBIcon:Hide("NoobTacoUI")
           end
         end
       },
@@ -147,23 +175,31 @@ local function GetGeneralSettingsSchema()
         type = "button",
         label = "Reload UI",
         onClick = function() ReloadUI() end
-      }
+      },
+
+      { type = "header", label = "Visual Theme" },
+      {
+        id = "activeTheme",
+        type = "dropdown",
+        label = "UI Theme",
+        default = "NoobTaco",
+        options = {
+          { label = "NoobTaco",   value = "NoobTaco" },
+          { label = "Default",    value = "Default" },
+          { label = "Nord",       value = "Nord" },
+          { label = "Catppuccin", value = "Catppuccin" },
+        },
+        onChange = function(value)
+          if addon.ConfigTheme then
+            addon.ConfigTheme:SetTheme(value)
+          end
+        end
+      },
     }
   }
-end
 
-local function GetAudioSettingsSchema()
-  -- Helper options for known sounds
-  local soundOptions = {
-    { label = "Game: Pet Collected",      value = "NT_Pet" },
-    { label = "Game: Mount Collected",    value = "NT_Mount_Collection" },
-    { label = "Game: Toy Collected",      value = "NT_Toy_Collection" },
-    { label = "Game: Transmog Collected", value = "NT_Transmog" },
-    { label = "Game: Quest Complete",     value = "NT_Quest_Complete" },
-    { label = "Interface: Achievement",   value = 569143 }, -- SoundID
-  }
-
-  return {
+  -- Audio Settings
+  addon.ConfigSchemas.Audio = {
     type = "group",
     children = {
       { type = "header", label = "Collection Notifications" },
@@ -227,10 +263,10 @@ local function GetAudioSettingsSchema()
       }
     }
   }
-end
 
-local function GetGameSettingsSchema()
-  -- Helper to set scale and prompt reload
+  -- Game Settings
+  local width, height = GetPhysicalScreenSize()
+  local resDisplay = width .. "x" .. height
   local function SetUIScale(scale, label)
     SetCVar("useUiScale", "1")
     SetCVar("uiScale", scale)
@@ -252,10 +288,7 @@ local function GetGameSettingsSchema()
     StaticPopup_Show("NOOBTACOUI_RELOAD_UI")
   end
 
-  local width, height = GetPhysicalScreenSize()
-  local resDisplay = width .. "x" .. height
-
-  return {
+  addon.ConfigSchemas.Game = {
     type = "group",
     children = {
       { type = "header", label = "Game Settings" },
@@ -264,8 +297,8 @@ local function GetGameSettingsSchema()
         title = "WARNING: CVars Modification",
         text = "Changing these settings (UiScale) affects the entire game interface. Use with caution.",
         buttonText = "I Understand",
-        severity = "high",             -- Red/Error style
-        onButtonClick = function() end -- No action needed, just advisory
+        severity = "high",
+        onButtonClick = function() end
       },
       {
         type = "description",
@@ -339,10 +372,9 @@ local function GetGameSettingsSchema()
       }
     }
   }
-end
 
-local function GetAboutSchema()
-  return {
+  -- About Schema
+  addon.ConfigSchemas.About = {
     type = "group",
     children = {
       {
@@ -352,7 +384,7 @@ local function GetAboutSchema()
         version = "Version " ..
             (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "1.4.3"),
         description =
-        "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern Nord-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.",
+        "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern NoobTaco-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.",
         links = {
           { label = "GitHub",     url = "https://github.com/NoobTaco/NoobTacoUI" },
           { label = "CurseForge", url = "https://www.curseforge.com/wow/addons/noobtacoui" },
@@ -360,23 +392,20 @@ local function GetAboutSchema()
       }
     }
   }
-end
 
-local function GetAddonIntegrationSchema()
-  local children = {}
+  -- Addon Integration (Profiles)
+  local integrationChildren = {
+    {
+      type = "description",
+      text =
+      "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
+    }
+  }
 
-  -- 1. Description
-  table.insert(children, {
-    type = "description",
-    text =
-    "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
-  })
-
-  -- 2. Mandatory Edit Mode (Retail only)
   if IsRetail() then
     local editModeProfile = addon.AddonProfiles and addon.AddonProfiles.EditMode
     if editModeProfile then
-      table.insert(children, {
+      table.insert(integrationChildren, {
         type = "callout",
         title = "STEP 1: MANDATORY EDIT MODE SETUP",
         text =
@@ -392,9 +421,8 @@ local function GetAddonIntegrationSchema()
     end
   end
 
-  -- 3. Automated Setup
-  table.insert(children, { type = "header", label = "STEP 2: AUTOMATED SETUP" })
-  table.insert(children, {
+  table.insert(integrationChildren, { type = "header", label = "STEP 2: AUTOMATED SETUP" })
+  table.insert(integrationChildren, {
     type = "callout",
     title = "Apply All Profiles",
     text =
@@ -407,9 +435,7 @@ local function GetAddonIntegrationSchema()
         button1 = "Yes",
         button2 = "No",
         OnAccept = function()
-          -- Bulk Apply Logic
           if addon.AddonProfiles then
-            -- Order matters!
             local applyOrder = {
               "BetterBlizzFrames",
               "Platynator",
@@ -419,16 +445,14 @@ local function GetAddonIntegrationSchema()
               "zBarButtonBG",
               "CooldownManagerTweaks"
             }
-
             local count = 0
             for _, name in ipairs(applyOrder) do
               local profile = addon.AddonProfiles[name]
               if profile and profile.applyFunction then
-                profile.applyFunction(true) -- true = isBulk (suppress individual popups)
+                profile.applyFunction(true)
                 count = count + 1
               end
             end
-
             print("|cFF16C3F2NoobTacoUI|r: Bulk setup complete. " .. count .. " profiles processed.")
             ReloadUI()
           end
@@ -441,15 +465,13 @@ local function GetAddonIntegrationSchema()
     end
   })
 
-  -- 4. Individual Addon Profiles
-  table.insert(children, { type = "header", label = "INDIVIDUAL ADDON PROFILES" })
-  table.insert(children, {
+  table.insert(integrationChildren, { type = "header", label = "INDIVIDUAL ADDON PROFILES" })
+  table.insert(integrationChildren, {
     type = "description",
-    text = "TIP: You can also update individual addon profiles below if you don't want to reset everything."
+    text = "TIP: Use the cards below to manage specific addon profiles."
   })
 
   if addon.AddonProfiles then
-    -- Define display order
     local displayOrder = {
       "BetterBlizzFrames",
       "Platynator",
@@ -465,11 +487,8 @@ local function GetAddonIntegrationSchema()
     for _, profileKey in ipairs(displayOrder) do
       local profile = addon.AddonProfiles[profileKey]
       if profile then
-        -- status logic
         local status = "|cFFBF616ANOT LOADED|r"
         local isLoaded = C_AddOns.IsAddOnLoaded(profile.name)
-
-        -- Special check for XIV_Databar which has multiple folder names
         if profileKey == "XIV_Databar" then
           if C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") then
             isLoaded = true
@@ -487,29 +506,17 @@ local function GetAddonIntegrationSchema()
           end
         end
 
-        local label = profile.displayName .. "  " .. status
-
         local profileChildren = {}
+        table.insert(profileChildren, { type = "description", text = profile.description })
 
-        -- Description
-        table.insert(profileChildren, {
-          type = "description",
-          text = profile.description
-        })
-
-        -- Instructions
         if profile.instructions then
           local instructText = "Instructions:\n"
           for i, line in ipairs(profile.instructions) do
             instructText = instructText .. i .. ". " .. line .. "\n"
           end
-          table.insert(profileChildren, {
-            type = "description",
-            text = instructText
-          })
+          table.insert(profileChildren, { type = "description", text = instructText })
         end
 
-        -- Action Buttons
         if isLoaded then
           table.insert(profileChildren, {
             type = "button",
@@ -519,7 +526,6 @@ local function GetAddonIntegrationSchema()
               if profile.applyFunction then
                 profile.applyFunction()
               elseif profile.profileString then
-                -- Generic Copy Dialog
                 StaticPopupDialogs["NOOBTACOUI_GENERIC_COPY"] = {
                   text = "CTRL+C to copy the profile string for " .. profile.displayName,
                   button1 = "Close",
@@ -530,8 +536,6 @@ local function GetAddonIntegrationSchema()
                     self.EditBox:SetFocus()
                     self.EditBox:HighlightText()
                   end,
-                  EditBoxOnEnterPressed = function(self) self:GetParent():Hide() end,
-                  EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
                   timeout = 0,
                   whileDead = true,
                   hideOnEscape = true,
@@ -547,51 +551,18 @@ local function GetAddonIntegrationSchema()
           })
         end
 
-        -- Download Link Button (if url exists)
-        if profile.downloadUrl then
-          table.insert(profileChildren, {
-            type = "row",
-            children = {
-              {
-                type = "button",
-                label = "Get Addon",
-                width = 100,
-                onClick = function()
-                  -- Can't open browser, but can show url
-                  local text = "Download at:\n" .. profile.downloadUrl
-                  StaticPopupDialogs["NOOBTACOUI_SHOW_URL"] = {
-                    text = text,
-                    button1 = "Close",
-                    hasEditBox = true,
-                    OnShow = function(self)
-                      self.EditBox:SetText(profile.downloadUrl)
-                      self.EditBox:HighlightText()
-                    end,
-                    timeout = 0,
-                    whileDead = true,
-                    hideOnEscape = true,
-                  }
-                  StaticPopup_Show("NOOBTACOUI_SHOW_URL")
-                end
-              }
-            }
-          })
-        end
-
-
-        table.insert(children, {
-          type = "expandable",
-          label = label,
-          expanded = false,
+        table.insert(integrationChildren, {
+          type = "card",
+          label = profile.displayName .. "  " .. status,
           children = profileChildren
         })
       end
     end
   end
 
-  return {
+  addon.ConfigSchemas.Addons = {
     type = "group",
-    children = children
+    children = integrationChildren
   }
 end
 
@@ -607,9 +578,9 @@ local function InitializeConfigUI()
     print("|cFF16C3F2NoobTacoUI|r: |cFFFF0000Error:|r Configuration library (NoobTaco-Config) failed to load.")
     return
   end
+  BuildSchemas()
 
   -- Create the main container frame
-  -- The library handles the frame creation and styling
   MainLayout = addon.ConfigLayout:CreateTwoColumnLayout(UIParent)
   MainLayout:Hide()
 
@@ -618,31 +589,36 @@ local function InitializeConfigUI()
 
   -- Set Default Theme
   if addon.ConfigTheme then
-    addon.ConfigTheme:SetTheme("Nord")
+    addon.ConfigTheme:SetTheme("NoobTaco")
   end
 
   -- Add Sidebar Items
   MainLayout.sidebarButtons = {}
+  MainLayout.sidebarButtons["about"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "about", "About", function()
+    addon.ConfigState:SetValue("lastSection", "about")
+    addon.ConfigRenderer:Render(addon.ConfigSchemas.About, MainLayout)
+  end)
+
   MainLayout.sidebarButtons["general"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "general", "General", function()
-    addon.ConfigRenderer:Render(GetGeneralSettingsSchema(), MainLayout)
+    addon.ConfigState:SetValue("lastSection", "general")
+    addon.ConfigRenderer:Render(addon.ConfigSchemas.General, MainLayout)
   end)
 
   MainLayout.sidebarButtons["audio"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "audio", "Audio", function()
-    addon.ConfigRenderer:Render(GetAudioSettingsSchema(), MainLayout)
-  end)
-
-  MainLayout.sidebarButtons["about"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "about", "About", function()
-    addon.ConfigRenderer:Render(GetAboutSchema(), MainLayout)
+    addon.ConfigState:SetValue("lastSection", "audio")
+    addon.ConfigRenderer:Render(addon.ConfigSchemas.Audio, MainLayout)
   end)
 
   MainLayout.sidebarButtons["addons"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "addons", "Addon Integration",
     function()
-      addon.ConfigRenderer:Render(GetAddonIntegrationSchema(), MainLayout)
+      addon.ConfigState:SetValue("lastSection", "addons")
+      addon.ConfigRenderer:Render(addon.ConfigSchemas.Addons, MainLayout)
     end)
 
   MainLayout.sidebarButtons["gamesettings"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "gamesettings",
     "Game Settings", function()
-      addon.ConfigRenderer:Render(GetGameSettingsSchema(), MainLayout)
+      addon.ConfigState:SetValue("lastSection", "gamesettings")
+      addon.ConfigRenderer:Render(addon.ConfigSchemas.Game, MainLayout)
     end)
 
   -- Default to General page on first show
@@ -657,7 +633,7 @@ local function InitializeConfigUI()
     local category, layout = Settings.RegisterCanvasLayoutCategory(MainLayout, "NoobTacoUI")
     addon.SettingsCategory = category
     Settings.RegisterAddOnCategory(category)
-  else
+  elseif InterfaceOptions_AddCategory then
     -- Fallback for older clients (Classic, etc)
     MainLayout.name = "NoobTacoUI"
     InterfaceOptions_AddCategory(MainLayout)
@@ -678,12 +654,12 @@ function addon.ShowConfigMenu()
 
     -- Select About by default if nothing rendered or first time
     -- Select General by default, or About if preferred
-    if MainLayout.sidebarButtons then
-      if MainLayout.sidebarButtons["general"] then
-        MainLayout.sidebarButtons["general"]:Click()
-      elseif MainLayout.sidebarButtons["about"] then
-        MainLayout.sidebarButtons["about"]:Click()
-      end
+    -- Initial Render (Restore last section)
+    local lastSection = addon.ConfigState:GetValue("lastSection") or "about"
+    if MainLayout.sidebarButtons[lastSection] then
+      MainLayout.sidebarButtons[lastSection]:Click()
+    else
+      MainLayout.sidebarButtons["about"]:Click()
     end
   end
 end
