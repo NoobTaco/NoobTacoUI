@@ -50,3 +50,6 @@ luac.out
 
 .vscode
 *.code-workspace
+
+# Local Libraries
+Libraries/NoobTaco-Config/
