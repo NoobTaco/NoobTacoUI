@@ -1,5 +1,16 @@
 # NoobTacoUI
 
+## [Unreleased]
+
+### 🎯 Major Features Added
+
+#### New Configuration System (Stage 1) 🆕
+
+- **New Library Integration**: Integrated `NoobTaco-Config` library for robust, modular configuration menus.
+- **Blizzard Settings Integration**: The configuration menu now integrates directly into the Blizzard Interface Options panel (Retail/Midnight).
+- **About Page**: Implemented the "About" page using the new schema-based system, featuring the addon logo, version, description, and links.
+- **Slash Commands**: Updated `/ntconfig` and related commands to open the new configuration panel.
+
 ## [v1.4.3](https://github.com/NoobTaco/NoobTacoUI/tree/v1.4.3) (2026-01-07)
 
 [Full Changelog](https://github.com/NoobTaco/NoobTacoUI/compare/v1.4.2...v1.4.3)
