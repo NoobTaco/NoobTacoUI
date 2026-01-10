@@ -444,24 +444,23 @@ local function BuildSchemas()
   addon.ConfigSchemas.Game = {
     type = "group",
     children = {
-      { type = "header", label = "Game Settings" },
+      { type = "header",      label = "Game Settings" },
+      { type = "description", text = "Configure advanced game settings and CVars" },
       {
-        type = "callout",
-        title = "WARNING: CVars Modification",
-        text = "Changing these settings (UiScale) affects the entire game interface. Use with caution.",
-        buttonText = "I Understand",
-        severity = "high",
-        onButtonClick = function() end
-      },
-      {
-        type = "description",
-        text = "Detected Resolution: |cFF88C0D0" .. resDisplay .. "|r"
+        type = "alert",
+        text =
+        "WARNING: CVars Modification. Changing these settings (UiScale) affects the entire game interface. Use with caution.",
+        severity = "warning"
       },
       { type = "header", label = "Pixel Perfect Scaling" },
       {
         type = "description",
         text =
         "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 logic) keep things crisp while being much easier to read."
+      },
+      {
+        type = "description",
+        text = "Detected Resolution: |cinfo|" .. resDisplay .. "|r"
       },
       {
         type = "row",
@@ -519,8 +518,37 @@ local function BuildSchemas()
         type = "button",
         label = "Print Current Scale",
         onClick = function()
-          local current = GetCVar("uiScale")
-          print("|cFF16C3F2NoobTacoUI|r: Current UI Scale: " .. (current or "N/A"))
+          local currentScale = tonumber(GetCVar("uiScale"))
+          local scaleText = currentScale and string.format("%.9f", currentScale) or "N/A"
+          local mode = ""
+
+          if currentScale then
+            local _, screenHeight = GetPhysicalScreenSize()
+            local scales = {
+              ["0.355555555"] = "4K Standard",
+              ["0.533333333"] = "1440p Standard",
+              ["1.066666666"] = "1440p High Vis",
+              ["1.422222222"] = "1080p High Vis"
+            }
+
+            -- Handle shared scale for 4K High Vis / 1080p Standard
+            if math.abs(currentScale - 0.711111111) < 0.000001 then
+              if screenHeight > 2000 then
+                mode = " (4K High Vis)"
+              else
+                mode = " (1080p Standard)"
+              end
+            else
+              for s, name in pairs(scales) do
+                if math.abs(currentScale - tonumber(s)) < 0.000001 then
+                  mode = " (" .. name .. ")"
+                  break
+                end
+              end
+            end
+          end
+
+          print("|cFF16C3F2NoobTacoUI|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. mode)
         end
       }
     }
