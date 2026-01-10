@@ -29,14 +29,6 @@ All media is automatically registered with **LibSharedMedia-3.0** and available 
 - **NoobTaco Theme Textures**: 32 high-quality status bar textures (Solid and Gradient) based on the popular NoobTaco color palette.
 - **High-Quality Audio**: Professional sound effects designed for notifications, rare mob scans, and UI interactions.
 
-### 🔔 Collection Notifications
-
-Never miss a new addition to your collection with the advanced notification system.
-
-- **Smart Detection**: Automatically detects new mounts, pets, toys, and transmog items.
-- **Custom Alerts**: Choose specific sounds for different collection types.
-- **Visual Feedback**: Optional chat messages and visual indicators.
-- **Spam Prevention**: Intelligent cooldowns to prevent audio spam during mass collection events.
 
 ### ⚙️ Modern Configuration
 

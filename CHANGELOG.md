@@ -6,7 +6,7 @@
 - **Improved Settings Persistence**: Implemented `NoobTaco-Config:Commit()` in all General section toggles and sliders to ensure settings are saved immediately.
 - **Nested Path Support**: Synchronized embedded library with standalone fixes for nested database pathing.
 - **Dependency Management**: Migrated `LibSharedMedia-3.0` to external dependency management via `.pkgmeta`, ensuring easier updates and cleaner repository structure.
-
+- **Notification Migration**: Removed Collection Notifications module and associated sound files. This feature has been moved to the standalone addon **NoobTaco-GotOne**.
 
 ### 🎯 Major Features Added
 
