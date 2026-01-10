@@ -4,14 +4,8 @@
 local addonName, addon = ...
 _G.NoobTacoUIAddon = addon -- Maintain compatibility with other modules
 
--- Bridge to NoobTaco-Config library
-local ConfigLib = LibStub("NoobTaco-Config-1.0", true)
-if ConfigLib then
-  addon.ConfigLayout = ConfigLib.Layout
-  addon.ConfigRenderer = ConfigLib.Renderer
-  addon.ConfigState = ConfigLib.State
-  addon.ConfigTheme = ConfigLib.Theme
-end
+-- Centralized bridge to NoobTaco-Config library is handled in version.lua
+-- addon.ConfigLayout, addon.ConfigRenderer, addon.ConfigState, addon.ConfigTheme are already set.
 
 local LDB = LibStub("LibDataBroker-1.1")
 local LibDBIcon = LibStub("LibDBIcon-1.0")
@@ -159,16 +153,24 @@ local function InitializeMinimapButton()
         local current = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
         if current ~= nil then
           addon.CollectionNotifications.SetSetting("enabled", not current)
-          local status = (not current) and "|cFFA3BE8CEnabled|r" or "|cFFBF616ADisabled|r"
-          print("|cFF16C3F2NoobTacoUI|r: Collection Notifications " .. status)
+          local status = (not current) and "|csuccess|Enabled|r" or "|cerror|Disabled|r"
+          addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications " .. status)
         end
       end
     end,
     OnTooltipShow = function(tooltip)
-      tooltip:AddLine("|cFF16C3F2NoobTacoUI|r")
-      tooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-      tooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
-      tooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
+      local theme = addon.ConfigTheme
+      if theme and theme.ProcessText then
+        tooltip:AddLine(theme:ProcessText("|chighlight|NoobTacoUI|r"))
+        tooltip:AddLine(theme:ProcessText("Left-click: Open configuration"), 0.7, 0.7, 0.7)
+        tooltip:AddLine(theme:ProcessText("Right-click: Toggle Collection Notifications"), 0.7, 0.7, 0.7)
+        tooltip:AddLine(theme:ProcessText("Drag to reposition"), 0.5, 0.5, 0.5)
+      else
+        tooltip:AddLine("|chighlight|NoobTacoUI|r")
+        tooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+        tooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+        tooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
+      end
     end,
   })
 
@@ -192,7 +194,7 @@ function NoobTacoUI_OnAddonCompartmentClick(addonName, buttonName)
   end
 
   if not enableCompartment then
-    print("|cFF16C3F2NoobTacoUI|r: |cFFBF616AAddon drawer integration is disabled|r - Enable in General Settings")
+    addon:Print("|chighlight|NoobTacoUI|r: |cerror|Addon drawer integration is disabled|r - Enable in General Settings")
     return
   end
 
@@ -203,13 +205,13 @@ function NoobTacoUI_OnAddonCompartmentClick(addonName, buttonName)
     local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
     if enabled then
       NoobTacoUIDB.CollectionNotifications.enabled = false
-      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFBF616ADisabled|r")
+      addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications |cerror|Disabled|r")
     else
       NoobTacoUIDB.CollectionNotifications.enabled = true
-      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFA3BE8CEnabled|r")
+      addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications |csuccess|Enabled|r")
     end
   elseif buttonName == "RightButton" and not AreCollectionsAvailable() then
-    print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
+    addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
   end
 end
 
@@ -223,18 +225,32 @@ function NoobTacoUI_OnAddonCompartmentEnter(addonName, menuButtonFrame)
     end
   end
 
+  local theme = addon.ConfigTheme
+  local function AddThemedLine(text, r, g, b)
+    if theme and theme.ProcessText then
+      GameTooltip:AddLine(theme:ProcessText(text), r, g, b)
+    else
+      GameTooltip:AddLine(text, r, g, b)
+    end
+  end
+
   GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
-  GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
-  GameTooltip:AddLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
-  GameTooltip:AddLine(" ", 1, 1, 1)
+  if theme and theme.ProcessText then
+    GameTooltip:SetText(theme:ProcessText("|chighlight|NoobTacoUI|r"), 1, 1, 1)
+  else
+    GameTooltip:SetText("|chighlight|NoobTacoUI|r", 1, 1, 1)
+  end
+
+  AddThemedLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
+  AddThemedLine(" ", 1, 1, 1)
 
   if not enableCompartment then
-    GameTooltip:AddLine("|cFFBF616AAddon drawer integration is disabled|r", 1, 0.7, 0.7)
-    GameTooltip:AddLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
+    AddThemedLine("|cerror|Addon drawer integration is disabled|r", 1, 0.7, 0.7)
+    AddThemedLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
   else
-    GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+    AddThemedLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
     if AreCollectionsAvailable() then
-      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+      AddThemedLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
     end
   end
 
@@ -283,10 +299,10 @@ local function BuildSchemas()
         onChange = function(val)
           if not val then
             LibDBIcon:Show("NoobTacoUI")
-            print("|cFF16C3F2NoobTacoUI|r: Minimap button shown")
+            addon:Print("|chighlight|NoobTacoUI|r: Minimap button shown")
           else
             LibDBIcon:Hide("NoobTacoUI")
-            print("|cFF16C3F2NoobTacoUI|r: Minimap button hidden")
+            addon:Print("|chighlight|NoobTacoUI|r: Minimap button hidden")
           end
           if addon.ConfigState then addon.ConfigState:Commit() end
         end
@@ -312,10 +328,10 @@ local function BuildSchemas()
         default = true,
         onChange = function(val)
           if val then
-            print("|cFF16C3F2NoobTacoUI|r: Addon drawer integration |cFFA3BE8CEnabled|r")
+            addon:Print("|chighlight|NoobTacoUI|r: Addon drawer integration |csuccess|Enabled|r")
           else
-            print(
-              "|cFF16C3F2NoobTacoUI|r: Addon drawer integration |cFFBF616ADisabled|r - UI Reload required to fully hide entry.")
+            addon:Print(
+              "|chighlight|NoobTacoUI|r: Addon drawer integration |cerror|Disabled|r - UI Reload required to fully hide entry.")
           end
           if addon.ConfigState then addon.ConfigState:Commit() end
         end
@@ -423,7 +439,7 @@ local function BuildSchemas()
   local function SetUIScale(scale, label)
     SetCVar("useUiScale", "1")
     SetCVar("uiScale", scale)
-    print("|cFF16C3F2NoobTacoUI|r: UI Scale set to |cFFA3BE8C" .. scale .. "|r (" .. label .. ")")
+    addon:Print("|chighlight|NoobTacoUI|r: UI Scale set to |csuccess|" .. scale .. "|r (" .. label .. ")")
 
     StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
       text = "UI Scale changed to " ..
@@ -548,7 +564,7 @@ local function BuildSchemas()
             end
           end
 
-          print("|cFF16C3F2NoobTacoUI|r: Current UI Scale: |cFF88C0D0" .. scaleText .. "|r" .. mode)
+          addon:Print("|chighlight|NoobTacoUI|r: Current UI Scale: |cinfo|" .. scaleText .. "|r" .. mode)
         end
       }
     }
@@ -582,6 +598,10 @@ local function BuildSchemas()
   -- Addon Integration (Profiles)
   local integrationChildren = {
     {
+      type = "header",
+      label = "Addon Integration"
+    },
+    {
       type = "description",
       text =
       "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
@@ -607,10 +627,10 @@ local function BuildSchemas()
     end
   end
 
-  table.insert(integrationChildren, { type = "header", label = "STEP 2: AUTOMATED SETUP" })
+  -- table.insert(integrationChildren, { type = "header", label = " 2: AUTOMATED SETUPSTEP" })
   table.insert(integrationChildren, {
     type = "callout",
-    title = "Apply All Profiles",
+    title = "STEP 2: AUTOMATED SETUP",
     text =
     "Automatically apply profiles for all detected and supported addons. This will overwrite existing settings for these addons.",
     buttonText = "APPLY ALL PROFILES",
@@ -639,7 +659,7 @@ local function BuildSchemas()
                 count = count + 1
               end
             end
-            print("|cFF16C3F2NoobTacoUI|r: Bulk setup complete. " .. count .. " profiles processed.")
+            addon:Print("|chighlight|NoobTacoUI|r: Bulk setup complete. " .. (count or 0) .. " profiles processed.")
             ReloadUI()
           end
         end,
@@ -651,10 +671,11 @@ local function BuildSchemas()
     end
   })
 
-  table.insert(integrationChildren, { type = "header", label = "INDIVIDUAL ADDON PROFILES" })
+  table.insert(integrationChildren, { type = "header", label = "Individual Addon Profiles" })
   table.insert(integrationChildren, {
     type = "description",
-    text = "TIP: Use the cards below to manage specific addon profiles."
+    text =
+    "|chighlight|TIP:|r You can also update or apply profiles for each addon individually in the list below. Simply look for the |csuccess|[NEW]|r or |csuccess|[UPDATE]|r badges and click the addon name to expand its options."
   })
 
   if addon.AddonProfiles then
@@ -673,7 +694,7 @@ local function BuildSchemas()
     for _, profileKey in ipairs(displayOrder) do
       local profile = addon.AddonProfiles[profileKey]
       if profile then
-        local status = "|cFFBF616ANOT LOADED|r"
+        local status = "|cerror|NOT LOADED|r"
         local isLoaded = C_AddOns.IsAddOnLoaded(profile.name)
         if profileKey == "XIV_Databar" then
           if C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") then
@@ -684,11 +705,11 @@ local function BuildSchemas()
         if isLoaded then
           local currentVer = appliedProfiles[profileKey]
           if not currentVer then
-            status = "|cFFD08770NEW|r"
+            status = "|cwarning|NEW|r"
           elseif currentVer < profile.version then
-            status = "|cFFebcb8bUPDATE|r"
+            status = "|cwarning|UPDATE|r"
           else
-            status = "|cFFA3BE8CINSTALLED|r"
+            status = "|csuccess|INSTALLED|r"
           end
         end
 
@@ -696,7 +717,7 @@ local function BuildSchemas()
         table.insert(profileChildren, { type = "description", text = profile.description })
 
         if profile.instructions then
-          local instructText = "Instructions:\n"
+          local instructText = "|cheader|Instructions:|r\n"
           for i, line in ipairs(profile.instructions) do
             instructText = instructText .. i .. ". " .. line .. "\n"
           end
@@ -733,7 +754,7 @@ local function BuildSchemas()
         else
           table.insert(profileChildren, {
             type = "description",
-            text = "|cFFBF616AAddon is not loaded. Please enable it to apply the profile.|r"
+            text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
           })
         end
 
@@ -761,7 +782,7 @@ local function InitializeConfigUI()
 
   -- Check if library is available
   if not addon.ConfigLayout or not addon.ConfigRenderer then
-    print("|cFF16C3F2NoobTacoUI|r: |cFFFF0000Error:|r Configuration library (NoobTaco-Config) failed to load.")
+    addon:Print("|chighlight|NoobTacoUI|r: |cerror|Error:|r Configuration library (NoobTaco-Config) failed to load.")
     return
   end
   BuildSchemas()
@@ -883,6 +904,6 @@ end
 -- Collection Notifications shortcut (Placeholder until migrated)
 SLASH_NTCC1 = "/ntcc"
 SlashCmdList["NTCC"] = function()
-  print("|cFF16C3F2NoobTacoUI|r: Collection Notifications settings migration in progress...")
+  addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications settings migration in progress...")
   addon.ShowConfigMenu()
 end

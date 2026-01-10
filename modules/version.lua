@@ -2,8 +2,27 @@
 -- Author: NoobTaco
 -- Version: @project-version@
 
-local addonName = "NoobTacoUI"
+local addonName, addon = ...
+_G.NoobTacoUIAddon = addon    -- Maintain compatibility with other modules
 local addonVersion = "v1.4.3" -- Fallback version - should match latest git tag
+
+-- Bridge to NoobTaco-Config library
+local ConfigLib = LibStub("NoobTaco-Config-1.0", true)
+if ConfigLib then
+  addon.ConfigLayout = ConfigLib.Layout
+  addon.ConfigRenderer = ConfigLib.Renderer
+  addon.ConfigState = ConfigLib.State
+  addon.ConfigTheme = ConfigLib.Theme
+end
+
+-- Centralized themed print function
+function addon:Print(msg)
+  if self.ConfigTheme and self.ConfigTheme.ProcessText then
+    print(self.ConfigTheme:ProcessText(msg))
+  else
+    print(msg)
+  end
+end
 
 -- Create a frame to handle the slash command
 local versionFrame = CreateFrame("Frame")
@@ -30,10 +49,10 @@ end
 
 -- Function to display version information
 local function ShowVersion()
-  local coloredTitle = "|cFF16C3F2NoobTacoUI|r"
+  local coloredTitle = "|chighlight|NoobTacoUI|r"
   local currentVersion = GetCurrentVersion()
-  local message = string.format("%s version: |cFF00FF00%s|r", coloredTitle, currentVersion)
-  print(message)
+  local message = string.format("%s version: |csuccess|%s|r", coloredTitle, currentVersion)
+  addon:Print(message)
 end
 
 -- Register the slash command
@@ -49,20 +68,20 @@ SlashCmdList["NTVERSION"] = function(msg)
     if _G.NoobTacoUIAddon and _G.NoobTacoUIAddon.ShowConfigMenu then
       _G.NoobTacoUIAddon.ShowConfigMenu()
     else
-      print("|cFF16C3F2NoobTacoUI|r: Configuration menu not available")
+      addon:Print("|chighlight|NoobTacoUI|r: |cerror|Configuration menu not available|r")
     end
   elseif args == "" then
     -- Show help when no arguments provided
-    print("|cFF16C3F2NoobTacoUI|r commands:")
-    print("  |cFFFFFF00/nt version|r - Display addon version")
-    print("  |cFFFFFF00/nt ver|r - Display addon version (short)")
-    print("  |cFFFFFF00/nt v|r - Display addon version (shortest)")
-    print("  |cFFFFFF00/nt config|r - Open configuration menu")
-    print("  |cFFFFFF00/nt cfg|r - Open configuration menu (short)")
-    print("  |cFFFFFF00/ntcollection|r - Collection notification commands")
+    addon:Print("|chighlight|NoobTacoUI|r commands:")
+    addon:Print("  |cwarning|/nt version|r - Display addon version")
+    addon:Print("  |cwarning|/nt ver|r - Display addon version (short)")
+    addon:Print("  |cwarning|/nt v|r - Display addon version (shortest)")
+    addon:Print("  |cwarning|/nt config|r - Open configuration menu")
+    addon:Print("  |cwarning|/nt cfg|r - Open configuration menu (short)")
+    addon:Print("  |cwarning|/ntcollection|r - Collection notification commands")
   else
-    print("|cFFFF0000Unknown command:|r " .. args)
-    print("Type |cFFFFFF00/nt|r for available commands")
+    addon:Print("|cerror|Unknown command:|r " .. args)
+    addon:Print("Type |cwarning|/nt|r for available commands")
   end
 end
 

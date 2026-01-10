@@ -46,7 +46,7 @@ local function InitializeSettings()
 
   if not NoobTacoUIDB.CollectionNotifications then
     NoobTacoUIDB.CollectionNotifications = {}
-    print("|cFF16C3F2NoobTacoUI|r: Creating new CollectionNotifications settings table")
+    addon:Print("|chighlight|NoobTacoUI|r: Creating new CollectionNotifications settings table")
   end
 
   -- Set defaults for any missing values
@@ -74,7 +74,7 @@ local function InitializeSettings()
   end
 
   if #changedSettings > 0 then
-    print("|cFF16C3F2NoobTacoUI|r: Initialized default values for: " .. table.concat(changedSettings, ", "))
+    addon:Print("|chighlight|NoobTacoUI|r: Initialized default values for: " .. table.concat(changedSettings, ", "))
   end
 
   -- One-time migration of legacy default sounds to new dedicated collection sounds
@@ -95,7 +95,7 @@ local function InitializeSettings()
     end
     db.soundDefaultsMigratedV2 = true
     if #migrated > 0 then
-      print("|cFF16C3F2NoobTacoUI|r: Updated collection sound defaults (" .. table.concat(migrated, ", ") .. ")")
+      addon:Print("|chighlight|NoobTacoUI|r: Updated collection sound defaults (" .. table.concat(migrated, ", ") .. ")")
     end
   end
 end
@@ -171,7 +171,7 @@ local function OnNewPet(self, event, petGUID)
       if numCollected and numCollected <= 1 then
         PlayNotificationSound("soundPet")
         if GetSetting("showMessages") then
-          print(string.format("|cFF16C3F2NoobTacoUI|r: New pet species collected: |cFF00FF00%s|r", name))
+          addon:Print(string.format("|chighlight|NoobTacoUI|r: New pet species collected: |csuccess|%s|r", name))
         end
       end
     elseif speciesID then
@@ -186,7 +186,7 @@ local function OnNewPet(self, event, petGUID)
         if numCollected and numCollected <= 1 then
           PlayNotificationSound("soundPet")
           if GetSetting("showMessages") then
-            print(string.format("|cFF16C3F2NoobTacoUI|r: New pet species collected: |cFF00FF00%s|r", speciesName))
+            addon:Print(string.format("|chighlight|NoobTacoUI|r: New pet species collected: |csuccess|%s|r", speciesName))
           end
         end
       end
@@ -204,7 +204,7 @@ local function OnNewMount(self, event, mountID)
       -- Unlike pets which can have duplicates, mounts are unique - you either have it or you don't
       PlayNotificationSound("soundMount")
       if GetSetting("showMessages") then
-        print(string.format("|cFF16C3F2NoobTacoUI|r: New mount collected: |cFF00FF00%s|r", name))
+        addon:Print(string.format("|chighlight|NoobTacoUI|r: New mount collected: |csuccess|%s|r", name))
       end
     end
   end
@@ -220,7 +220,7 @@ local function OnNewToy(self, event, itemID)
       -- Similar to mounts, toys are unique - you either have it or you don't
       PlayNotificationSound("soundToy")
       if GetSetting("showMessages") then
-        print(string.format("|cFF16C3F2NoobTacoUI|r: New toy collected: |cFF00FF00%s|r", name))
+        addon:Print(string.format("|chighlight|NoobTacoUI|r: New toy collected: |csuccess|%s|r", name))
       end
     end
   end
@@ -250,11 +250,11 @@ local function OnTransmogCollected(self, event, sourceID)
       if sourceInfo and sourceInfo.itemID and sourceInfo.itemID > 0 then
         local itemName = C_Item.GetItemNameByID(sourceInfo.itemID)
         if itemName then
-          displayText = string.format("New transmog collected: |cFF00FF00%s|r", itemName)
+          displayText = string.format("New transmog collected: |csuccess|%s|r", itemName)
         end
       end
 
-      print(string.format("|cFF16C3F2NoobTacoUI|r: %s", displayText))
+      addon:Print(string.format("|chighlight|NoobTacoUI|r: %s", displayText))
     end
   end
 end
@@ -345,49 +345,49 @@ SlashCmdList["NTCOLLECTION"] = function(msg)
   local args = string.lower(msg or "")
 
   if args == "test" then
-    print("|cFF16C3F2NoobTacoUI|r Collection Notifications: Testing all sounds...")
+    addon:Print("|chighlight|NoobTacoUI|r Collection Notifications: Testing all sounds...")
     PlayNotificationSound("soundPet", true)
     C_Timer.After(1, function() PlayNotificationSound("soundMount", true) end)
     C_Timer.After(2, function() PlayNotificationSound("soundToy", true) end)
     C_Timer.After(3, function() PlayNotificationSound("soundTransmog", true) end)
   elseif args == "testpet" then
-    print("|cFF16C3F2NoobTacoUI|r Testing pet notification...")
+    addon:Print("|chighlight|NoobTacoUI|r Testing pet notification...")
     PlayNotificationSound("soundPet", true)
     if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New pet species collected: |cFF00FF00Test Pet|r")
+      addon:Print("|chighlight|NoobTacoUI|r: New pet species collected: |csuccess|Test Pet|r")
     end
   elseif args == "testmount" then
-    print("|cFF16C3F2NoobTacoUI|r Testing mount notification...")
+    addon:Print("|chighlight|NoobTacoUI|r Testing mount notification...")
     PlayNotificationSound("soundMount", true)
     if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New mount collected: |cFF00FF00Test Mount|r")
+      addon:Print("|chighlight|NoobTacoUI|r: New mount collected: |csuccess|Test Mount|r")
     end
   elseif args == "testtoy" then
-    print("|cFF16C3F2NoobTacoUI|r Testing toy notification...")
+    addon:Print("|chighlight|NoobTacoUI|r Testing toy notification...")
     PlayNotificationSound("soundToy", true)
     if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New toy collected: |cFF00FF00Test Toy|r")
+      addon:Print("|chighlight|NoobTacoUI|r: New toy collected: |csuccess|Test Toy|r")
     end
   elseif args == "testtransmog" then
-    print("|cFF16C3F2NoobTacoUI|r Testing transmog notification...")
+    addon:Print("|chighlight|NoobTacoUI|r Testing transmog notification...")
     PlayNotificationSound("soundTransmog", true)
     if GetSetting("showMessages") then
-      print("|cFF16C3F2NoobTacoUI|r: New transmog collected: |cFF00FF00Test Transmog Item|r")
+      addon:Print("|chighlight|NoobTacoUI|r: New transmog collected: |csuccess|Test Transmog Item|r")
     end
   elseif args == "status" then
-    print("|cFF16C3F2NoobTacoUI|r Collection Notifications Status:")
-    print("  Enabled: " .. (GetSetting("enabled") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
-    print("  Pets: " .. (GetSetting("newPet") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
-    print("  Mounts: " .. (GetSetting("newMount") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
-    print("  Toys: " .. (GetSetting("newToy") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
-    print("  Transmog: " .. (GetSetting("newTransmog") and "|cFF00FF00Yes|r" or "|cFFFF0000No|r"))
+    addon:Print("|chighlight|NoobTacoUI|r Collection Notifications Status:")
+    addon:Print("  Enabled: " .. (GetSetting("enabled") and "|csuccess|Yes|r" or "|cerror|No|r"))
+    addon:Print("  Pets: " .. (GetSetting("newPet") and "|csuccess|Yes|r" or "|cerror|No|r"))
+    addon:Print("  Mounts: " .. (GetSetting("newMount") and "|csuccess|Yes|r" or "|cerror|No|r"))
+    addon:Print("  Toys: " .. (GetSetting("newToy") and "|csuccess|Yes|r" or "|cerror|No|r"))
+    addon:Print("  Transmog: " .. (GetSetting("newTransmog") and "|csuccess|Yes|r" or "|cerror|No|r"))
   else
-    print("|cFF16C3F2NoobTacoUI|r Collection Notifications commands:")
-    print("  |cFFFFFF00/ntcollection test|r - Test all notification sounds")
-    print("  |cFFFFFF00/ntcollection testpet|r - Test pet notification")
-    print("  |cFFFFFF00/ntcollection testmount|r - Test mount notification")
-    print("  |cFFFFFF00/ntcollection testtoy|r - Test toy notification")
-    print("  |cFFFFFF00/ntcollection testtransmog|r - Test transmog notification")
-    print("  |cFFFFFF00/ntcollection status|r - Show current settings")
+    addon:Print("|chighlight|NoobTacoUI|r Collection Notifications commands:")
+    addon:Print("  |cwarning|/ntcollection test|r - Test all notification sounds")
+    addon:Print("  |cwarning|/ntcollection testpet|r - Test pet notification")
+    addon:Print("  |cwarning|/ntcollection testmount|r - Test mount notification")
+    addon:Print("  |cwarning|/ntcollection testtoy|r - Test toy notification")
+    addon:Print("  |cwarning|/ntcollection testtransmog|r - Test transmog notification")
+    addon:Print("  |cwarning|/ntcollection status|r - Show current settings")
   end
 end

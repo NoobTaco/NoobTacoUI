@@ -20,7 +20,7 @@ addon.AddonProfiles.EditMode = {
   downloadUrl = "N/A",
   command = "Open Edit Mode",
   instructions = {
-    "Click the |cFFEBCB8BApply Profile|r button below.",
+    "Click the |cwarning|Apply Profile|r button below.",
     "Copy the profile string (CTRL+C) from the popup.",
     "Open WoW Edit Mode (ESC > Edit Mode).",
     "Click Import from the layout dropdown and paste the string."
@@ -42,7 +42,7 @@ addon.AddonProfiles.EditMode = {
     end
 
     if not profileString or profileString == "" then
-      print("|cFF16C3F2NoobTacoUI|r: Profile string is empty.")
+      addon:Print("|chighlight|NoobTacoUI|r: Profile string is empty.")
       return
     end
 
@@ -72,11 +72,11 @@ addon.AddonProfiles.EditMode = {
     }
     StaticPopup_Show("NOOBTACOUI_EDITMODE_COPY")
 
-    print("|cFF16C3F2NoobTacoUI|r: Detected " .. clientName .. " client.")
-    print("|cFF16C3F2NoobTacoUI|r: Please Copy (Ctrl+C) the string from the popup window.")
-    print("|cFF16C3F2NoobTacoUI|r: 1. Open Edit Mode (ESC > Edit Mode)")
-    print("|cFF16C3F2NoobTacoUI|r: 2. Click Layout Dropdown > Import")
-    print("|cFF16C3F2NoobTacoUI|r: 3. Paste (Ctrl+V) and Import")
+    addon:Print("|chighlight|NoobTacoUI|r: Detected " .. clientName .. " client.")
+    addon:Print("|chighlight|NoobTacoUI|r: Please Copy (Ctrl+C) the string from the popup window.")
+    addon:Print("|chighlight|NoobTacoUI|r: 1. Open Edit Mode (ESC > Edit Mode)")
+    addon:Print("|chighlight|NoobTacoUI|r: 2. Click Layout Dropdown > Import")
+    addon:Print("|chighlight|NoobTacoUI|r: 3. Paste (Ctrl+V) and Import")
   end,
   profileStringRetail =
   "2 43 0 0 0 4 4 UIParent 0.0 -480.0 -1 ##$$%/&$'%)$+$,$ 0 1 0 6 0 MainActionBar 0.0 4.0 -1 ##$$%/&$'%(#,$ 0 2 0 8 2 MultiBarBottomLeft 0.0 4.0 -1 ##$$%/&$'%(#,$ 0 3 0 1 1 UIParent -681.3 -242.0 -1 ##$$%/&%'%(#,# 0 4 0 7 7 UIParent 896.1 242.0 -1 ##$$%/&$'%(&,# 0 5 0 4 4 UIParent 161.7 168.6 -1 ##$$%/&('%(#,$ 0 6 0 4 4 UIParent 154.1 168.3 -1 ##$$%/&('%(#,$ 0 7 0 4 4 UIParent 154.6 165.5 -1 ##$$%/&('%(#,$ 0 10 0 6 0 MultiBarBottomRight 0.0 4.0 -1 ##$$&&'% 0 11 0 3 3 UIParent 6.3 -291.1 -1 ##$$&''%,# 0 12 0 4 4 UIParent -240.0 -420.0 -1 ##$$&('% 1 -1 0 1 1 UIParent -0.0 -902.8 -1 ##$#%# 2 -1 0 2 2 UIParent 0.0 0.0 -1 ##$#%( 3 0 0 1 1 UIParent -258.0 -797.0 -1 $#3# 3 1 0 0 0 UIParent 1102.0 -797.0 -1 %$3# 3 2 0 7 7 UIParent 273.5 68.0 -1 %#&#3# 3 3 0 0 0 UIParent 502.0 -422.0 -1 '$(#)#-;.=/#1#3#5$6(7-7$ 3 4 0 0 0 UIParent 19.4 -515.2 -1 ,%-'.//#0#1$2(5#6(7-7$ 3 5 0 2 2 UIParent -296.4 -242.4 -1 &$*#3' 3 6 0 2 2 UIParent -11.4 -460.4 -1 -#.#/#4&5#6(7-7$ 3 7 1 4 4 UIParent 0.0 0.0 -1 3# 4 -1 0 7 7 UIParent 0.0 402.0 -1 # 5 -1 0 7 7 UIParent 253.0 362.0 -1 # 6 0 1 2 0 MinimapCluster -10.0 -10.0 -1 ##$#%#&.(()( 6 1 0 0 0 UIParent 623.0 -472.0 -1 ##$$%#'((()(-$ 7 -1 0 1 1 UIParent 7.0 -162.0 -1 # 8 -1 0 4 4 UIParent -636.5 -346.3 -1 #($%%%&$ 9 -1 0 7 7 UIParent -242.0 62.0 -1 # 10 -1 1 0 0 UIParent 16.0 -116.0 -1 # 11 -1 0 1 1 UIParent 533.0 -682.0 -1 # 12 -1 0 1 1 UIParent 828.0 -242.0 -1 #@$#%# 13 -1 0 1 1 UIParent -930.3 -2.0 -1 ##$#%&&, 14 -1 0 7 7 UIParent -515.2 1041.6 -1 ##$#%$ 15 0 0 7 7 UIParent 0.0 22.0 -1 # 15 1 0 1 1 UIParent 0.0 -1062.0 -1 # 16 -1 0 7 7 UIParent -239.0 53.6 -1 #( 17 -1 1 1 1 UIParent 0.0 -100.0 -1 ## 18 -1 1 5 5 UIParent 0.0 0.0 -1 #- 19 -1 0 4 4 UIParent 0.0 415.8 -1 ## 20 0 0 0 0 UIParent 815.0 -821.0 -1 ##$)%$&('%(-($)#+$,$-$ 20 1 0 0 0 UIParent 816.0 -874.0 -1 ##$/%$&&''(-($)#+$,$-$ 20 2 0 0 0 UIParent 822.3 -751.0 -1 ##$$%$&''%(-($)$+$,$-$ 20 3 0 8 2 PlayerFrame -20.0 -12.0 -1 #$$$%#&''#(-($)$*#+$,$-$.P",
@@ -100,8 +100,8 @@ addon.AddonProfiles.BetterBlizzFrames = {
   command = "/bbf",
   instructions = {
     "Click the button below to copy the profile string",
-    "Type |cFFEBCB8B/bbf|r in chat to open BetterBlizzFrames config",
-    "Navigate to the |cFFEBCB8BImport Profile|r section",
+    "Type |cwarning|/bbf|r in chat to open BetterBlizzFrames config",
+    "Navigate to the |cwarning|Import Profile|r section",
     "Paste the profile string and import"
   },
   isCustomApply = true,
@@ -109,14 +109,14 @@ addon.AddonProfiles.BetterBlizzFrames = {
     -- Check if BetterBlizzFrames is loaded
     if not C_AddOns.IsAddOnLoaded("BetterBlizzFrames") then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames not loaded.")
+        addon:Print("|chighlight|NoobTacoUI|r: BetterBlizzFrames not loaded.")
       end
       return
     end
 
     if not BBF or not BBF.ImportProfile then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: BBF global or ImportProfile function missing.")
+        addon:Print("|chighlight|NoobTacoUI|r: BBF global or ImportProfile function missing.")
       end
       return
     end
@@ -131,14 +131,14 @@ addon.AddonProfiles.BetterBlizzFrames = {
 
     if err then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Error importing BBF profile: " .. tostring(err))
+        addon:Print("|chighlight|NoobTacoUI|r: Error importing BBF profile: " .. tostring(err))
       end
       return
     end
 
     if not data then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to decode BBF profile data.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to decode BBF profile data.")
       end
       return
     end
@@ -153,7 +153,7 @@ addon.AddonProfiles.BetterBlizzFrames = {
     end
 
     if not isBulk then
-      print("|cFF16C3F2NoobTacoUI|r: BetterBlizzFrames profile applied successfully.")
+      addon:Print("|chighlight|NoobTacoUI|r: BetterBlizzFrames profile applied successfully.")
 
       StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_BBF"] = {
         text = "BetterBlizzFrames profile applied.\nA reload is required for changes to take effect.\nReload now?",
@@ -190,8 +190,8 @@ addon.AddonProfiles.Platynator = {
   command = "/platynator",
   instructions = {
     "Click the button below to copy the profile string",
-    "Type |cFFEBCB8B/platynator|r in chat to open Platynator config",
-    "Navigate to the |cFFEBCB8BImport Profile|r section",
+    "Type |cwarning|/platynator|r in chat to open Platynator config",
+    "Navigate to the |cwarning|Import Profile|r section",
     "Paste the profile string and import"
   },
   isCustomApply = true,
@@ -199,14 +199,14 @@ addon.AddonProfiles.Platynator = {
     -- Check if Platynator is loaded
     if not C_AddOns.IsAddOnLoaded("Platynator") then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Platynator not loaded.")
+        addon:Print("|chighlight|NoobTacoUI|r: Platynator not loaded.")
       end
       return
     end
 
     if not C_EncodingUtil then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: C_EncodingUtil not available (requires Retail).")
+        addon:Print("|chighlight|NoobTacoUI|r: C_EncodingUtil not available (requires Retail).")
       end
       return
     end
@@ -219,7 +219,7 @@ addon.AddonProfiles.Platynator = {
     local success, import = pcall(C_EncodingUtil.DeserializeJSON, profileString)
     if not success or not import then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize Platynator profile string.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to deserialize Platynator profile string.")
       end
       return
     end
@@ -283,7 +283,7 @@ addon.AddonProfiles.Platynator = {
     end
 
     if not isBulk then
-      print("|cFF16C3F2NoobTacoUI|r: Platynator profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+      addon:Print("|chighlight|NoobTacoUI|r: Platynator profile |cwarning|NoobTacoUI|r applied successfully.")
 
       StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_PLATYNATOR"] = {
         text = "Platynator profile applied.\nA reload is required for changes to take effect.\nReload now?",
@@ -321,8 +321,8 @@ addon.AddonProfiles.CooldownManagerTweaks = {
   command = "/cmt",
   instructions = {
     "Click the button below to copy the profile string",
-    "Type |cFFEBCB8B/cmt|r in chat to open Cooldown Manager Tweaks config",
-    "Navigate to the |cFFEBCB8BProfiles|r section",
+    "Type |cwarning|/cmt|r in chat to open Cooldown Manager Tweaks config",
+    "Navigate to the |cwarning|Profiles|r section",
     "Paste the profile string and import"
   },
   profileString =
@@ -345,8 +345,8 @@ addon.AddonProfiles.zBarButtonBG = {
   command = "Options > Addons",
   instructions = {
     "Click the button below to copy the profile string",
-    "Press |cFFEBCB8BEscape|r and go to |cFFEBCB8BOptions > Addons|r",
-    "Select |cFFEBCB8BzBarButtonBG|r and go to |cFFEBCB8BProfiles|r",
+    "Press |cwarning|Escape|r and go to |cwarning|Options > Addons|r",
+    "Select |cwarning|zBarButtonBG|r and go to |cwarning|Profiles|r",
     "Paste the profile string and import"
   },
   isCustomApply = true,
@@ -354,7 +354,7 @@ addon.AddonProfiles.zBarButtonBG = {
     -- Check if dependencies are loaded
     if not zBarButtonBGAce or not zBarButtonBGAce.db then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: zBarButtonBG not fully loaded.")
+        addon:Print("|chighlight|NoobTacoUI|r: zBarButtonBG not fully loaded.")
       end
       return
     end
@@ -364,7 +364,7 @@ addon.AddonProfiles.zBarButtonBG = {
 
     if not LibDeflate or not AceSerializer then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/AceSerializer) not found.")
+        addon:Print("|chighlight|NoobTacoUI|r: Required libraries (LibDeflate/AceSerializer) not found.")
       end
       return
     end
@@ -377,7 +377,7 @@ addon.AddonProfiles.zBarButtonBG = {
     local decoded = LibDeflate:DecodeForPrint(profileString)
     if not decoded then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to decode profile string.")
       end
       return
     end
@@ -385,7 +385,7 @@ addon.AddonProfiles.zBarButtonBG = {
     local decompressed = LibDeflate:DecompressDeflate(decoded)
     if not decompressed then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to decompress profile string.")
       end
       return
     end
@@ -393,7 +393,7 @@ addon.AddonProfiles.zBarButtonBG = {
     local success, profileTable = AceSerializer:Deserialize(decompressed)
     if not success or not profileTable then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to deserialize profile data.")
       end
       return
     end
@@ -428,7 +428,7 @@ addon.AddonProfiles.zBarButtonBG = {
 
     if not isBulk then
       print(
-        "|cFF16C3F2NoobTacoUI|r: zBarButtonBG profile |cFFEBCB8BNoobTacoUI|r applied successfully.")
+        "|cFF16C3F2NoobTacoUI|r: zBarButtonBG profile |cwarning|NoobTacoUI|r applied successfully.")
 
       StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
         text =
@@ -465,8 +465,8 @@ addon.AddonProfiles.XIV_Databar = {
   downloadUrl = "https://www.curseforge.com/wow/addons/xiv-databar-continued",
   command = "/xivbar config",
   instructions = {
-    "Click the |cFFEBCB8BApply Profile|r button below.",
-    "Type |cFFEBCB8B/xivbar config|r in chat to open XIV_Databar config if needed.",
+    "Click the |cwarning|Apply Profile|r button below.",
+    "Type |cwarning|/xivbar config|r in chat to open XIV_Databar config if needed.",
     "The profile will be imported and applied automatically."
   },
   isCustomApply = true,
@@ -483,7 +483,7 @@ addon.AddonProfiles.XIV_Databar = {
 
     if xivFolder == "" then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: XIV_Databar Continued not loaded.")
+        addon:Print("|chighlight|NoobTacoUI|r: XIV_Databar Continued not loaded.")
       end
       return
     end
@@ -492,7 +492,7 @@ addon.AddonProfiles.XIV_Databar = {
     local XIVBar = LibStub("AceAddon-3.0"):GetAddon(xivFolder, true)
     if not XIVBar or not XIVBar.ImportProfile then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: XIVBar addon object or ImportProfile function missing.")
+        addon:Print("|chighlight|NoobTacoUI|r: XIVBar addon object or ImportProfile function missing.")
       end
       return
     end
@@ -531,15 +531,15 @@ addon.AddonProfiles.XIV_Databar = {
       }
 
       if success and result then
-        print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied successfully.")
+        addon:Print("|chighlight|NoobTacoUI|r: XIV_Databar profile applied successfully.")
         StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
       elseif not success then
         -- If it crashed (like the talent module error), settings are likely still partially changed
         -- Proceed with reload prompt as it's the only way for the user to recover
-        print("|cFF16C3F2NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
+        addon:Print("|chighlight|NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
         StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
       else
-        print("|cFF16C3F2NoobTacoUI|r: Failed to import XIV_Databar profile (invalid data).")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to import XIV_Databar profile (invalid data).")
       end
     end
   end,
@@ -565,15 +565,15 @@ addon.AddonProfiles.SenseiClassResourceBar = {
   command = "/scrb",
   instructions = {
     "Ensure you have an active Edit Mode profile selected.",
-    "Click the |cFFEBCB8BApply Profile|r button below.",
-    "Reload your UI (|cFFEBCB8B/reload|r) for changes to take effect."
+    "Click the |cwarning|Apply Profile|r button below.",
+    "Reload your UI (|cwarning|/reload|r) for changes to take effect."
   },
   isCustomApply = true,
   applyFunction = function(isBulk)
     -- Check if Sensei is loaded
     if not C_AddOns.IsAddOnLoaded("SenseiClassResourceBar") then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Sensei Class Resource Bar not loaded.")
+        addon:Print("|chighlight|NoobTacoUI|r: Sensei Class Resource Bar not loaded.")
       end
       return
     end
@@ -583,7 +583,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
 
     if not LibDeflate or not LibSerialize then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Required libraries (LibDeflate/LibSerialize) not found.")
+        addon:Print("|chighlight|NoobTacoUI|r: Required libraries (LibDeflate/LibSerialize) not found.")
       end
       return
     end
@@ -596,7 +596,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     local prefix, version, encoded = profileString:match("^([^:]+):(%d+):(.+)$")
     if not encoded or prefix ~= "SenseiClassResourceBar" then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Invalid Sensei profile string format.")
+        addon:Print("|chighlight|NoobTacoUI|r: Invalid Sensei profile string format.")
       end
       return
     end
@@ -605,7 +605,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     local decoded = LibDeflate:DecodeForPrint(encoded)
     if not decoded then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to decode profile string.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to decode profile string.")
       end
       return
     end
@@ -613,7 +613,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     local decompressed = LibDeflate:DecompressDeflate(decoded)
     if not decompressed then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to decompress profile string.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to decompress profile string.")
       end
       return
     end
@@ -621,7 +621,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     local success, data = LibSerialize:Deserialize(decompressed)
     if not success or not data then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Failed to deserialize profile data.")
+        addon:Print("|chighlight|NoobTacoUI|r: Failed to deserialize profile data.")
       end
       return
     end
@@ -665,7 +665,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     if not layoutName then
       layoutName = "Default"
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Edit Mode layout not detected. Using 'Default'.")
+        addon:Print("|chighlight|NoobTacoUI|r: Edit Mode layout not detected. Using 'Default'.")
       end
     end
 
@@ -693,7 +693,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
     end
 
     if not isBulk then
-      print("|cFF16C3F2NoobTacoUI|r: Sensei profile applied for layout: |cFFEBCB8B" .. layoutName .. "|r")
+      addon:Print("|chighlight|NoobTacoUI|r: Sensei profile applied for layout: |cwarning|" .. layoutName .. "|r")
 
       StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_SENSEI"] = {
         text =
@@ -730,7 +730,7 @@ addon.AddonProfiles.Details = {
   downloadUrl = "https://www.curseforge.com/wow/addons/details",
   command = "/details",
   instructions = {
-    "Click the |cFFEBCB8BApply Profile|r button below.",
+    "Click the |cwarning|Apply Profile|r button below.",
     "Details! will import the profile and create a new one named 'NoobTacoUI'.",
     "A reload may be required for all settings to take effect."
   },
@@ -739,7 +739,7 @@ addon.AddonProfiles.Details = {
     -- Check if Details is loaded
     if not C_AddOns.IsAddOnLoaded("Details") then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Details! Damage Meter not loaded.")
+        addon:Print("|chighlight|NoobTacoUI|r: Details! Damage Meter not loaded.")
       end
       return
     end
@@ -748,7 +748,7 @@ addon.AddonProfiles.Details = {
     local DetailsAddon = _G.Details or _G._detalhes
     if not DetailsAddon then
       if not isBulk then
-        print("|cFF16C3F2NoobTacoUI|r: Details! engine not found.")
+        addon:Print("|chighlight|NoobTacoUI|r: Details! engine not found.")
       end
       return
     end
@@ -770,7 +770,7 @@ addon.AddonProfiles.Details = {
 
     if not isBulk then
       if success then
-        print("|cFF16C3F2NoobTacoUI|r: Details! profile 'NoobTacoUI' applied successfully.")
+        addon:Print("|chighlight|NoobTacoUI|r: Details! profile 'NoobTacoUI' applied successfully.")
 
         StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_DETAILS"] = {
           text = "Details! profile applied.\nA reload is required for changes to take effect.\nReload now?",
@@ -810,7 +810,7 @@ addon.AddonProfiles.Details = {
           preferredIndex = 3,
         }
         StaticPopup_Show("NOOBTACOUI_DETAILS_COPY")
-        print("|cFF16C3F2NoobTacoUI|r: Please Copy (Ctrl+C) the string and import manually in Details! options.")
+        addon:Print("|chighlight|NoobTacoUI|r: Please Copy (Ctrl+C) the string and import manually in Details! options.")
       end
     end
   end,
@@ -863,7 +863,7 @@ function addon.ApplyAllProfiles()
   end
 
   if appliedCount > 0 then
-    print("|cFF16C3F2NoobTacoUI|r: Successfully applied |cFF00FF00" .. appliedCount .. "|r addon profiles.")
+    addon:Print("|chighlight|NoobTacoUI|r: Successfully applied |csuccess|" .. appliedCount .. "|r addon profiles.")
 
     -- Show a single consolidated reload prompt
     StaticPopupDialogs["NOOBTACOUI_RELOAD_UI_BULK"] = {
@@ -880,6 +880,6 @@ function addon.ApplyAllProfiles()
     }
     StaticPopup_Show("NOOBTACOUI_RELOAD_UI_BULK")
   else
-    print("|cFF16C3F2NoobTacoUI|r: No loaded addon profiles found to apply.")
+    addon:Print("|chighlight|NoobTacoUI|r: No loaded addon profiles found to apply.")
   end
 end
