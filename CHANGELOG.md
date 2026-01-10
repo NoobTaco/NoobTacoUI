@@ -1,6 +1,9 @@
 # NoobTacoUI
 
 ## [Unreleased]
+- **Library Update**: Updated `NoobTaco-Config` embedded library to v1.0.3 to ensure compatibility and prevent version conflicts.
+
+
 - **Themed Chat & Tooltips**: Centralized chat printing via `addon:Print` and updated Minimap/Compartment tooltips to use the `NoobTaco-Config` theme system for dynamic token resolution.
 - **Theme Migration**: Successfully transitioned the default UI color theme from "Nord" to "NoobTaco" across the entire addon suite and documentation.
 - **Improved Settings Persistence**: Implemented `NoobTaco-Config:Commit()` in all General section toggles and sliders to ensure settings are saved immediately.
