@@ -2,12 +2,18 @@
 
 ## [Unreleased]
 - **Theme Migration**: Successfully transitioned the default UI color theme from "Nord" to "NoobTaco" across the entire addon suite and documentation.
+- **Improved Settings Persistence**: Implemented `NoobTaco-Config:Commit()` in all General section toggles and sliders to ensure settings are saved immediately.
+- **Nested Path Support**: Synchronized embedded library with standalone fixes for nested database pathing.
 
 ### 🎯 Major Features Added
 
 #### New Configuration System (Stage 1) 🆕
 
 - **New Library Integration**: Integrated `NoobTaco-Config` library for robust, modular configuration menus.
+- **General Settings**: Completed the "General Settings" section using the new library:
+    - **Minimap Button Toggle**: Interactive toggle for showing/hiding the minimap button.
+    - **Minimap Button Angle**: New slider to adjust the position of the minimap button.
+    - **Addon Compartment Toggle**: Control for the Blizzard Addon Drawer integration.
 - **Blizzard Settings Integration**: The configuration menu now integrates directly into the Blizzard Interface Options panel (Retail/Midnight).
 - **About Page**: Implemented the "About" page using the new schema-based system, featuring the addon logo, version, description, and links.
 - **Slash Commands**: Updated `/ntconfig` and related commands to open the new configuration panel.

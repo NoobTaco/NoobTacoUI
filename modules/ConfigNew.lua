@@ -40,6 +40,63 @@ local function IsCata()
   return tocVersion >= 40000 and tocVersion < 50000
 end
 
+local function IsMoP()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= 50000 and tocVersion < 60000
+end
+
+local function IsWoD()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= 60000 and tocVersion < 70000
+end
+
+local function IsLegion()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= 70000 and tocVersion < 80000
+end
+
+local function IsBfA()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= 80000 and tocVersion < 90000
+end
+
+local function IsShadowlands()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= 90000 and tocVersion < 100000
+end
+
+local function IsDragonflight()
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= 100000 and tocVersion < 110000
+end
+
+local function AreCollectionsAvailable()
+  return IsMoP() or IsWoD() or IsLegion() or IsBfA() or IsShadowlands() or IsDragonflight() or IsRetail()
+end
+
+local function GetExpansionName()
+  if IsClassicEra() then
+    return "Classic Era"
+  elseif IsCata() then
+    return "Cataclysm"
+  elseif IsMoP() then
+    return "Mists of Pandaria"
+  elseif IsWoD() then
+    return "Warlords of Draenor"
+  elseif IsLegion() then
+    return "Legion"
+  elseif IsBfA() then
+    return "Battle for Azeroth"
+  elseif IsShadowlands() then
+    return "Shadowlands"
+  elseif IsDragonflight() then
+    return "Dragonflight"
+  elseif IsRetail() then
+    return "Retail"
+  end
+  return "Unknown"
+end
+
 local function IsSoD()
   local C_Seasons = _G.C_Seasons
   return C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery)
@@ -63,9 +120,10 @@ local function InitializeDatabase()
   -- Initialize General Settings if needed
   if not NoobTacoUIDB.GeneralSettings then
     NoobTacoUIDB.GeneralSettings = {
-      showMinimapButton = true,
+      showMinimapButton = true, -- For legacy compatibility
+      hide = false,             -- Modern key for LibDBIcon
       enableAddonCompartment = true,
-      minimapButtonAngle = 225,
+      minimapPos = 225,
       AppliedProfiles = {},
     }
   end
@@ -121,6 +179,73 @@ local function InitializeMinimapButton()
 end
 
 -------------------------------------------------------------------------------
+-- Global functions for AddonCompartment integration
+-------------------------------------------------------------------------------
+function NoobTacoUI_OnAddonCompartmentClick(addonName, buttonName)
+  -- Check if addon compartment is enabled in settings
+  local enableCompartment = true -- Default to enabled
+  if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings then
+    local setting = NoobTacoUIDB.GeneralSettings.enableAddonCompartment
+    if setting ~= nil then
+      enableCompartment = setting
+    end
+  end
+
+  if not enableCompartment then
+    print("|cFF16C3F2NoobTacoUI|r: |cFFBF616AAddon drawer integration is disabled|r - Enable in General Settings")
+    return
+  end
+
+  if buttonName == "LeftButton" then
+    addon.ShowConfigMenu()
+  elseif buttonName == "RightButton" and AreCollectionsAvailable() then
+    -- Toggle collection notifications (only available in retail)
+    local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
+    if enabled then
+      NoobTacoUIDB.CollectionNotifications.enabled = false
+      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFBF616ADisabled|r")
+    else
+      NoobTacoUIDB.CollectionNotifications.enabled = true
+      print("|cFF16C3F2NoobTacoUI|r: Collection Notifications |cFFA3BE8CEnabled|r")
+    end
+  elseif buttonName == "RightButton" and not AreCollectionsAvailable() then
+    print("|cFF16C3F2NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
+  end
+end
+
+function NoobTacoUI_OnAddonCompartmentEnter(addonName, menuButtonFrame)
+  -- Check if addon compartment is enabled in settings
+  local enableCompartment = true -- Default to enabled
+  if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings then
+    local setting = NoobTacoUIDB.GeneralSettings.enableAddonCompartment
+    if setting ~= nil then
+      enableCompartment = setting
+    end
+  end
+
+  GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
+  GameTooltip:SetText("|cFF16C3F2NoobTacoUI|r", 1, 1, 1)
+  GameTooltip:AddLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
+  GameTooltip:AddLine(" ", 1, 1, 1)
+
+  if not enableCompartment then
+    GameTooltip:AddLine("|cFFBF616AAddon drawer integration is disabled|r", 1, 0.7, 0.7)
+    GameTooltip:AddLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
+  else
+    GameTooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+    if AreCollectionsAvailable() then
+      GameTooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
+    end
+  end
+
+  GameTooltip:Show()
+end
+
+function NoobTacoUI_OnAddonCompartmentLeave(addonName, menuButtonFrame)
+  GameTooltip:Hide()
+end
+
+-------------------------------------------------------------------------------
 -- Schema Definitions
 -------------------------------------------------------------------------------
 
@@ -154,12 +279,29 @@ local function BuildSchemas()
         label = "Show Minimap Button",
         invertValue = true,
         id = "GeneralSettings.hide",
-        default = true,
+        default = false,
         onChange = function(val)
-          if val then
+          if not val then
             LibDBIcon:Show("NoobTacoUI")
+            print("|cFF16C3F2NoobTacoUI|r: Minimap button shown")
           else
             LibDBIcon:Hide("NoobTacoUI")
+            print("|cFF16C3F2NoobTacoUI|r: Minimap button hidden")
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "slider",
+        label = "Minimap Button Angle",
+        id = "GeneralSettings.minimapPos",
+        min = 0,
+        max = 360,
+        step = 1,
+        default = 225,
+        onChange = function(val)
+          if LibDBIcon:IsRegistered("NoobTacoUI") then
+            LibDBIcon:Refresh("NoobTacoUI", NoobTacoUIDB.GeneralSettings)
           end
         end
       },
@@ -168,10 +310,20 @@ local function BuildSchemas()
         label = "Enable Addon Compartment",
         id = "GeneralSettings.enableAddonCompartment",
         default = true,
+        onChange = function(val)
+          if val then
+            print("|cFF16C3F2NoobTacoUI|r: Addon drawer integration |cFFA3BE8CEnabled|r")
+          else
+            print(
+              "|cFF16C3F2NoobTacoUI|r: Addon drawer integration |cFFBF616ADisabled|r - UI Reload required to fully hide entry.")
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
       },
-      { type = "description", text = "|csuccess|Minimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle. Changes take effect immediately." },
-      { type = "description", text = "|cerror|Minimap Button Angle:|r Adjusts the angle of the minimap button. Changes take effect immediately." },
-      { type = "alert",       severity = "warning",                                                                                                                                                  text = "WARNING: Changing Addon Compartment settings requires a UI reload." },
+      { type = "description", text = "|cheader|Minimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle. Changes take effect immediately." },
+      { type = "description", text = "|cheader|Minimap Button Angle:|r Adjusts the angle of the minimap button. Changes take effect immediately." },
+      { type = "description", text = "|cheader|Addon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu. When disabled, the drawer entry will show but be non-functional until re-enabled." },
+      { type = "alert",       severity = "info",                                                                                                                                                                                                             text = "WARNING: Changing Addon Compartment settings requires a UI reload." },
       {
         type = "button",
         label = "Reload UI",
