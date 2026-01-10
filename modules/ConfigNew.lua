@@ -146,7 +146,9 @@ local function BuildSchemas()
   addon.ConfigSchemas.General = {
     type = "group",
     children = {
-      { type = "header", label = "General Settings" },
+      { type = "header",      label = "General Settings" },
+      { type = "description", text = "General settings for NoobTacoUI." },
+      { type = "header",      label = "Minimap & Interface" },
       {
         type = "checkbox",
         label = "Show Minimap Button",
@@ -167,10 +169,9 @@ local function BuildSchemas()
         id = "GeneralSettings.enableAddonCompartment",
         default = true,
       },
-      {
-        type = "description",
-        text = "|cFFFF0000Note:|r Changing Addon Compartment settings requires a UI reload."
-      },
+      { type = "description", text = "|csuccess|Minimap Button:|r Shows a small button on your minimap for quick access to configuration and notifications toggle. Changes take effect immediately." },
+      { type = "description", text = "|cerror|Minimap Button Angle:|r Adjusts the angle of the minimap button. Changes take effect immediately." },
+      { type = "alert",       severity = "warning",                                                                                                                                                  text = "WARNING: Changing Addon Compartment settings requires a UI reload." },
       {
         type = "button",
         label = "Reload UI",
@@ -379,17 +380,22 @@ local function BuildSchemas()
     children = {
       {
         type = "about",
-        title = "About NoobTacoUI",
         icon = addon.UIAssets and addon.UIAssets.Logo or "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
+        title = "NoobTacoUI",
         version = "Version " ..
             (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "1.4.3"),
         description =
-        "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern NoobTaco-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.",
+        "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern NoobTaco-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.\n\nCreated by NoobTaco Development Team.",
         links = {
-          { label = "GitHub",     url = "https://github.com/NoobTaco/NoobTacoUI" },
-          { label = "CurseForge", url = "https://www.curseforge.com/wow/addons/noobtacoui" },
+          { label = "Discord", url = "https://discord.gg/noobtaco" },
+          { label = "Patreon", url = "https://patreon.com/noobtaco" },
+          { label = "GitHub",  url = "https://github.com/noobtaco/config" },
         }
-      }
+      },
+      {
+        type = "description",
+        text = "Receive audio notifications when you collect new items."
+      },
     }
   }
 
