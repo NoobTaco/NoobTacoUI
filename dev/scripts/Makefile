@@ -8,10 +8,15 @@ all: test
 libs:
 	@echo "📥 Updating libraries using BigWigsMods packager..."
 	cd $(PROJECT_ROOT) && curl -s $(PACKAGER_URL) | bash -s -- -c -d -z
-	@if [ -d "$(PROJECT_ROOT)/.release/NoobTacoUI/Libraries/LibSharedMedia-3.0" ]; then \
-		echo "📦 Installing LibSharedMedia-3.0..."; \
-		rm -rf $(PROJECT_ROOT)/Libraries/LibSharedMedia-3.0; \
-		cp -r $(PROJECT_ROOT)/.release/NoobTacoUI/Libraries/LibSharedMedia-3.0 $(PROJECT_ROOT)/Libraries/; \
+	@if [ -d "$(PROJECT_ROOT)/.release/NoobTacoUI/Libraries" ]; then \
+		echo "📦 Installing libraries..."; \
+		for lib in $$(ls $(PROJECT_ROOT)/.release/NoobTacoUI/Libraries); do \
+			if [ "$$lib" != "Load_Libraries.xml" ]; then \
+				echo "  -> $$lib"; \
+				rm -rf $(PROJECT_ROOT)/Libraries/$$lib; \
+				cp -r $(PROJECT_ROOT)/.release/NoobTacoUI/Libraries/$$lib $(PROJECT_ROOT)/Libraries/; \
+			fi \
+		done; \
 		echo "✅ Libraries updated successfully!"; \
 	else \
 		echo "❌ Failed to update libraries"; \

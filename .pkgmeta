@@ -11,5 +11,8 @@ ignore:
 
 externals:
     Libraries/LibSharedMedia-3.0: 
-        url: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk
-        tag: latest
+        url: https://github.com/NoobTaco/LibSharedMedia-3.0.git
+        tag: main
+    Libraries/NoobTaco-Config:
+        url: https://github.com/NoobTaco/NoobTaco-Config
+        tag: v1.2.0

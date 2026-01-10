@@ -5,6 +5,8 @@
 - **Theme Migration**: Successfully transitioned the default UI color theme from "Nord" to "NoobTaco" across the entire addon suite and documentation.
 - **Improved Settings Persistence**: Implemented `NoobTaco-Config:Commit()` in all General section toggles and sliders to ensure settings are saved immediately.
 - **Nested Path Support**: Synchronized embedded library with standalone fixes for nested database pathing.
+- **Dependency Management**: Migrated `LibSharedMedia-3.0` to external dependency management via `.pkgmeta`, ensuring easier updates and cleaner repository structure.
+
 
 ### 🎯 Major Features Added
 
