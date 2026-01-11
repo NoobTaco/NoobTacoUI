@@ -588,10 +588,6 @@ local function BuildSchemas()
           { label = "GitHub",  url = "https://github.com/noobtaco/config" },
         }
       },
-      {
-        type = "description",
-        text = "Receive audio notifications when you collect new items."
-      },
     }
   }
 
@@ -862,8 +858,18 @@ local function InitializeConfigUI()
   MainLayout.lastSelected = MainLayout.sidebarButtons["general"]
 
 
-  -- Default to About page on first show
-  -- This is handled in ShowConfigMenu
+  -- Ensure a section is rendered when the frame is shown (e.g. via Blizzard Options)
+  MainLayout:SetScript("OnShow", function()
+    local lastSection = addon.ConfigState:GetValue("lastSection") or "about"
+    if MainLayout.sidebarButtons[lastSection] then
+      -- Only click if it's not already the selected button to avoid redundant renders
+      -- However, Renderer:Render usually handles its own state.
+      -- To be safe and ensure the page is actually there:
+      MainLayout.sidebarButtons[lastSection]:Click()
+    else
+      MainLayout.sidebarButtons["about"]:Click()
+    end
+  end)
 
   -- Register with Blizzard Settings Panel
   if Settings and Settings.RegisterCanvasLayoutCategory then
@@ -913,8 +919,8 @@ initFrame:RegisterEvent("ADDON_LOADED")
 initFrame:SetScript("OnEvent", function(self, event, loadedAddonName)
   if loadedAddonName == addonName then
     InitializeDatabase()
-
     InitializeMinimapButton()
+    InitializeConfigUI()
 
     self:UnregisterEvent("ADDON_LOADED")
   end

@@ -1,6 +1,9 @@
 # NoobTacoUI
 
 ## [Unreleased]
+- **Fix**: Resolved issue where opening the `NoobTacoUI` category via the Blizzard Options menu would show an empty page. It now correctly defaults to the "About" page.
+- **Fix**: Resolved issue where the `NoobTacoUI` category was not appearing in the Blizzard Options menu until the config window was opened manually.
+- **UI Refinement**: Removed redundant audio notification description from the `About` page.
 - **UI Refinement**: Streamlined "Addon Integration" section by simplifying addon descriptions and instructions (Issue #33).
 - **New Feature**: Added a "DOWNLOAD ADDON" button for uninstalled addons, providing direct access to download links.
 - **Code Cleanup**: Removed the redundant legacy configuration menu (`ConfigMenu.lua`) as the new library-based system is now fully operational.
