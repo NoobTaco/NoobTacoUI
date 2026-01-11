@@ -311,25 +311,6 @@ local function BuildSchemas()
         label = "Reload UI",
         onClick = function() ReloadUI() end
       },
-
-      { type = "header", label = "Visual Theme" },
-      {
-        id = "activeTheme",
-        type = "dropdown",
-        label = "UI Theme",
-        default = "NoobTaco",
-        options = {
-          { label = "NoobTaco",   value = "NoobTaco" },
-          { label = "Default",    value = "Default" },
-          { label = "Nord",       value = "Nord" },
-          { label = "Catppuccin", value = "Catppuccin" },
-        },
-        onChange = function(value)
-          if addon.ConfigTheme then
-            addon.ConfigTheme:SetTheme(value)
-          end
-        end
-      },
     }
   }
 
