@@ -10,7 +10,8 @@
 - **Code Cleanup**: Removed the redundant legacy configuration menu (`ConfigMenu.lua`) as the new library-based system is now fully operational.
 - **Code Cleanup**: Removed unused metadata and redundant headers from addon profile definitions.
 - **Library Update**: Updated `NoobTaco-Config` embedded library to v1.0.3 to ensure compatibility and prevent version conflicts.
-- **Bug Fix**: Resolved issue where addon messages would append a '1' to the end (Issue #32).
+- **Fix**: Resolved issue where addon messages would append a '1' to the end (Issue #32).
+- **Fix**: Resolved Lua syntax error in `Media/UIAssets.lua` caused by redundant code at the end of the file.
 
 
 - **Themed Chat & Tooltips**: Centralized chat printing via `addon:Print` and updated Minimap/Compartment tooltips to use the `NoobTaco-Config` theme system for dynamic token resolution.

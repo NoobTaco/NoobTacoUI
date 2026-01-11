@@ -305,15 +305,3 @@ function addon.UIUtils:CreateThemedCheckbox(parent, size)
 
   return checkbox
 end
-
-  -- Enable mouse interaction by default
-  button:EnableMouse(true)
-
-  return button
-end
-
-  -- Enable mouse interaction by default
-  button:EnableMouse(true)
-
-  return button
-end
