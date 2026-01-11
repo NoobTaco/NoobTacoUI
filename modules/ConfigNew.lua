@@ -513,7 +513,7 @@ local function BuildSchemas()
     text =
     "Automatically apply profiles for all detected and supported addons. This will overwrite existing settings for these addons.",
     buttonText = "APPLY ALL PROFILES",
-    severity = "info",
+    severity = "success",
     onButtonClick = function()
       StaticPopupDialogs["NOOBTACOUI_BULK_APPLY"] = {
         text = "This will overwrite settings for ALL supported addons detected.\nAre you sure you want to continue?",
