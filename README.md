@@ -1,5 +1,12 @@
 # NoobTacoUI
 
+> [!IMPORTANT]
+> ### 📢 WHAT'S NEW: Collection Notifications Split
+> The audio notification system for collections (Mounts, Pets, Toys, and Transmog) has been split into its own standalone addon: **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)**. 
+> 
+> Please download **GotOne** to continue receiving high-performance, audio-only notifications for your collections.
+
+
 ![CI Status](https://github.com/NoobTaco/NoobTacoUI/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI/workflows/Release/badge.svg)
 
 **NoobTacoUI is a set of UI profiles that create a uniform and beautiful UI experience for World of Warcraft.**
@@ -27,15 +34,11 @@ All media is automatically registered with **LibSharedMedia-3.0** and available 
 
 - **Google Fonts**: A curated collection of fonts optimized for readability (Montserrat, Roboto, Lato, Dosis, Exo2, Mukta, Poppins).
 - **NoobTaco Theme Textures**: 32 high-quality status bar textures (Solid and Gradient) based on the popular NoobTaco color palette.
-- **High-Quality Audio**: Professional sound effects designed for notifications, rare mob scans, and UI interactions.
-
-
 ### ⚙️ Modern Configuration
 
 A completely redesigned, professional menu system featuring the NoobTaco theme.
 
 - **Easy Access**: Open via Minimap button, Addon Compartment, or chat commands.
-- **Interactive Preview**: Test audio and view media before applying changes.
 - **Account-Wide Settings**: Configuration persists across all your characters.
 
 ## 🚀 Getting Started

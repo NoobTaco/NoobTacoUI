@@ -60,12 +60,7 @@ LSM:Register("font", "Poppins-SemiBold", [[Interface\AddOns\NoobTacoUI\Media\Fon
 LSM:Register("font", "Poppins-Thin", [[Interface\AddOns\NoobTacoUI\Media\Fonts\Poppins-Thin.ttf]])
 
 -- Audio
-LSM:Register("sound", "NT_Chest", [[Interface\AddOns\NoobTacoUI\Media\Audio\nt_sd_chest.ogg]])
-LSM:Register("sound", "NT_Group", [[Interface\AddOns\NoobTacoUI\Media\Audio\nt_sd_groupnpc.ogg]])
-LSM:Register("sound", "NT_Mount", [[Interface\AddOns\NoobTacoUI\Media\Audio\nt_sd_mount.ogg]])
 LSM:Register("sound", "NT_NPC", [[Interface\AddOns\NoobTacoUI\Media\Audio\nt_sd_npc.ogg]])
-LSM:Register("sound", "NT_InfussionOfLight", [[Interface\AddOns\NoobTacoUI\Media\Audio\nt_InfussionOfLight.ogg]])
-LSM:Register("sound", "NT_Collection", [[Interface\AddOns\NoobTacoUI\Media\Audio\nt_InfussionOfLight.ogg]])
 
 
 -- Status Bar Textures - NoobTaco Theme

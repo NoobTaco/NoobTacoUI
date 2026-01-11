@@ -1,6 +1,7 @@
 # NoobTacoUI
 
 ## [Unreleased]
+- **Module Split**: The Collection Notifications module and associated sound files have been officially moved to the standalone addon **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)**.
 - **Fix**: Resolved issue where opening the `NoobTacoUI` category via the Blizzard Options menu would show an empty page. It now correctly defaults to the "About" page.
 - **Fix**: Resolved issue where the `NoobTacoUI` category was not appearing in the Blizzard Options menu until the config window was opened manually.
 - **UI Refinement**: Removed redundant audio notification description from the `About` page.

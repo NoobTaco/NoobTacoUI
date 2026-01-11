@@ -148,14 +148,6 @@ local function InitializeMinimapButton()
     OnClick = function(self, button)
       if button == "LeftButton" then
         addon.ShowConfigMenu()
-      elseif button == "RightButton" then
-        -- Toggle Collection Notifications shortcut
-        local current = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
-        if current ~= nil then
-          addon.CollectionNotifications.SetSetting("enabled", not current)
-          local status = (not current) and "|csuccess|Enabled|r" or "|cerror|Disabled|r"
-          addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications " .. status)
-        end
       end
     end,
     OnTooltipShow = function(tooltip)
@@ -163,12 +155,10 @@ local function InitializeMinimapButton()
       if theme and theme.ProcessText then
         tooltip:AddLine(theme:ProcessText("|chighlight|NoobTacoUI|r"))
         tooltip:AddLine(theme:ProcessText("Left-click: Open configuration"), 0.7, 0.7, 0.7)
-        tooltip:AddLine(theme:ProcessText("Right-click: Toggle Collection Notifications"), 0.7, 0.7, 0.7)
         tooltip:AddLine(theme:ProcessText("Drag to reposition"), 0.5, 0.5, 0.5)
       else
         tooltip:AddLine("|chighlight|NoobTacoUI|r")
         tooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-        tooltip:AddLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
         tooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
       end
     end,
@@ -200,18 +190,6 @@ function NoobTacoUI_OnAddonCompartmentClick(addonName, buttonName)
 
   if buttonName == "LeftButton" then
     addon.ShowConfigMenu()
-  elseif buttonName == "RightButton" and AreCollectionsAvailable() then
-    -- Toggle collection notifications (only available in retail)
-    local enabled = NoobTacoUIDB.CollectionNotifications and NoobTacoUIDB.CollectionNotifications.enabled
-    if enabled then
-      NoobTacoUIDB.CollectionNotifications.enabled = false
-      addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications |cerror|Disabled|r")
-    else
-      NoobTacoUIDB.CollectionNotifications.enabled = true
-      addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications |csuccess|Enabled|r")
-    end
-  elseif buttonName == "RightButton" and not AreCollectionsAvailable() then
-    addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications not available in " .. GetExpansionName())
   end
 end
 
@@ -241,7 +219,7 @@ function NoobTacoUI_OnAddonCompartmentEnter(addonName, menuButtonFrame)
     GameTooltip:SetText("|chighlight|NoobTacoUI|r", 1, 1, 1)
   end
 
-  AddThemedLine("Media addon with collection notifications", 0.7, 0.7, 0.7)
+  AddThemedLine("Media addon with enhanced configuration", 0.7, 0.7, 0.7)
   AddThemedLine(" ", 1, 1, 1)
 
   if not enableCompartment then
@@ -249,9 +227,6 @@ function NoobTacoUI_OnAddonCompartmentEnter(addonName, menuButtonFrame)
     AddThemedLine("Enable in General Settings to use", 0.7, 0.7, 0.7)
   else
     AddThemedLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
-    if AreCollectionsAvailable() then
-      AddThemedLine("Right-click: Toggle Collection Notifications", 0.7, 0.7, 0.7)
-    end
   end
 
   GameTooltip:Show()
@@ -273,15 +248,6 @@ addon.ConfigSchemas = {}
 local function BuildSchemas()
   if addon.ConfigSchemas.General then return end -- Already built
 
-  -- Helper options for known sounds
-  local soundOptions = {
-    { label = "Game: Pet Collected",      value = "NT_Pet" },
-    { label = "Game: Mount Collected",    value = "NT_Mount_Collection" },
-    { label = "Game: Toy Collected",      value = "NT_Toy_Collection" },
-    { label = "Game: Transmog Collected", value = "NT_Transmog" },
-    { label = "Game: Quest Complete",     value = "NT_Quest_Complete" },
-    { label = "Interface: Achievement",   value = 569143 }, -- SoundID
-  }
 
   -- General Settings
   addon.ConfigSchemas.General = {
@@ -367,71 +333,6 @@ local function BuildSchemas()
     }
   }
 
-  -- Audio Settings
-  addon.ConfigSchemas.Audio = {
-    type = "group",
-    children = {
-      { type = "header", label = "Collection Notifications" },
-      {
-        type = "description",
-        text = "Receive audio notifications when you collect new items."
-      },
-      {
-        type = "checkbox",
-        label = "Enable Notifications",
-        id = "CollectionNotifications.enabled",
-        default = true,
-        onChange = function(val)
-          if addon.CollectionNotifications then
-            addon.CollectionNotifications.SetSetting("enabled", val)
-          end
-        end
-      },
-      { type = "header", label = "Sound Selection" },
-      {
-        type = "media",
-        label = "Pet Sound",
-        id = "CollectionNotifications.soundPet",
-        options = soundOptions,
-        default = "NT_Pet"
-      },
-      {
-        type = "media",
-        label = "Mount Sound",
-        id = "CollectionNotifications.soundMount",
-        options = soundOptions,
-        default = "NT_Mount_Collection"
-      },
-      {
-        type = "media",
-        label = "Toy Sound",
-        id = "CollectionNotifications.soundToy",
-        options = soundOptions,
-        default = "NT_Toy_Collection"
-      },
-      {
-        type = "media",
-        label = "Transmog Sound",
-        id = "CollectionNotifications.soundTransmog",
-        options = soundOptions,
-        default = "NT_Transmog"
-      },
-      { type = "header", label = "Test Sounds" },
-      {
-        type = "row",
-        children = {
-          {
-            type = "button",
-            label = "Test All",
-            width = 100,
-            onClick = function()
-              if addon.CollectionNotifications then addon.CollectionNotifications.PlayNotificationSound("soundPet", true) end
-            end
-          }
-        }
-      }
-    }
-  }
 
   -- Game Settings
   local width, height = GetPhysicalScreenSize()
@@ -837,10 +738,6 @@ local function InitializeConfigUI()
     addon.ConfigRenderer:Render(addon.ConfigSchemas.General, MainLayout)
   end)
 
-  MainLayout.sidebarButtons["audio"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "audio", "Audio", function()
-    addon.ConfigState:SetValue("lastSection", "audio")
-    addon.ConfigRenderer:Render(addon.ConfigSchemas.Audio, MainLayout)
-  end)
 
   MainLayout.sidebarButtons["addons"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "addons", "Addon Integration",
     function()
@@ -934,12 +831,5 @@ SLASH_NTUICONFIG2 = "/ntuiconfig"
 SLASH_NTUICONFIG3 = "/ntmedia"
 SLASH_NTUICONFIG4 = "/ntuimedia"
 SlashCmdList["NTUICONFIG"] = function()
-  addon.ShowConfigMenu()
-end
-
--- Collection Notifications shortcut (Placeholder until migrated)
-SLASH_NTCC1 = "/ntcc"
-SlashCmdList["NTCC"] = function()
-  addon:Print("|chighlight|NoobTacoUI|r: Collection Notifications settings migration in progress...")
   addon.ShowConfigMenu()
 end

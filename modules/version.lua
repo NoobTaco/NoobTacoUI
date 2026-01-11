@@ -78,7 +78,6 @@ SlashCmdList["NTVERSION"] = function(msg)
     addon:Print("  |cwarning|/nt v|r - Display addon version (shortest)")
     addon:Print("  |cwarning|/nt config|r - Open configuration menu")
     addon:Print("  |cwarning|/nt cfg|r - Open configuration menu (short)")
-    addon:Print("  |cwarning|/ntcollection|r - Collection notification commands")
   else
     addon:Print("|cerror|Unknown command:|r " .. args)
     addon:Print("Type |cwarning|/nt|r for available commands")
