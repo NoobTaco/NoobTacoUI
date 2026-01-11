@@ -49,7 +49,7 @@ end
 
 -- Function to display version information
 local function ShowVersion()
-  local coloredTitle = "|chighlight|NoobTacoUI|r"
+  local coloredTitle = "|chighlight|NoobTaco|r|cffF8F9FAUI|r"
   local currentVersion = GetCurrentVersion()
   local message = string.format("%s version: |csuccess|%s|r", coloredTitle, currentVersion)
   addon:Print(message)
@@ -68,11 +68,11 @@ SlashCmdList["NTVERSION"] = function(msg)
     if _G.NoobTacoUIAddon and _G.NoobTacoUIAddon.ShowConfigMenu then
       _G.NoobTacoUIAddon.ShowConfigMenu()
     else
-      addon:Print("|chighlight|NoobTacoUI|r: |cerror|Configuration menu not available|r")
+      addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: |cerror|Configuration menu not available|r")
     end
   elseif args == "" then
     -- Show help when no arguments provided
-    addon:Print("|chighlight|NoobTacoUI|r commands:")
+    addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r commands:")
     addon:Print("  |cwarning|/nt version|r - Display addon version")
     addon:Print("  |cwarning|/nt ver|r - Display addon version (short)")
     addon:Print("  |cwarning|/nt v|r - Display addon version (shortest)")

@@ -153,7 +153,7 @@ local function InitializeMinimapButton()
     OnTooltipShow = function(tooltip)
       local theme = addon.ConfigTheme
       if theme and theme.ProcessText then
-        tooltip:AddLine(theme:ProcessText("|chighlight|NoobTacoUI|r"))
+        tooltip:AddLine(theme:ProcessText("|chighlight|NoobTaco|r|cffF8F9FAUI|r"))
         tooltip:AddLine(theme:ProcessText("Left-click: Open configuration"), 0.7, 0.7, 0.7)
         tooltip:AddLine(theme:ProcessText("Drag to reposition"), 0.5, 0.5, 0.5)
       else
@@ -184,7 +184,8 @@ function NoobTacoUI_OnAddonCompartmentClick(addonName, buttonName)
   end
 
   if not enableCompartment then
-    addon:Print("|chighlight|NoobTacoUI|r: |cerror|Addon drawer integration is disabled|r - Enable in General Settings")
+    addon:Print(
+      "|cffD78144NoobTaco|r|cffF8F9FAUI|r: |cerror|Addon drawer integration is disabled|r - Enable in General Settings")
     return
   end
 
@@ -214,9 +215,9 @@ function NoobTacoUI_OnAddonCompartmentEnter(addonName, menuButtonFrame)
 
   GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_LEFT")
   if theme and theme.ProcessText then
-    GameTooltip:SetText(theme:ProcessText("|chighlight|NoobTacoUI|r"), 1, 1, 1)
+    GameTooltip:SetText(theme:ProcessText("|chighlight|NoobTaco|r|cffF8F9FAUI|r"), 1, 1, 1)
   else
-    GameTooltip:SetText("|chighlight|NoobTacoUI|r", 1, 1, 1)
+    GameTooltip:SetText("|chighlight|NoobTaco|r|cffF8F9FAUI|r", 1, 1, 1)
   end
 
   AddThemedLine("Media addon with enhanced configuration", 0.7, 0.7, 0.7)
@@ -265,10 +266,10 @@ local function BuildSchemas()
         onChange = function(val)
           if not val then
             LibDBIcon:Show("NoobTacoUI")
-            addon:Print("|chighlight|NoobTacoUI|r: Minimap button shown")
+            addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Minimap button shown")
           else
             LibDBIcon:Hide("NoobTacoUI")
-            addon:Print("|chighlight|NoobTacoUI|r: Minimap button hidden")
+            addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Minimap button hidden")
           end
           if addon.ConfigState then addon.ConfigState:Commit() end
         end
@@ -294,10 +295,10 @@ local function BuildSchemas()
         default = true,
         onChange = function(val)
           if val then
-            addon:Print("|chighlight|NoobTacoUI|r: Addon drawer integration |csuccess|Enabled|r")
+            addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Addon drawer integration |csuccess|Enabled|r")
           else
             addon:Print(
-              "|chighlight|NoobTacoUI|r: Addon drawer integration |cerror|Disabled|r - UI Reload required to fully hide entry.")
+              "|chighlight|NoobTaco|r|cffF8F9FAUI|r: Addon drawer integration |cerror|Disabled|r - UI Reload required to fully hide entry.")
           end
           if addon.ConfigState then addon.ConfigState:Commit() end
         end
@@ -321,7 +322,7 @@ local function BuildSchemas()
   local function SetUIScale(scale, label)
     SetCVar("useUiScale", "1")
     SetCVar("uiScale", scale)
-    addon:Print("|chighlight|NoobTacoUI|r: UI Scale set to |csuccess|" .. scale .. "|r (" .. label .. ")")
+    addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: UI Scale set to |csuccess|" .. scale .. "|r (" .. label .. ")")
 
     StaticPopupDialogs["NOOBTACOUI_RELOAD_UI"] = {
       text = "UI Scale changed to " ..
@@ -446,7 +447,7 @@ local function BuildSchemas()
             end
           end
 
-          addon:Print("|chighlight|NoobTacoUI|r: Current UI Scale: |cinfo|" .. scaleText .. "|r" .. mode)
+          addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Current UI Scale: |cinfo|" .. scaleText .. "|r" .. mode)
         end
       }
     }
@@ -459,7 +460,7 @@ local function BuildSchemas()
       {
         type = "about",
         icon = addon.UIAssets and addon.UIAssets.Logo or "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
-        title = "NoobTacoUI",
+        title = "NoobTaco|cffF8F9FAUI|r",
         version = "Version " ..
             (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "1.4.3"),
         description =
@@ -537,7 +538,8 @@ local function BuildSchemas()
                 count = count + 1
               end
             end
-            addon:Print("|chighlight|NoobTacoUI|r: Bulk setup complete. " .. (count or 0) .. " profiles processed.")
+            addon:Print("|cffD78144NoobTaco|r|cffF8F9FAUI|r: Bulk setup complete. " ..
+              (count or 0) .. " profiles processed.")
             ReloadUI()
           end
         end,
@@ -690,7 +692,8 @@ local function InitializeConfigUI()
 
   -- Check if library is available
   if not addon.ConfigLayout or not addon.ConfigRenderer then
-    addon:Print("|chighlight|NoobTacoUI|r: |cerror|Error:|r Configuration library (NoobTaco-Config) failed to load.")
+    addon:Print(
+      "|cffD78144NoobTaco|r|cffF8F9FAUI|r: |cerror|Error:|r Configuration library (NoobTaco-Config) failed to load.")
     return
   end
   BuildSchemas()
@@ -751,12 +754,12 @@ local function InitializeConfigUI()
 
   -- Register with Blizzard Settings Panel
   if Settings and Settings.RegisterCanvasLayoutCategory then
-    local category, layout = Settings.RegisterCanvasLayoutCategory(MainLayout, "NoobTacoUI")
+    local category, layout = Settings.RegisterCanvasLayoutCategory(MainLayout, "|cffD78144NoobTaco|r|cffF8F9FAUI|r")
     addon.SettingsCategory = category
     Settings.RegisterAddOnCategory(category)
   elseif InterfaceOptions_AddCategory then
     -- Fallback for older clients (Classic, etc)
-    MainLayout.name = "NoobTacoUI"
+    MainLayout.name = "|cffD78144NoobTaco|r|cffF8F9FAUI|r"
     InterfaceOptions_AddCategory(MainLayout)
   end
 end

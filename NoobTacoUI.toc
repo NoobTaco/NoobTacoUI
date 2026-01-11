@@ -1,5 +1,5 @@
 ## Interface: 120001, 120000, 110207, 110107, 50500, 40402, 11507
-## Title: |cFF16C3F2NoobTacoUI|r
+## Title: |cffD78144NoobTaco|r|cffF8F9FAUI|r
 ## Author: NoobTaco
 ## Version: @project-version@
 ## OptionalDeps: SharedMedia, LibSharedMedia-3.0, LibDataBroker-1.1, LibDBIcon-1.0, BetterBlizzFrames, Platynator, CooldownManagerTweaks, zBarButtonBG, XIV_Databar, SenseiClassResourceBar
