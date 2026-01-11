@@ -1,6 +1,9 @@
 # NoobTacoUI
 
 ## [Unreleased]
+- **UI Refinement**: Streamlined "Addon Integration" section by simplifying addon descriptions and instructions (Issue #33).
+- **New Feature**: Added a "DOWNLOAD ADDON" button for uninstalled addons, providing direct access to download links.
+- **Code Cleanup**: Removed unused metadata and redundant headers from addon profile definitions.
 - **Library Update**: Updated `NoobTaco-Config` embedded library to v1.0.3 to ensure compatibility and prevent version conflicts.
 - **Bug Fix**: Resolved issue where addon messages would append a '1' to the end (Issue #32).
 

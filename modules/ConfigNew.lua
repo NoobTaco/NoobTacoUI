@@ -717,7 +717,7 @@ local function BuildSchemas()
         table.insert(profileChildren, { type = "description", text = profile.description })
 
         if profile.instructions then
-          local instructText = "|cheader|Instructions:|r\n"
+          local instructText = ""
           for i, line in ipairs(profile.instructions) do
             instructText = instructText .. i .. ". " .. line .. "\n"
           end
@@ -752,10 +752,40 @@ local function BuildSchemas()
             end
           })
         else
-          table.insert(profileChildren, {
-            type = "description",
-            text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
-          })
+          if profile.downloadUrl and profile.downloadUrl ~= "N/A" then
+            table.insert(profileChildren, {
+              type = "description",
+              text = "|cerror|Addon is not loaded.|r"
+            })
+            table.insert(profileChildren, {
+              type = "button",
+              label = "DOWNLOAD ADDON",
+              width = 200,
+              onClick = function()
+                StaticPopupDialogs["NOOBTACOUI_DOWNLOAD_LINK"] = {
+                  text = "CTRL+C to copy the download link for " .. profile.displayName,
+                  button1 = "Close",
+                  hasEditBox = true,
+                  editBoxWidth = 400,
+                  OnShow = function(self)
+                    self.EditBox:SetText(profile.downloadUrl)
+                    self.EditBox:SetFocus()
+                    self.EditBox:HighlightText()
+                  end,
+                  timeout = 0,
+                  whileDead = true,
+                  hideOnEscape = true,
+                  preferredIndex = 3,
+                }
+                StaticPopup_Show("NOOBTACOUI_DOWNLOAD_LINK")
+              end
+            })
+          else
+            table.insert(profileChildren, {
+              type = "description",
+              text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
+            })
+          end
         end
 
         table.insert(integrationChildren, {

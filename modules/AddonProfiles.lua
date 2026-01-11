@@ -15,10 +15,8 @@ addon.AddonProfiles = addon.AddonProfiles or {}
 addon.AddonProfiles.EditMode = {
   name = "EditMode",
   displayName = "Default WoW UI Edit Mode",
-  description =
-  "Import the default WoW UI Edit Mode layout optimized for NoobTacoUI. This layout provides a clean and functional interface base. Optimized for 4K display.",
+  description = "Optimized WoW Edit Mode layout providing a clean and functional interface base.",
   downloadUrl = "N/A",
-  command = "Open Edit Mode",
   instructions = {
     "Click the |cwarning|Apply Profile|r button below.",
     "Copy the profile string (CTRL+C) from the popup.",
@@ -94,10 +92,8 @@ addon.AddonProfiles.EditMode = {
 addon.AddonProfiles.BetterBlizzFrames = {
   name = "BetterBlizzFrames",
   displayName = "BetterBlizzFrames",
-  description =
-  "Import a pre-configured profile for BetterBlizzFrames that complements the NoobTacoUI aesthetic. This profile includes optimized frame styling and positioning.",
+  description = "Enhances Blizzard unit frames with customizable auras, castbars, and visual tweaks.",
   downloadUrl = "https://www.curseforge.com/wow/addons/betterblizzframes",
-  command = "/bbf",
   instructions = {
     "Click the button below to copy the profile string",
     "Type |cwarning|/bbf|r in chat to open BetterBlizzFrames config",
@@ -184,10 +180,8 @@ addon.AddonProfiles.BetterBlizzFrames = {
 addon.AddonProfiles.Platynator = {
   name = "Platynator",
   displayName = "Platynator",
-  description =
-  "Import a pre-configured profile for Platynator that complements the NoobTacoUI aesthetic. This profile includes optimized nameplate styling and positioning.",
+  description = "High-performance nameplate addon with threat coloring and a user-friendly editor.",
   downloadUrl = "https://www.curseforge.com/wow/addons/platynator",
-  command = "/platynator",
   instructions = {
     "Click the button below to copy the profile string",
     "Type |cwarning|/platynator|r in chat to open Platynator config",
@@ -303,8 +297,6 @@ addon.AddonProfiles.Platynator = {
   profileString =
   '{"stack_region_scale_y":1.1,"design_all":[],"closer_to_screen_edges":true,"cast_scale":1.1,"simplified_nameplates":{"minor":true,"minion":true,"instancesNormal":true},"stacking_nameplates":true,"designs_assigned":{"enemySimplified":"NoobTacoUI-Simplified","friend":"NoobTacoUI-Simplified","enemy":"NoobTacoUI-Simplified"},"target_scale":1.2,"version":1,"not_target_alpha":1,"show_friendly_in_instances_1":"always","cast_alpha":1,"addon":"Platynator","apply_cvars":true,"current_skin":"blizzard","stack_region_scale_x":1.2,"global_scale":1,"style":"NoobTacoUI-Simplified","show_nameplates_only_needed":false,"click_region_scale_x":1,"click_region_scale_y":1,"kind":"profile","designs":{"NoobTacoUI-Simplified":{"highlights":[{"anchor":["BOTTOM",0,-14],"color":{"a":0.46875014901161196,"b":0.9294118285179138,"g":0.8980392813682556,"r":0.8980392813682556},"layer":0,"height":1.18,"scale":0.51,"kind":"target","asset":"glow","width":1}],"specialBars":[],"addon":"Platynator","auras":[{"direction":"RIGHT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"showPandemic":true,"height":1,"anchor":["BOTTOMLEFT",-63,37],"kind":"debuffs","textScale":1,"filters":{"important":true,"fromYou":true}},{"direction":"LEFT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"anchor":["BOTTOMLEFT",-90,2],"height":1,"kind":"buffs","textScale":1,"filters":{"dispelable":true,"important":true}},{"direction":"RIGHT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"anchor":["BOTTOMRIGHT",90,2],"height":1,"kind":"crowdControl","textScale":1,"filters":{"fromYou":false}}],"font":{"outline":true,"shadow":true,"asset":"RobotoCondensed-Bold"},"version":1,"bars":[],"kind":"style","markers":[{"layer":3,"anchor":["BOTTOMLEFT",-82,0],"scale":0.9,"kind":"quest","asset":"normal/quest-boss-blizzard","color":{"r":1,"g":1,"b":1}},{"layer":3,"anchor":["BOTTOM",0,32],"scale":1.45,"kind":"raid","asset":"normal/blizzard-raid","color":{"r":1,"g":1,"b":1}}],"texts":[{"showWhenWowDoes":true,"truncate":false,"scale":1.27,"layer":2,"autoColors":[{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"colors":{"neutral":{"r":1,"g":1,"b":0},"hostile":{"r":1,"g":0,"b":0},"friendly":{"r":0,"g":1,"b":0},"unfriendly":{"b":0,"g":0.5058823529411765,"r":1}},"kind":"reaction"}],"color":{"b":0.9686275124549866,"g":0.9686275124549866,"r":0.9686275124549866},"anchor":["BOTTOM",0,7],"kind":"creatureName","widthLimit":130,"align":"CENTER"},{"widthLimit":124,"truncate":true,"align":"CENTER","layer":2,"showWhenWowDoes":true,"anchor":["BOTTOM",0,-4],"kind":"guild","color":{"r":1,"g":1,"b":1},"scale":0.91}]},"NoobTacoUI":{"highlights":[{"color":{"a":1,"r":1,"g":1,"b":1},"anchor":[],"layer":0,"height":1,"scale":1,"kind":"target","asset":"arrows","width":1}],"specialBars":[],"texts":[{"showWhenWowDoes":false,"truncate":true,"color":{"b":1,"g":1,"r":1},"layer":2,"autoColors":[],"align":"LEFT","anchor":["RIGHT",64,0],"kind":"creatureName","scale":0.8,"widthLimit":124},{"color":{"r":1,"g":1,"b":1},"layer":2,"widthLimit":0,"truncate":true,"anchor":["TOPLEFT",-60,-9],"kind":"castSpellName","scale":0.7,"align":"LEFT"},{"widthLimit":0,"truncate":false,"scale":0.8,"layer":2,"displayTypes":["percentage"],"anchor":["RIGHT",60,0],"kind":"health","color":{"r":1,"g":1,"b":1},"align":"RIGHT"}],"font":{"outline":false,"shadow":true,"asset":"Poppins-Bold"},"bars":[{"absorb":{"color":{"a":1,"b":1,"g":1,"r":1},"asset":"wide/blizzard-absorb"},"scale":1,"layer":1,"border":{"color":{"a":1,"r":0,"g":0,"b":0},"height":1,"asset":"thin","width":1},"autoColors":[{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"colors":[],"kind":"classColors"},{"combatOnly":false,"colors":{"transition":{"a":1,"b":0.4392157196998596,"g":0.529411792755127,"r":0.8156863451004028},"warning":{"a":1,"b":0.415686309337616,"g":0.3803921937942505,"r":0.7490196228027344},"offtank":{"a":1,"b":0.8156863451004028,"g":0.7529412508010864,"r":0.5333333611488342},"safe":{"a":1,"b":0.6745098233222961,"g":0.5058823823928833,"r":0.3686274588108063}},"kind":"threat","useSafeColor":true,"instancesOnly":false},{"colors":{"unfriendly":{"a":1,"b":0.4392157196998596,"g":0.529411792755127,"r":0.8156863451004028},"neutral":{"a":1,"b":0.545098066329956,"g":0.7960785031318665,"r":0.9215686917304992},"friendly":{"a":1,"b":0.5490196347236633,"g":0.7450980544090271,"r":0.6392157077789307},"hostile":{"a":1,"b":0.415686309337616,"g":0.3803921937942505,"r":0.7490196228027344}},"kind":"reaction"}],"marker":{"asset":"none"},"kind":"health","anchor":[],"background":{"color":{"a":0.44,"r":1,"g":1,"b":1},"applyColor":false,"asset":"black"},"relativeTo":0,"foreground":{"asset":"white"}},{"marker":{"asset":"wide/glow"},"layer":1,"border":{"color":{"a":1,"r":0,"g":0,"b":0},"height":0.75,"asset":"thin","width":1},"autoColors":[{"colors":{"cast":{"b":0.1529411764705883,"g":0.09411764705882352,"r":1},"channel":{"b":1,"g":0.2627450980392157,"r":0.0392156862745098}},"kind":"importantCast"},{"colors":{"cast":{"r":0.9882352941176472,"g":0.5490196078431373,"b":0},"interrupted":{"r":0.9882352941176472,"g":0.211764705882353,"b":0.8784313725490196},"uninterruptable":{"r":0.5137254901960784,"g":0.7529411764705882,"b":0.7647058823529411},"channel":{"r":0.2431372549019608,"g":0.7764705882352941,"b":0.2156862745098039}},"kind":"cast"}],"foreground":{"asset":"white"},"anchor":["TOP",0,-7],"kind":"cast","scale":1,"background":{"color":{"a":0,"r":0.7803922295570374,"g":0.7803922295570374,"b":0.7803922295570374},"applyColor":true,"asset":"grey"}}],"markers":[{"color":{"r":1,"g":1,"b":1},"anchor":["LEFT",-78,0],"scale":1,"layer":3,"asset":"normal/quest-blizzard","kind":"quest"},{"color":{"r":1,"g":0.9019608497619628,"b":0.9019608497619628},"anchor":["TOP",0,-10],"scale":0.8,"layer":3,"asset":"normal/shield-soft","kind":"cannotInterrupt"},{"color":{"r":1,"g":1,"b":1},"anchor":["LEFT",-83,0],"scale":1,"layer":3,"asset":"special/blizzard-elite-midnight","kind":"elite"},{"color":{"r":1,"g":1,"b":1},"anchor":["BOTTOM",0,12],"scale":1.25,"layer":3,"asset":"normal/blizzard-raid","kind":"raid"}],"auras":[{"direction":"RIGHT","scale":1,"textScale":1,"sorting":{"reversed":false,"kind":"duration"},"showCountdown":true,"showPandemic":true,"anchor":["BOTTOMLEFT",-62,9],"kind":"debuffs","height":1,"filters":{"fromYou":true,"important":true}},{"direction":"LEFT","scale":1,"textScale":1,"sorting":{"reversed":false,"kind":"duration"},"height":1,"anchor":["LEFT",-100,0],"kind":"buffs","showCountdown":true,"filters":{"dispelable":true,"important":true}},{"direction":"RIGHT","scale":1,"textScale":1,"sorting":{"reversed":false,"kind":"duration"},"height":1,"anchor":["RIGHT",87,0],"kind":"crowdControl","showCountdown":true,"filters":{"fromYou":false}}]},"_custom":{"highlights":[{"scale":0.51,"color":{"a":0.46875014901161196,"r":0.8980392813682556,"g":0.8980392813682556,"b":0.9294118285179138},"kind":"target","anchor":["BOTTOM",0,-14],"height":1.18,"layer":0,"asset":"glow","width":1}],"specialBars":[],"addon":"Platynator","auras":[{"direction":"RIGHT","scale":1,"showCountdown":true,"filters":{"fromYou":true,"important":true},"height":1,"textScale":1,"anchor":["BOTTOMLEFT",-63,37],"kind":"debuffs","showPandemic":true,"sorting":{"reversed":false,"kind":"duration"}},{"direction":"LEFT","scale":1,"showCountdown":true,"filters":{"dispelable":true,"important":true},"textScale":1,"height":1,"kind":"buffs","anchor":["BOTTOMLEFT",-90,2],"sorting":{"reversed":false,"kind":"duration"}},{"direction":"RIGHT","scale":1,"showCountdown":true,"filters":{"fromYou":false},"textScale":1,"height":1,"kind":"crowdControl","anchor":["BOTTOMRIGHT",90,2],"sorting":{"reversed":false,"kind":"duration"}}],"font":{"outline":true,"shadow":true,"asset":"RobotoCondensed-Bold"},"version":1,"kind":"style","bars":[],"markers":[{"scale":0.9,"anchor":["BOTTOMLEFT",-82,0],"color":{"b":1,"g":1,"r":1},"kind":"quest","asset":"normal/quest-boss-blizzard","layer":3},{"scale":1.45,"anchor":["BOTTOM",0,32],"color":{"b":1,"g":1,"r":1},"kind":"raid","asset":"normal/blizzard-raid","layer":3}],"texts":[{"showWhenWowDoes":true,"truncate":false,"align":"CENTER","layer":2,"autoColors":[{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"r":0.4313725490196079,"g":0.4313725490196079,"b":0.4313725490196079}},"kind":"tapped"},{"colors":{"unfriendly":{"r":1,"g":0.5058823529411765,"b":0},"neutral":{"b":0,"g":1,"r":1},"friendly":{"b":0,"g":1,"r":0},"hostile":{"b":0,"g":0,"r":1}},"kind":"reaction"}],"scale":1.27,"anchor":["BOTTOM",0,7],"kind":"creatureName","widthLimit":130,"color":{"r":0.9686275124549866,"g":0.9686275124549866,"b":0.9686275124549866}},{"widthLimit":124,"truncate":true,"scale":0.91,"layer":2,"align":"CENTER","anchor":["BOTTOM",0,-4],"kind":"guild","color":{"b":1,"g":1,"r":1},"showWhenWowDoes":true}]}},"show_nameplates":{"player":true,"npc":true,"enemy":true}}',
   version = "1.2",
-  author = "NoobTaco",
-  dateCreated = "2025-12-17"
 }
 
 
@@ -315,10 +307,8 @@ addon.AddonProfiles.Platynator = {
 addon.AddonProfiles.CooldownManagerTweaks = {
   name = "CooldownManagerTweaks",
   displayName = "Cooldown Manager Tweaks",
-  description =
-  "Import a pre-configured profile for Cooldown Manager Tweaks that complements the NoobTacoUI aesthetic. This profile includes optimized tracker styling and positioning.",
+  description = "Enhancements for Blizzard's Cooldown Manager with advanced layout control.",
   downloadUrl = "https://www.curseforge.com/wow/addons/cooldown-manager-tweaks",
-  command = "/cmt",
   instructions = {
     "Click the button below to copy the profile string",
     "Type |cwarning|/cmt|r in chat to open Cooldown Manager Tweaks config",
@@ -328,8 +318,6 @@ addon.AddonProfiles.CooldownManagerTweaks = {
   profileString =
   'CMT1:{"trackers":{"items":{"cooldownTextScale":1,"zoom":1,"borderAlpha":1,"hSpacing":2,"compactMode":false,"vSpacing":2,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":40,"barSpacing":2,"rowPattern":[1,3,4,3],"barIconGap":0},"buffs":{"cooldownTextScale":1,"zoom":1.1000000238419,"borderAlpha":0.5,"hSpacing":0,"compactMode":false,"vSpacing":0,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":35,"barSpacing":2,"rowPattern":[6],"barIconGap":0},"essential":{"cooldownTextScale":1,"zoom":1.1000000238419,"borderAlpha":0.5,"hSpacing":0,"compactMode":false,"vSpacing":0,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":43,"barSpacing":2,"rowPattern":[6,6],"barIconGap":0},"utility":{"cooldownTextScale":1,"zoom":1.1000000238419,"borderAlpha":0.5,"hSpacing":0,"compactMode":false,"vSpacing":0,"barIconSide":"LEFT","compactOffset":-4,"reverseOrder":false,"aspectRatio":"1:1","alignment":"CENTER","layoutDirection":"ROWS","iconSize":30,"barSpacing":2,"rowPattern":[8,6],"barIconGap":0}},"version":"4.4.0","profileName":"NT"}',
   version = "1.0",
-  author = "NoobTaco",
-  dateCreated = "2025-11-27"
 }
 
 -- zBarButtonBG Profile
@@ -339,10 +327,8 @@ addon.AddonProfiles.CooldownManagerTweaks = {
 addon.AddonProfiles.zBarButtonBG = {
   name = "zBarButtonBG",
   displayName = "zBarButtonBG",
-  description =
-  "Import a pre-configured profile for zBarButtonBG that complements the NoobTacoUI aesthetic. This profile includes optimized button styling.",
+  description = "Customizable background frames for action bar buttons for a cleaner aesthetic.",
   downloadUrl = "https://www.curseforge.com/wow/addons/zbarbuttonbg",
-  command = "Options > Addons",
   instructions = {
     "Click the button below to copy the profile string",
     "Press |cwarning|Escape|r and go to |cwarning|Options > Addons|r",
@@ -449,8 +435,6 @@ addon.AddonProfiles.zBarButtonBG = {
   profileString =
   "nsvBtQjpu0Fr7ockc(rXzT1oU4og680(LmtacivmxEscJZ2F9nHeqa1P9d(69MCoN75Cb7GJXOuOHjpKNlOYFIJMHr1CiDDL8lvW1nqfW1nruvEDLhgXXroyuH(NlXOe9NUyjgDHKYHiYf6hGOuwcmmk8qC8H3Ta8FLzYt4OfUQd1iLadj)SIIrO)VHWP6MGQm4kBmIgaNza0a3iWgs7Z0ptkzzFLwwCsQyPRrj9YWcyeWuVNa8mkFiyogOuQXOo3HQZE3g4(rlCTQAlOEvrkey0HVhVFx0B3rot3ItW1qs65mouJdvxT977P5Y1z)QriVqzkwp)wPyOEsLrY5zUsG3qI3iOBQicr7r2XyuooPxoA2Jk)n1mS65T(VXOpG66sM4fe9szOYBgOy7zwAKfQcKAPvWv1Z0IBeOHTtAnQJay6uJYijv02JNtYOBSXb956giVteNPzXqyB(r350KQ1IpsRRiP0jiEtPw5pmsAHieux9LjJ9(BPlAnVZq7LMOPOGkK0S1P6S)djZGH(uXZjSc6owwzkrc8X2RVDh41fDjZz(wh2P1Il1U6JsYDjcNU21D3BIpYH7v63u6VmxtN2n59VTT7bf3dKbgdio3TSmA3CmUdsv9lTEdiXa)zWZOS7tpyGpr(ZDw0VsS6g76S6JAeN40wA(pOrT9FCKRPZJqJCKvSnWzPRVV38vbZ9MfSiaN)IxRFU1BPNJN)s3zURc8w47QRSuJYZQK8Skt3YpOjXO9T)UEKy8F(",
   version = "1.0",
-  author = "NoobTaco",
-  dateCreated = "2025-11-29"
 }
 
 -- XIV_Databar Continued Profile
@@ -460,10 +444,8 @@ addon.AddonProfiles.zBarButtonBG = {
 addon.AddonProfiles.XIV_Databar = {
   name = "XIV_Databar",
   displayName = "XIV_Databar Continued",
-  description =
-  "Import a pre-configured profile for XIV_Databar Continued that complements the NoobTacoUI aesthetic. This profile includes optimized bar styling and positioning.",
+  description = "FFXIV-inspired info bar for tracking gold, currency, durability, and more.",
   downloadUrl = "https://www.curseforge.com/wow/addons/xiv-databar-continued",
-  command = "/xivbar config",
   instructions = {
     "Click the |cwarning|Apply Profile|r button below.",
     "Type |cwarning|/xivbar config|r in chat to open XIV_Databar config if needed.",
@@ -536,7 +518,8 @@ addon.AddonProfiles.XIV_Databar = {
       elseif not success then
         -- If it crashed (like the talent module error), settings are likely still partially changed
         -- Proceed with reload prompt as it's the only way for the user to recover
-        addon:Print("|chighlight|NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
+        addon:Print(
+          "|chighlight|NoobTacoUI|r: XIV_Databar profile applied with minor issues. A reload is highly recommended.")
         StaticPopup_Show("NOOBTACOUI_RELOAD_UI_XIVBAR")
       else
         addon:Print("|chighlight|NoobTacoUI|r: Failed to import XIV_Databar profile (invalid data).")
@@ -546,8 +529,6 @@ addon.AddonProfiles.XIV_Databar = {
   profileString =
   "9v1sZnkoq4Fo7Pjfymg8X4xtMQg)OcS7SNyIm02Oncjwj5xZH8BF7wcBh7KzpHqDR(5x)1fHf5fzTA1gUaOJGKTwaZpzR5LRuAltykwxKzabuAHQNaM2wBSkjyq1TfzBbjOzcNzuCjEZ4PlYN(Cr2XLB2yaBXIGIS1m9kLHB5kzr2OL55lN7UCotVLlVOcRQIl3wSiQi70TVE2oHWuQbqwmYDXyvZAM9jEfqX3odmvS)p)gjudcMLVhwDB4iuLVcvKcnQQDciRLv6DwNhe8T1xmiEXp4v26IfHrdIPeTCNodygLCPuCIuPujuAkVLkDJVcWWW9HKymgOdPy1P77A)x0mCjRKIUlQ3ZREOt5qNQHKIyknEm5NA1EW5hTRyCwRzXrdshomPF4Wbj4N(fB(sCu3lFIEd(8Z1QUiLvmljoTFyssAqCuV0Ou3R6t2E2GK0W0HHPjrbjd7nCajza5VFNK1)oj(yihoADza(RfptbWgL0MX)fqLvevHLnXSRx1ZRqr2kvBlxA(sg0WhPevKjQFh077CdzUfHdd6fLGikT6vq)2l5AM0GnAgb0E7L5mRMFevlPxyYWISPwqlzcNE7reT(pmV9Y7G0fl6ffheIP2Zqf0kuNAaPfTJdWqUlkof7M58g4at86NzG(XdtWU0Qhw(q2d5pqbHX6vC6Xwny(OlhmifZbuQahr2dFWIdIrey2yLPHxENWWbrb9rH4LvcVTvAd0WKFiYctthgJv4jQgedIZY3lVFV4(O8CvdgcQnyvsDalIEwaYv9gMGnTVQbMDdZwtf8FGJyFwviinjarvtaOT6ai6k1tjva59khIPaMdt0mq6YqeUUfAiZmmiYNDNv3hzOvE7Lzcwdqid)8mXhLz1SkW8kxiUsM5M5n1Qd5kLWYBppuqthe0KjWM8DQluSk1oB2bUTet0PxL4v673k3XQWLDmgXb37pRlYqi3DU5dCkFg9lrPXKvyB7xWtg)8eIe0Q5GChzWT74IZeB8nCqF2XerrznZ6yWRvTo2eq4(YkRPpnmUKSZf2WE(y)RZxMpHu4F3bgNbArY4r3wtBXoljszYuLCMGM49JXDfvYFiH6JTTJX5AK4ZZBsm3tL05)rTJMiPJInBjJwRqQJ76yUAqdLTJ8g8DUdFjVujVj(DsD13AM2f7776cybxdYYt31hi6PLYNPfaND9FVcXiFcY5y7ih2z9vJLxJ7LkYcE3nhufzrb9sVE1seQJxf4wcSL40(iaDgANrSTuUCPeSKg0EgyIgZ5RYiAZX42ntxJvBZPYgcs6GhL0YU7CWvQ3Eb(Q409yp6Cr0ICAZOfzewfhz3dp2SQH28RXvjeJN30E6S)sj21a3NcwOL2O5wFzoH)28)pfIR7vstUcB6hqCt3yZJcXsjgGBU0l(Hs7a4Ozz6g)QSdmTeB4t2PzR5cU9KpVUZzFtSxC(8yLs3vGS3osHkuXem8QFwB(PbxAGiPSj(RULTIM9alJIacCHqAC6pBHsTgH3ytho2sTdQCHRDgKmOF)eA1JM6GfzFNZQqR7cHI)7p",
   version = "1.1",
-  author = "NoobTaco",
-  dateCreated = "2025-11-30"
 }
 
 -- Add more addon profiles here following the same structure
@@ -559,10 +540,8 @@ addon.AddonProfiles.XIV_Databar = {
 addon.AddonProfiles.SenseiClassResourceBar = {
   name = "SenseiClassResourceBar",
   displayName = "Sensei Class Resource Bar",
-  description =
-  "Import a pre-configured profile for Sensei Class Resource Bar that complements the NoobTacoUI aesthetic. This profile includes optimized resource bar styling and positioning.",
+  description = "Adaptive resource bar that automatically stylizes based on class and specialization.",
   downloadUrl = "https://www.curseforge.com/wow/addons/senseiclassresourcebar",
-  command = "/scrb",
   instructions = {
     "Ensure you have an active Edit Mode profile selected.",
     "Click the |cwarning|Apply Profile|r button below.",
@@ -725,10 +704,8 @@ addon.AddonProfiles.SenseiClassResourceBar = {
 addon.AddonProfiles.Details = {
   name = "Details",
   displayName = "Details! Damage Meter",
-  description =
-  "Import a pre-configured profile for Details! Damage Meter that complements the NoobTacoUI aesthetic.",
+  description = "The premier damage and healing meter for advanced combat logging.",
   downloadUrl = "https://www.curseforge.com/wow/addons/details",
-  command = "/details",
   instructions = {
     "Click the |cwarning|Apply Profile|r button below.",
     "Details! will import the profile and create a new one named 'NoobTacoUI'.",
