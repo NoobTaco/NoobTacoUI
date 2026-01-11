@@ -1,5 +1,8 @@
 # NoobTacoUI
 
+## [2.0.1] - 2026-01-11
+- **Fix**: Fixed XIV_Databar Continued detection by implementing dynamic schema building. The addon integration UI now rebuilds its schema when opened, ensuring accurate detection of addons that load after NoobTacoUI (Issue #39).
+
 ## [2.0.0] - 2026-01-11
 - **Branding**: Re-branded the NoobTaco suite with the official "NoobTaco Tech Brand Identity". Added split-color prominence: **NoobTaco** (Burnt Sienna) paired with **UI** or **GotOne** (Cloud White). (Issue #35)
 - **Theme System**: Removed the theme switcher UI from the configuration menu. The addon now exclusively uses the "NoobTaco" theme for a consistent visual identity. (Issue #36)

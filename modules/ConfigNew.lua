@@ -475,212 +475,221 @@ local function BuildSchemas()
   }
 
   -- Addon Integration (Profiles)
-  local integrationChildren = {
-    {
-      type = "header",
-      label = "Addon Integration"
-    },
-    {
-      type = "description",
-      text =
-      "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
-    }
-  }
-
-  if IsRetail() then
-    local editModeProfile = addon.AddonProfiles and addon.AddonProfiles.EditMode
-    if editModeProfile then
-      table.insert(integrationChildren, {
-        type = "callout",
-        title = "STEP 1: MANDATORY EDIT MODE SETUP",
+  -- Build schema dynamically to ensure addon load state is current
+  addon.BuildAddonsSchema = function()
+    local integrationChildren = {
+      {
+        type = "header",
+        label = "Addon Integration"
+      },
+      {
+        type = "description",
         text =
-        "You MUST import the Edit Mode layout for the UI to function correctly. This controls the position of all standard Blizzard frames.",
-        buttonText = "GET IMPORT STRING",
-        severity = "warning",
-        onButtonClick = function()
-          if editModeProfile.applyFunction then
-            editModeProfile.applyFunction()
-          end
-        end
-      })
-    end
-  end
-
-  -- table.insert(integrationChildren, { type = "header", label = " 2: AUTOMATED SETUPSTEP" })
-  table.insert(integrationChildren, {
-    type = "callout",
-    title = "STEP 2: AUTOMATED SETUP",
-    text =
-    "Automatically apply profiles for all detected and supported addons. This will overwrite existing settings for these addons.",
-    buttonText = "APPLY ALL PROFILES",
-    severity = "success",
-    onButtonClick = function()
-      StaticPopupDialogs["NOOBTACOUI_BULK_APPLY"] = {
-        text = "This will overwrite settings for ALL supported addons detected.\nAre you sure you want to continue?",
-        button1 = "Yes",
-        button2 = "No",
-        OnAccept = function()
-          if addon.AddonProfiles then
-            local applyOrder = {
-              "BetterBlizzFrames",
-              "Platynator",
-              "SenseiClassResourceBar",
-              "XIV_Databar",
-              "Details",
-              "zBarButtonBG",
-              "CooldownManagerTweaks"
-            }
-            local count = 0
-            for _, name in ipairs(applyOrder) do
-              local profile = addon.AddonProfiles[name]
-              if profile and profile.applyFunction then
-                profile.applyFunction(true)
-                count = count + 1
-              end
-            end
-            addon:Print("|cffD78144NoobTaco|r|cffF8F9FAUI|r: Bulk setup complete. " ..
-              (count or 0) .. " profiles processed.")
-            ReloadUI()
-          end
-        end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
+        "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
       }
-      StaticPopup_Show("NOOBTACOUI_BULK_APPLY")
-    end
-  })
-
-  table.insert(integrationChildren, { type = "header", label = "Individual Addon Profiles" })
-  table.insert(integrationChildren, {
-    type = "description",
-    text =
-    "|chighlight|TIP:|r You can also update or apply profiles for each addon individually in the list below. Simply look for the |csuccess|[NEW]|r or |csuccess|[UPDATE]|r badges and click the addon name to expand its options."
-  })
-
-  if addon.AddonProfiles then
-    local displayOrder = {
-      "BetterBlizzFrames",
-      "Platynator",
-      "XIV_Databar",
-      "SenseiClassResourceBar",
-      "Details",
-      "CooldownManagerTweaks",
-      "zBarButtonBG"
     }
 
-    local appliedProfiles = NoobTacoUIDB.GeneralSettings.AppliedProfiles or {}
-
-    for _, profileKey in ipairs(displayOrder) do
-      local profile = addon.AddonProfiles[profileKey]
-      if profile then
-        local status = "|cerror|NOT LOADED|r"
-        local isLoaded = C_AddOns.IsAddOnLoaded(profile.name)
-        if profileKey == "XIV_Databar" then
-          if C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") then
-            isLoaded = true
-          end
-        end
-
-        if isLoaded then
-          local currentVer = appliedProfiles[profileKey]
-          if not currentVer then
-            status = "|cwarning|NEW|r"
-          elseif currentVer < profile.version then
-            status = "|cwarning|UPDATE|r"
-          else
-            status = "|csuccess|INSTALLED|r"
-          end
-        end
-
-        local profileChildren = {}
-        table.insert(profileChildren, { type = "description", text = profile.description })
-
-        if profile.instructions then
-          local instructText = ""
-          for i, line in ipairs(profile.instructions) do
-            instructText = instructText .. i .. ". " .. line .. "\n"
-          end
-          table.insert(profileChildren, { type = "description", text = instructText })
-        end
-
-        if isLoaded then
-          table.insert(profileChildren, {
-            type = "button",
-            label = profile.isCustomApply and "APPLY PROFILE" or "COPY PROFILE STRING",
-            width = 200,
-            onClick = function()
-              if profile.applyFunction then
-                profile.applyFunction()
-              elseif profile.profileString then
-                StaticPopupDialogs["NOOBTACOUI_GENERIC_COPY"] = {
-                  text = "CTRL+C to copy the profile string for " .. profile.displayName,
-                  button1 = "Close",
-                  hasEditBox = true,
-                  editBoxWidth = 400,
-                  OnShow = function(self)
-                    self.EditBox:SetText(profile.profileString)
-                    self.EditBox:SetFocus()
-                    self.EditBox:HighlightText()
-                  end,
-                  timeout = 0,
-                  whileDead = true,
-                  hideOnEscape = true,
-                }
-                StaticPopup_Show("NOOBTACOUI_GENERIC_COPY")
-              end
-            end
-          })
-        else
-          if profile.downloadUrl and profile.downloadUrl ~= "N/A" then
-            table.insert(profileChildren, {
-              type = "description",
-              text = "|cerror|Addon is not loaded.|r"
-            })
-            table.insert(profileChildren, {
-              type = "button",
-              label = "DOWNLOAD ADDON",
-              width = 200,
-              onClick = function()
-                StaticPopupDialogs["NOOBTACOUI_DOWNLOAD_LINK"] = {
-                  text = "CTRL+C to copy the download link for " .. profile.displayName,
-                  button1 = "Close",
-                  hasEditBox = true,
-                  editBoxWidth = 400,
-                  OnShow = function(self)
-                    self.EditBox:SetText(profile.downloadUrl)
-                    self.EditBox:SetFocus()
-                    self.EditBox:HighlightText()
-                  end,
-                  timeout = 0,
-                  whileDead = true,
-                  hideOnEscape = true,
-                  preferredIndex = 3,
-                }
-                StaticPopup_Show("NOOBTACOUI_DOWNLOAD_LINK")
-              end
-            })
-          else
-            table.insert(profileChildren, {
-              type = "description",
-              text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
-            })
-          end
-        end
-
+    if IsRetail() then
+      local editModeProfile = addon.AddonProfiles and addon.AddonProfiles.EditMode
+      if editModeProfile then
         table.insert(integrationChildren, {
-          type = "card",
-          label = profile.displayName .. "  " .. status,
-          children = profileChildren
+          type = "callout",
+          title = "STEP 1: MANDATORY EDIT MODE SETUP",
+          text =
+          "You MUST import the Edit Mode layout for the UI to function correctly. This controls the position of all standard Blizzard frames.",
+          buttonText = "GET IMPORT STRING",
+          severity = "warning",
+          onButtonClick = function()
+            if editModeProfile.applyFunction then
+              editModeProfile.applyFunction()
+            end
+          end
         })
       end
     end
+
+    -- table.insert(integrationChildren, { type = "header", label = " 2: AUTOMATED SETUPSTEP" })
+    table.insert(integrationChildren, {
+      type = "callout",
+      title = "STEP 2: AUTOMATED SETUP",
+      text =
+      "Automatically apply profiles for all detected and supported addons. This will overwrite existing settings for these addons.",
+      buttonText = "APPLY ALL PROFILES",
+      severity = "success",
+      onButtonClick = function()
+        StaticPopupDialogs["NOOBTACOUI_BULK_APPLY"] = {
+          text = "This will overwrite settings for ALL supported addons detected.\nAre you sure you want to continue?",
+          button1 = "Yes",
+          button2 = "No",
+          OnAccept = function()
+            if addon.AddonProfiles then
+              local applyOrder = {
+                "BetterBlizzFrames",
+                "Platynator",
+                "SenseiClassResourceBar",
+                "XIV_Databar",
+                "Details",
+                "zBarButtonBG",
+                "CooldownManagerTweaks"
+              }
+              local count = 0
+              for _, name in ipairs(applyOrder) do
+                local profile = addon.AddonProfiles[name]
+                if profile and profile.applyFunction then
+                  profile.applyFunction(true)
+                  count = count + 1
+                end
+              end
+              addon:Print("|cffD78144NoobTaco|r|cffF8F9FAUI|r: Bulk setup complete. " ..
+                (count or 0) .. " profiles processed.")
+              ReloadUI()
+            end
+          end,
+          timeout = 0,
+          whileDead = true,
+          hideOnEscape = true,
+        }
+        StaticPopup_Show("NOOBTACOUI_BULK_APPLY")
+      end
+    })
+
+    table.insert(integrationChildren, { type = "header", label = "Individual Addon Profiles" })
+    table.insert(integrationChildren, {
+      type = "description",
+      text =
+      "|chighlight|TIP:|r You can also update or apply profiles for each addon individually in the list below. Simply look for the |csuccess|[NEW]|r or |csuccess|[UPDATE]|r badges and click the addon name to expand its options."
+    })
+
+    if addon.AddonProfiles then
+      local displayOrder = {
+        "BetterBlizzFrames",
+        "Platynator",
+        "XIV_Databar",
+        "SenseiClassResourceBar",
+        "Details",
+        "CooldownManagerTweaks",
+        "zBarButtonBG"
+      }
+
+      local appliedProfiles = NoobTacoUIDB.GeneralSettings.AppliedProfiles or {}
+
+      for _, profileKey in ipairs(displayOrder) do
+        local profile = addon.AddonProfiles[profileKey]
+        if profile then
+          local status = "|cerror|NOT LOADED|r"
+          local isLoaded = false
+          if profileKey == "XIV_Databar" then
+            if C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued_Mainline") or C_AddOns.IsAddOnLoaded("XIV_DataBar") then
+              isLoaded = true
+            end
+          else
+            isLoaded = C_AddOns.IsAddOnLoaded(profile.name)
+          end
+
+          if isLoaded then
+            local currentVer = appliedProfiles[profileKey]
+            if not currentVer then
+              status = "|cwarning|NEW|r"
+            elseif currentVer < profile.version then
+              status = "|cwarning|UPDATE|r"
+            else
+              status = "|csuccess|INSTALLED|r"
+            end
+          end
+
+          local profileChildren = {}
+          table.insert(profileChildren, { type = "description", text = profile.description })
+
+          if profile.instructions then
+            local instructText = ""
+            for i, line in ipairs(profile.instructions) do
+              instructText = instructText .. i .. ". " .. line .. "\n"
+            end
+            table.insert(profileChildren, { type = "description", text = instructText })
+          end
+
+          if isLoaded then
+            table.insert(profileChildren, {
+              type = "button",
+              label = profile.isCustomApply and "APPLY PROFILE" or "COPY PROFILE STRING",
+              width = 200,
+              onClick = function()
+                if profile.applyFunction then
+                  profile.applyFunction()
+                elseif profile.profileString then
+                  StaticPopupDialogs["NOOBTACOUI_GENERIC_COPY"] = {
+                    text = "CTRL+C to copy the profile string for " .. profile.displayName,
+                    button1 = "Close",
+                    hasEditBox = true,
+                    editBoxWidth = 400,
+                    OnShow = function(self)
+                      self.EditBox:SetText(profile.profileString)
+                      self.EditBox:SetFocus()
+                      self.EditBox:HighlightText()
+                    end,
+                    timeout = 0,
+                    whileDead = true,
+                    hideOnEscape = true,
+                  }
+                  StaticPopup_Show("NOOBTACOUI_GENERIC_COPY")
+                end
+              end
+            })
+          else
+            if profile.downloadUrl and profile.downloadUrl ~= "N/A" then
+              table.insert(profileChildren, {
+                type = "description",
+                text = "|cerror|Addon is not loaded.|r"
+              })
+              table.insert(profileChildren, {
+                type = "button",
+                label = "DOWNLOAD ADDON",
+                width = 200,
+                onClick = function()
+                  StaticPopupDialogs["NOOBTACOUI_DOWNLOAD_LINK"] = {
+                    text = "CTRL+C to copy the download link for " .. profile.displayName,
+                    button1 = "Close",
+                    hasEditBox = true,
+                    editBoxWidth = 400,
+                    OnShow = function(self)
+                      self.EditBox:SetText(profile.downloadUrl)
+                      self.EditBox:SetFocus()
+                      self.EditBox:HighlightText()
+                    end,
+                    timeout = 0,
+                    whileDead = true,
+                    hideOnEscape = true,
+                    preferredIndex = 3,
+                  }
+                  StaticPopup_Show("NOOBTACOUI_DOWNLOAD_LINK")
+                end
+              })
+            else
+              table.insert(profileChildren, {
+                type = "description",
+                text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
+              })
+            end
+          end
+
+          table.insert(integrationChildren, {
+            type = "card",
+            label = profile.displayName .. "  " .. status,
+            children = profileChildren
+          })
+        end
+      end
+    end
+
+    addon.ConfigSchemas.Addons = {
+      type = "group",
+      children = integrationChildren
+    }
+    return addon.ConfigSchemas.Addons
   end
 
-  addon.ConfigSchemas.Addons = {
-    type = "group",
-    children = integrationChildren
-  }
+  -- Initialize with empty schema, will be rebuilt on render
+  addon.ConfigSchemas.Addons = { type = "group", children = {} }
 end
 
 -------------------------------------------------------------------------------
@@ -720,7 +729,8 @@ local function InitializeConfigUI()
   MainLayout.sidebarButtons["addons"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "addons", "Addon Integration",
     function()
       addon.ConfigState:SetValue("lastSection", "addons")
-      addon.ConfigRenderer:Render(addon.ConfigSchemas.Addons, MainLayout)
+      local schema = addon.BuildAddonsSchema()
+      addon.ConfigRenderer:Render(schema, MainLayout)
     end)
 
   MainLayout.sidebarButtons["gamesettings"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "gamesettings",

@@ -462,6 +462,8 @@ addon.AddonProfiles.XIV_Databar = {
       xivFolder = "XIV_Databar_Continued"
     elseif C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") then
       xivFolder = "XIV_Databar-Continued"
+    elseif C_AddOns.IsAddOnLoaded("XIV_Databar_Continued_Mainline") then
+      xivFolder = "XIV_Databar_Continued_Mainline"
     end
 
     if xivFolder == "" then
@@ -471,8 +473,12 @@ addon.AddonProfiles.XIV_Databar = {
       return
     end
 
-    -- XIV_Databar uses the folder name as its AceAddon name
+    -- XIV_Databar uses the folder name as its AceAddon name, but sometimes it retains "XIV_Databar" even if folder is different
     local XIVBar = LibStub("AceAddon-3.0"):GetAddon(xivFolder, true)
+    if not XIVBar then
+      XIVBar = LibStub("AceAddon-3.0"):GetAddon("XIV_Databar", true)
+    end
+
     if not XIVBar or not XIVBar.ImportProfile then
       if not isBulk then
         addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: XIVBar addon object or ImportProfile function missing.")
@@ -828,7 +834,9 @@ function addon.ApplyAllProfiles()
       if profile.name == "XIV_Databar" then
         addonLoaded = C_AddOns.IsAddOnLoaded("XIV_Databar") or
             C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or
-            C_AddOns.IsAddOnLoaded("XIV_Databar-Continued")
+            C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") or
+            C_AddOns.IsAddOnLoaded("XIV_Databar_Continued_Mainline") or
+            C_AddOns.IsAddOnLoaded("XIV_DataBar")
       else
         addonLoaded = C_AddOns.IsAddOnLoaded(profile.name)
       end
