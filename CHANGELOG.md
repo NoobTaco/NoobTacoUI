@@ -1,6 +1,6 @@
 # NoobTacoUI
 
-## [Unreleased]
+## [2.0.0] - 2026-01-11
 - **Branding**: Re-branded the NoobTaco suite with the official "NoobTaco Tech Brand Identity". Added split-color prominence: **NoobTaco** (Burnt Sienna) paired with **UI** or **GotOne** (Cloud White). (Issue #35)
 - **Theme System**: Removed the theme switcher UI from the configuration menu. The addon now exclusively uses the "NoobTaco" theme for a consistent visual identity. (Issue #36)
 - **Config UI**: Rearranged sidebar menu items for a more logical onboarding flow: **About** -> **Addon Integration** -> **Game Settings** -> **General**. The configuration menu now defaults to the **About** page on first open. (Issue #34)
@@ -12,7 +12,7 @@
 - **New Feature**: Added a "DOWNLOAD ADDON" button for uninstalled addons, providing direct access to download links.
 - **Code Cleanup**: Removed the redundant legacy configuration menu (`ConfigMenu.lua`) as the new library-based system is now fully operational.
 - **Code Cleanup**: Removed unused metadata and redundant headers from addon profile definitions.
-- **Library Update**: Updated `NoobTaco-Config` embedded library to v1.0.3 to ensure compatibility and prevent version conflicts.
+- **Library Update**: Updated `NoobTaco-Config` embedded library to v1.3.1 to ensure compatibility and prevent version conflicts.
 - **Fix**: Resolved issue where addon messages would append a '1' to the end (Issue #32).
 - **Fix**: Resolved Lua syntax error in `Media/UIAssets.lua` caused by redundant code at the end of the file.
 
