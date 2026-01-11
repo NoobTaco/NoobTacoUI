@@ -717,12 +717,6 @@ local function InitializeConfigUI()
     addon.ConfigRenderer:Render(addon.ConfigSchemas.About, MainLayout)
   end)
 
-  MainLayout.sidebarButtons["general"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "general", "General", function()
-    addon.ConfigState:SetValue("lastSection", "general")
-    addon.ConfigRenderer:Render(addon.ConfigSchemas.General, MainLayout)
-  end)
-
-
   MainLayout.sidebarButtons["addons"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "addons", "Addon Integration",
     function()
       addon.ConfigState:SetValue("lastSection", "addons")
@@ -735,8 +729,13 @@ local function InitializeConfigUI()
       addon.ConfigRenderer:Render(addon.ConfigSchemas.Game, MainLayout)
     end)
 
-  -- Default to General page on first show
-  MainLayout.lastSelected = MainLayout.sidebarButtons["general"]
+  MainLayout.sidebarButtons["general"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "general", "General", function()
+    addon.ConfigState:SetValue("lastSection", "general")
+    addon.ConfigRenderer:Render(addon.ConfigSchemas.General, MainLayout)
+  end)
+
+  -- Default to About page on first show
+  MainLayout.lastSelected = MainLayout.sidebarButtons["about"]
 
 
   -- Ensure a section is rendered when the frame is shown (e.g. via Blizzard Options)

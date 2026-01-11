@@ -3,6 +3,7 @@
 ## [Unreleased]
 - **Branding**: Re-branded the NoobTaco suite with the official "NoobTaco Tech Brand Identity". Added split-color prominence: **NoobTaco** (Burnt Sienna) paired with **UI** or **GotOne** (Cloud White). (Issue #35)
 - **Theme System**: Removed the theme switcher UI from the configuration menu. The addon now exclusively uses the "NoobTaco" theme for a consistent visual identity. (Issue #36)
+- **Config UI**: Rearranged sidebar menu items for a more logical onboarding flow: **About** -> **Addon Integration** -> **Game Settings** -> **General**. The configuration menu now defaults to the **About** page on first open. (Issue #34)
 - **Module Split**: The Collection Notifications module and associated sound files have been officially moved to the standalone addon **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)**.
 - **Fix**: Resolved issue where opening the `NoobTacoUI` category via the Blizzard Options menu would show an empty page. It now correctly defaults to the "About" page.
 - **Fix**: Resolved issue where the `NoobTacoUI` category was not appearing in the Blizzard Options menu until the config window was opened manually.
