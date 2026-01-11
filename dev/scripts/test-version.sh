@@ -19,8 +19,6 @@ echo "📝 Lua fallback versions:"
 echo "version.lua:"
 grep "addonVersion.*=" .release/NoobTacoUI-Media/modules/version.lua
 
-echo "ConfigMenu.lua:"
-grep -A1 -B1 "version.*=.*\"v" .release/NoobTacoUI-Media/modules/ConfigMenu.lua
 
 echo
 echo "✅ Version test complete!"

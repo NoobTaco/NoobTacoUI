@@ -64,7 +64,7 @@ SlashCmdList["NTVERSION"] = function(msg)
   if args == "version" or args == "ver" or args == "v" then
     ShowVersion()
   elseif args == "config" or args == "cfg" or args == "options" then
-    -- Show configuration menu (requires ConfigMenu.lua to be loaded)
+    -- Show configuration menu (handled in ConfigNew.lua)
     if _G.NoobTacoUIAddon and _G.NoobTacoUIAddon.ShowConfigMenu then
       _G.NoobTacoUIAddon.ShowConfigMenu()
     else

@@ -3,6 +3,6 @@
 	<Script file="Commands.lua"/>
 
 	<Script file="AddonProfiles.lua"/>
-	<!-- <Script file="ConfigMenu.lua"/> -->
+
 	<Script file="ConfigNew.lua"/>
 </Ui>
