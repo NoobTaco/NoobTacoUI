@@ -6,7 +6,7 @@
 ## Notes: The complete UI configuration, profile, and media framework, ready for Midnight.
 ## X-License: GPL-3.0-or-later
 ## DefaultState: enabled
-## IconTexture: Interface\AddOns\NoobTacoUI\media\Textures\logo.tga
+## IconTexture: Interface\AddOns\NoobTacoUI\Media\Textures\logo.tga
 ## SavedVariables: NoobTacoUIDB
 ## AddonCompartmentFunc: NoobTacoUI_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: NoobTacoUI_OnAddonCompartmentEnter

@@ -1,5 +1,11 @@
 # NoobTacoUI
 
+## [2.0.2] - 2026-01-11
+- **Feature**: Implemented client-side filtering for addon profiles based on version compatibility (Fixes #40).
+- **Addon Profiles**: Curated accurate `minTocVersion` metadata for all profiles via CurseForge research, ensuring specific addons like *zBarButtonBG* and *Sensei* are correctly hidden on Classic clients.
+- **Initialization**: Optimized library load order to ensure Core components like *LibStub* are available before secondary libraries.
+- **Branding**: Fixed Minimap icon rendering on MoP Classic by standardizing media paths, folder casing, and adding explicit `.tga` extensions.
+
 ## [2.0.1] - 2026-01-11
 - **Fix**: Fixed XIV_Databar Continued detection by implementing dynamic schema building. The addon integration UI now rebuilds its schema when opened, ensuring accurate detection of addons that load after NoobTacoUI (Issue #39).
 

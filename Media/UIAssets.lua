@@ -54,7 +54,7 @@ end
 -- Asset paths for easy management
 addon.UIAssets = {
   -- Logo and branding
-  Logo = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo",
+  Logo = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
 
   -- Background textures using your NoobTaco theme
   Background = {

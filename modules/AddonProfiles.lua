@@ -16,6 +16,7 @@ addon.AddonProfiles.EditMode = {
   name = "EditMode",
   displayName = "Default WoW UI Edit Mode",
   description = "Optimized WoW Edit Mode layout providing a clean and functional interface base.",
+  minTocVersion = 110000,
   downloadUrl = "N/A",
   instructions = {
     "Click the |cwarning|Apply Profile|r button below.",
@@ -93,6 +94,7 @@ addon.AddonProfiles.BetterBlizzFrames = {
   name = "BetterBlizzFrames",
   displayName = "BetterBlizzFrames",
   description = "Enhances Blizzard unit frames with customizable auras, castbars, and visual tweaks.",
+  minTocVersion = 11500,
   downloadUrl = "https://www.curseforge.com/wow/addons/betterblizzframes",
   instructions = {
     "Click the button below to copy the profile string",
@@ -181,6 +183,7 @@ addon.AddonProfiles.Platynator = {
   name = "Platynator",
   displayName = "Platynator",
   description = "High-performance nameplate addon with threat coloring and a user-friendly editor.",
+  minTocVersion = 11500,
   downloadUrl = "https://www.curseforge.com/wow/addons/platynator",
   instructions = {
     "Click the button below to copy the profile string",
@@ -309,6 +312,7 @@ addon.AddonProfiles.CooldownManagerTweaks = {
   name = "CooldownManagerTweaks",
   displayName = "Cooldown Manager Tweaks",
   description = "Enhancements for Blizzard's Cooldown Manager with advanced layout control.",
+  minTocVersion = 110000,
   downloadUrl = "https://www.curseforge.com/wow/addons/cooldown-manager-tweaks",
   instructions = {
     "Click the button below to copy the profile string",
@@ -329,6 +333,7 @@ addon.AddonProfiles.zBarButtonBG = {
   name = "zBarButtonBG",
   displayName = "zBarButtonBG",
   description = "Customizable background frames for action bar buttons for a cleaner aesthetic.",
+  minTocVersion = 110000,
   downloadUrl = "https://www.curseforge.com/wow/addons/zbarbuttonbg",
   instructions = {
     "Click the button below to copy the profile string",
@@ -446,6 +451,7 @@ addon.AddonProfiles.XIV_Databar = {
   name = "XIV_Databar",
   displayName = "XIV_Databar Continued",
   description = "FFXIV-inspired info bar for tracking gold, currency, durability, and more.",
+  minTocVersion = 11500,
   downloadUrl = "https://www.curseforge.com/wow/addons/xiv-databar-continued",
   instructions = {
     "Click the |cwarning|Apply Profile|r button below.",
@@ -548,6 +554,7 @@ addon.AddonProfiles.SenseiClassResourceBar = {
   name = "SenseiClassResourceBar",
   displayName = "Sensei Class Resource Bar",
   description = "Adaptive resource bar that automatically stylizes based on class and specialization.",
+  minTocVersion = 110000,
   downloadUrl = "https://www.curseforge.com/wow/addons/senseiclassresourcebar",
   instructions = {
     "Ensure you have an active Edit Mode profile selected.",
@@ -712,6 +719,7 @@ addon.AddonProfiles.Details = {
   name = "Details",
   displayName = "Details! Damage Meter",
   description = "The premier damage and healing meter for advanced combat logging.",
+  minTocVersion = 11500,
   downloadUrl = "https://www.curseforge.com/wow/addons/details",
   instructions = {
     "Click the |cwarning|Apply Profile|r button below.",

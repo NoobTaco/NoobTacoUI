@@ -101,6 +101,14 @@ local function IsAddonLoaded(name)
   return C_AddOns and C_AddOns.IsAddOnLoaded(name)
 end
 
+-- Helper to check if a profile is supported by current client
+local function IsProfileSupported(profile)
+  if not profile then return false end
+  if not profile.minTocVersion then return true end -- Supported by default if no version specified
+  local _, _, _, tocVersion = GetWoWVersion()
+  return tocVersion >= profile.minTocVersion
+end
+
 -- Initial configuration
 local MainLayout = nil
 
@@ -144,7 +152,7 @@ local function InitializeMinimapButton()
   local minimapButtonLDB = LDB:NewDataObject("NoobTacoUI", {
     type = "launcher",
     text = "NoobTacoUI",
-    icon = addon.UIAssets and addon.UIAssets.Logo or "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
+    icon = [[Interface\AddOns\NoobTacoUI\Media\Textures\logo.tga]],
     OnClick = function(self, button)
       if button == "LeftButton" then
         addon.ShowConfigMenu()
@@ -459,7 +467,7 @@ local function BuildSchemas()
     children = {
       {
         type = "about",
-        icon = addon.UIAssets and addon.UIAssets.Logo or "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
+        icon = [[Interface\AddOns\NoobTacoUI\Media\Textures\logo.tga]],
         title = "NoobTaco|cffF8F9FAUI|r",
         version = "Version " ..
             (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "1.4.3"),
@@ -535,7 +543,7 @@ local function BuildSchemas()
               local count = 0
               for _, name in ipairs(applyOrder) do
                 local profile = addon.AddonProfiles[name]
-                if profile and profile.applyFunction then
+                if profile and profile.applyFunction and IsProfileSupported(profile) then
                   profile.applyFunction(true)
                   count = count + 1
                 end
@@ -575,7 +583,7 @@ local function BuildSchemas()
 
       for _, profileKey in ipairs(displayOrder) do
         local profile = addon.AddonProfiles[profileKey]
-        if profile then
+        if profile and IsProfileSupported(profile) then
           local status = "|cerror|NOT LOADED|r"
           local isLoaded = false
           if profileKey == "XIV_Databar" then
