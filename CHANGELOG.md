@@ -15,6 +15,7 @@
 - **Library Update**: Updated `NoobTaco-Config` embedded library to v1.3.1 to ensure compatibility and prevent version conflicts.
 - **Fix**: Resolved issue where addon messages would append a '1' to the end (Issue #32).
 - **Fix**: Resolved Lua syntax error in `Media/UIAssets.lua` caused by redundant code at the end of the file.
+- **Profile Update**: Updated the Retail Edit Mode profile layout to strictly match the "Midnight" profile positions, ensuring a consistent UI layout across game clients.
 
 
 - **Themed Chat & Tooltips**: Centralized chat printing via `addon:Print` and updated Minimap/Compartment tooltips to use the `NoobTaco-Config` theme system for dynamic token resolution.
