@@ -127,12 +127,18 @@ local function InitializeDatabase()
       enableAddonCompartment = true,
       minimapPos = 225,
       AppliedProfiles = {},
+      ExcludedProfiles = {},
     }
   end
 
   -- Ensure AppliedProfiles exists for existing databases
   if not NoobTacoUIDB.GeneralSettings.AppliedProfiles then
     NoobTacoUIDB.GeneralSettings.AppliedProfiles = {}
+  end
+
+  -- Ensure ExcludedProfiles exists for existing databases
+  if not NoobTacoUIDB.GeneralSettings.ExcludedProfiles then
+    NoobTacoUIDB.GeneralSettings.ExcludedProfiles = {}
   end
 
   -- Initialize the Config Library State with our DB
@@ -607,9 +613,11 @@ local function BuildSchemas()
                 "CooldownManagerTweaks"
               }
               local count = 0
+              local excludedProfiles = NoobTacoUIDB.GeneralSettings.ExcludedProfiles or {}
               for _, name in ipairs(applyOrder) do
                 local profile = addon.AddonProfiles[name]
-                if profile and profile.applyFunction and IsProfileSupported(profile) then
+                local isExcluded = excludedProfiles[name]
+                if profile and profile.applyFunction and IsProfileSupported(profile) and not isExcluded then
                   profile.applyFunction(true)
                   count = count + 1
                 end
@@ -673,6 +681,18 @@ local function BuildSchemas()
 
           local profileChildren = {}
           table.insert(profileChildren, { type = "description", text = profile.description })
+
+          -- Add Exclusion Checkbox
+          table.insert(profileChildren, {
+            type = "checkbox",
+            label = "Include in Bulk Setup",
+            id = "GeneralSettings.ExcludedProfiles." .. profileKey,
+            invertValue = true,
+            default = false,
+            onChange = function(val)
+              if addon.ConfigState then addon.ConfigState:Commit() end
+            end
+          })
 
           if profile.instructions then
             local instructText = ""
