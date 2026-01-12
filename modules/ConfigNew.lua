@@ -263,7 +263,7 @@ local function BuildSchemas()
     type = "group",
     children = {
       { type = "header",      label = "General Settings" },
-      { type = "description", text = "General settings for NoobTacoUI." },
+      { type = "description", text = "Configure how NoobTacoUI appears and behaves in your game." },
       { type = "header",      label = "Minimap & Interface" },
       {
         type = "checkbox",
@@ -352,7 +352,7 @@ local function BuildSchemas()
     type = "group",
     children = {
       { type = "header",      label = "Game Settings" },
-      { type = "description", text = "Configure advanced game settings and CVars" },
+      { type = "description", text = "Optimize your display settings for the best visual experience." },
       {
         type = "alert",
         text =
@@ -363,7 +363,7 @@ local function BuildSchemas()
       {
         type = "description",
         text =
-        "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 logic) keep things crisp while being much easier to read."
+        "|cheader|What Is This?|r Pixel Perfect Scaling ensures your UI is rendered at the optimal scale for your monitor, eliminating blurriness and making text crisp.\n\n|cheader|Two Modes Available:|r\n• |csuccess|Standard (1:1)|r - Maximum screen space, smaller UI elements, perfectly sharp\n• |csuccess|High Visibility (2:1)|r - Doubled UI size for easier reading, still perfectly sharp\n\n|cheader|How To Choose:|r\n1. Check your detected resolution below\n2. Try the Standard mode first\n3. If text is too small, use High Visibility mode\n4. A UI reload is required after changing"
       },
       {
         type = "description",
@@ -520,6 +520,18 @@ local function BuildSchemas()
           },
         }
       },
+      { type = "header", label = "Getting Started" },
+      {
+        type = "description",
+        text =
+        "|cheader|New to NoobTacoUI? Start Here!|r\n\n" ..
+        "|csuccess|Step 1:|r Click 'Addon Integration' in the sidebar\n" ..
+        "|csuccess|Step 2:|r Follow the STEP 1: Edit Mode setup (required)\n" ..
+        "|csuccess|Step 3:|r Use STEP 2 to apply all addon profiles automatically\n" ..
+        "|csuccess|Step 4:|r Visit 'Game Settings' to optimize your display\n" ..
+        "|csuccess|Step 5:|r Customize 'General' settings to your preference\n\n" ..
+        "|chighlight|Need Help?|r Each section has detailed explanations to guide you through the process."
+      },
     }
   }
 
@@ -534,7 +546,13 @@ local function BuildSchemas()
       {
         type = "description",
         text =
-        "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
+        "Welcome to NoobTacoUI! Follow these steps to set up your interface. Each step builds on the previous one for a complete UI experience."
+      },
+      {
+        type = "alert",
+        severity = "info",
+        text =
+        "|cheader|Understanding Profile Status:|r\n• |csuccess|INSTALLED|r - Profile is up to date\n• |cwarning|NEW|r - Profile has never been applied\n• |cwarning|UPDATE|r - A newer version is available\n• |cerror|NOT LOADED|r - Addon not installed or enabled"
       }
     }
 
@@ -545,7 +563,7 @@ local function BuildSchemas()
           type = "callout",
           title = "STEP 1: MANDATORY EDIT MODE SETUP",
           text =
-          "You MUST import the Edit Mode layout for the UI to function correctly. This controls the position of all standard Blizzard frames.",
+          "|cheader|Why This Matters:|r Edit Mode controls the position and layout of all default Blizzard UI elements (player frame, target frame, action bars, minimap, etc.). This is the foundation of NoobTacoUI.\n\n|cheader|What To Do:|r\n1. Click 'GET IMPORT STRING' below\n2. Copy the string (CTRL+C)\n3. Press ESC > Edit Mode in-game\n4. Click the Layout dropdown > Import\n5. Paste (CTRL+V) and click Import",
           buttonText = "GET IMPORT STRING",
           severity = "warning",
           onButtonClick = function()
@@ -562,7 +580,7 @@ local function BuildSchemas()
       type = "callout",
       title = "STEP 2: AUTOMATED SETUP",
       text =
-      "Automatically apply profiles for all detected and supported addons. This will overwrite existing settings for these addons.",
+      "|cheader|What This Does:|r Applies profiles for ALL supported addons you have installed. Each profile is pre-configured to work perfectly with NoobTacoUI.\n\n|cheader|Your Choice:|r You can:\n• Use this button to apply all profiles at once (recommended for new users)\n• Or scroll down and apply profiles individually (advanced users)\n\n|cwarning|Note:|r This will overwrite your existing addon settings for supported addons.",
       buttonText = "APPLY ALL PROFILES",
       severity = "success",
       onButtonClick = function()
@@ -606,7 +624,7 @@ local function BuildSchemas()
     table.insert(integrationChildren, {
       type = "description",
       text =
-      "|chighlight|TIP:|r You can also update or apply profiles for each addon individually in the list below. Simply look for the |csuccess|[NEW]|r or |csuccess|[UPDATE]|r badges and click the addon name to expand its options."
+      "|cheader|Advanced Setup:|r Pick and choose which addon profiles to apply. This is useful if:\n• You only use certain addons\n• You want to update one specific addon profile\n• You prefer to configure addons yourself\n\nEach addon card below shows its status and lets you apply profiles individually."
     })
 
     if addon.AddonProfiles then
