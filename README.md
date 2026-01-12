@@ -19,14 +19,6 @@ It's a collection of high-quality fonts, sounds, and textures, plus it comes wit
 
 Keep everything looking consistent across your whole screen with built-in profile setup.
 
-- **Addon Profiles**: Easy three-step setup:
-  - **Step 1: Edit Mode**: Simple export for the perfect layout.
-  - **Step 2: Quick Apply**: Apply all your addon profiles at once.
-  - **Manage Your Addons**: A clean list of supported addons (BetterBlizzFrames, Platynator, XIV_Databar, etc.) with easy-to-read status badges (**NEW**, **UPDATE**, **NOT LOADED**) and a **DOWNLOAD ADDON** button for anything you're missing.
-- **Clean UI Scaling**: Tools to set your UI scale perfectly for 4K, 1440p, or 1080p.
-  - **Standard (1:1)**: Maximum screen real estate with mathematical sharpness.
-  - **High Visibility (2:1)**: Doubled UI size for better accessibility while maintaining perfect clarity on high-DPI monitors.
-- **Tweaked Settings**: Simple control over game settings to keep your interface looking crisp.
 - **Pixel Perfect Scaling**: Built-in tools to set your UI scale perfectly for 4K, 1440p, and 1080p resolutions.
   - **Standard (1:1)**: Maximum screen real estate with mathematical sharpness.
   - **High Visibility (2:1)**: Doubled UI size for better accessibility while maintaining perfect clarity on high-DPI monitors.
