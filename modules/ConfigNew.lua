@@ -526,8 +526,8 @@ local function BuildSchemas()
         text =
         "|cheader|New to NoobTacoUI? Start Here!|r\n\n" ..
         "|csuccess|Step 1:|r Click 'Addon Integration' in the sidebar\n" ..
-        "|csuccess|Step 2:|r Follow the STEP 1: Edit Mode setup (required)\n" ..
-        "|csuccess|Step 3:|r Use STEP 2 to apply all addon profiles automatically\n" ..
+        "|csuccess|Step 2:|r Follow the mandatory Edit Mode setup\n" ..
+        "|csuccess|Step 3:|r Use the automated profile application to set up all addons\n" ..
         "|csuccess|Step 4:|r Visit 'Game Settings' to optimize your display\n" ..
         "|csuccess|Step 5:|r Customize 'General' settings to your preference\n\n" ..
         "|chighlight|Need Help?|r Each section has detailed explanations to guide you through the process."
@@ -563,7 +563,7 @@ local function BuildSchemas()
           type = "callout",
           title = "STEP 1: MANDATORY EDIT MODE SETUP",
           text =
-          "|cheader|Why This Matters:|r Edit Mode controls the position and layout of all default Blizzard UI elements (player frame, target frame, action bars, minimap, etc.). This is the foundation of NoobTacoUI.\n\n|cheader|What To Do:|r\n1. Click 'GET IMPORT STRING' below\n2. Copy the string (CTRL+C)\n3. Press ESC > Edit Mode in-game\n4. Click the Layout dropdown > Import\n5. Paste (CTRL+V) and click Import",
+          "|cheader|Why This Matters:|r Edit Mode controls the position and layout of all default Blizzard UI elements (player frame, target frame, action bars, minimap, etc.). This is the foundation of NoobTacoUI.\n\n|cheader|What To Do:|r\n1. Click 'GET IMPORT STRING' below\n2. Copy the string (CTRL+C)\n3. Press ESC to open the game menu, then click 'Edit Mode'\n4. In Edit Mode, click the Layout dropdown menu at the top\n5. Select 'Import' and paste (CTRL+V) the string, then click Import",
           buttonText = "GET IMPORT STRING",
           severity = "warning",
           onButtonClick = function()
