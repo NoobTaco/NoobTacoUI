@@ -1,5 +1,10 @@
 # NoobTacoUI
 
+## [2.0.4] - 2026-01-11
+- **Accessibility**: Increased font weight of the body font in the configuration menu to improve readability for users with poor eyesight.
+- **Themes**: Updated default typography to use `Poppins-Medium` for 'Normal' and `Poppins-Bold` for 'Bold' weights.
+- **Media**: Synchronized high-weight font files across the addon suite.
+
 ## [2.0.3] - 2026-01-11
 - **Branding**: Replaced Discord and Patreon buttons with a "Donate" button linked to Ko-Fi.
 - **Branding**: Enhanced support buttons (Donate, GitHub) to open a copy-paste dialog when clicked for easier link sharing.
