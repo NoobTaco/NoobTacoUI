@@ -1,5 +1,9 @@
 # NoobTacoUI
 
+## [2.1.2] - 2026-01-12
+### Addon Profiles
+- **Edit Mode**: Updated the **Midnight and Retail** Edit Mode profile strings to version 1.4 with optimized positioning for a consistent layout across game expansions.
+
 ## [2.1.1] - 2026-01-12
 ### Features
 - **Addon Integration**: Added the ability to exclude specific addons from the "Apply All Profiles" automated setup.
