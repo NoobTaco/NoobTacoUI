@@ -1,5 +1,9 @@
 # NoobTacoUI
 
+## [2.0.3] - 2026-01-11
+- **Branding**: Replaced Discord and Patreon buttons with a "Donate" button linked to Ko-Fi.
+- **Branding**: Enhanced support buttons (Donate, GitHub) to open a copy-paste dialog when clicked for easier link sharing.
+
 ## [2.0.2] - 2026-01-11
 - **Feature**: Implemented client-side filtering for addon profiles based on version compatibility (Fixes #40).
 - **Addon Profiles**: Curated accurate `minTocVersion` metadata for all profiles via CurseForge research, ensuring specific addons like *zBarButtonBG* and *Sensei* are correctly hidden on Classic clients.

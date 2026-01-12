@@ -474,9 +474,50 @@ local function BuildSchemas()
         description =
         "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern NoobTaco-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.\n\nCreated by NoobTaco Development Team.",
         links = {
-          { label = "Discord", url = "https://discord.gg/noobtaco" },
-          { label = "Patreon", url = "https://patreon.com/noobtaco" },
-          { label = "GitHub",  url = "https://github.com/noobtaco/config" },
+          {
+            label = "Donate",
+            url = "https://ko-fi.com/mikenorton",
+            onClick = function()
+              StaticPopupDialogs["NOOBTACOUI_GENERIC_COPY"] = {
+                text = "CTRL+C to copy the link: https://ko-fi.com/mikenorton",
+                button1 = "Close",
+                hasEditBox = true,
+                editBoxWidth = 400,
+                OnShow = function(self)
+                  self.EditBox:SetText("https://ko-fi.com/mikenorton")
+                  self.EditBox:SetFocus()
+                  self.EditBox:HighlightText()
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+              }
+              StaticPopup_Show("NOOBTACOUI_GENERIC_COPY")
+            end
+          },
+          {
+            label = "GitHub",
+            url = "https://github.com/noobtaco/config",
+            onClick = function()
+              StaticPopupDialogs["NOOBTACOUI_GENERIC_COPY"] = {
+                text = "CTRL+C to copy the link: https://github.com/noobtaco/config",
+                button1 = "Close",
+                hasEditBox = true,
+                editBoxWidth = 400,
+                OnShow = function(self)
+                  self.EditBox:SetText("https://github.com/noobtaco/config")
+                  self.EditBox:SetFocus()
+                  self.EditBox:HighlightText()
+                end,
+                timeout = 0,
+                whileDead = true,
+                hideOnEscape = true,
+                preferredIndex = 3,
+              }
+              StaticPopup_Show("NOOBTACOUI_GENERIC_COPY")
+            end
+          },
         }
       },
     }
