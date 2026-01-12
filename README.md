@@ -24,8 +24,8 @@ Keep everything looking consistent across your whole screen with built-in profil
   - **High Visibility (2:1)**: Doubled UI size for better accessibility while maintaining perfect clarity on high-DPI monitors.
 - **Addon Profiles**: Guided, three-step setup for a perfect UI:
   - **Step 1: Mandatory Edit Mode**: One-click export of optimized layout strings.
-  - **Step 2: Automated Application**: Apply all loaded addon profiles at once.
-  - **Full Addon Management**: Alphabetical list of all supported addons (BetterBlizzFrames, Platynator, XIV_Databar, etc.) with smart status badges (**NEW**, **UPDATE**, **UP TO DATE**, **NOT LOADED**) indicating if the NoobTacoUI profile is applied and current. Includes a **DOWNLOAD ADDON** button for missing requirements.
+  - **Step 2: Automated Application**: Apply all loaded addon profiles at once. You can now customize your bulk setup by toggling "Include in Bulk Setup" for specific addons.
+  - **Full Addon Management**: Alphabetical list of all supported addons (BetterBlizzFrames, Platynator, XIV_Databar, etc.) with smart status badges (**NEW**, **UPDATE**, **UP TO DATE**, **NOT LOADED**) indicating if the NoobTacoUI profile is applied and current. Features include a **DOWNLOAD ADDON** button for missing requirements and a toggle to include/exclude the addon from bulk application.
 - **Game Settings**: Direct control over critical CVars to ensure your UI looks crisp.
 
 ### 📚 Extensive Media Library

@@ -1,5 +1,16 @@
 # NoobTacoUI
 
+## [2.1.2] - 2026-01-12
+### Addon Profiles
+- **Edit Mode**: Updated the **Midnight and Retail** Edit Mode profile strings to version 1.4 with optimized positioning for a consistent layout across game expansions.
+
+## [2.1.1] - 2026-01-12
+### Features
+- **Addon Integration**: Added the ability to exclude specific addons from the "Apply All Profiles" automated setup.
+  - Added "Include in Bulk Setup" checkboxes to individual addon cards.
+  - Bulk implementation now respects user-selected exclusions, allowing for better customization of the addon suite.
+- **Addon Profiles**: Updated the **Platynator** profile string to version 1.3 with an optimized aesthetic and updated configuration.
+
 ## [2.1.0] - 2026-01-12
 ### Documentation
 - **Enhancement**: Significantly improved in-game documentation and step-by-step installation instructions.
