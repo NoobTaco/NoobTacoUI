@@ -470,7 +470,7 @@ local function BuildSchemas()
         icon = [[Interface\AddOns\NoobTacoUI\Media\Textures\logo.tga]],
         title = "NoobTaco|cffF8F9FAUI|r",
         version = "Version " ..
-            (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "1.4.3"),
+            (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "2.1.0"),
         description =
         "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern NoobTaco-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.\n\nCreated by NoobTaco Development Team.",
         links = {

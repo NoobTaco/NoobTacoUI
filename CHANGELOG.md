@@ -1,6 +1,6 @@
 # NoobTacoUI
 
-## [Unreleased]
+## [2.1.0] - 2026-01-12
 ### Documentation
 - **Enhancement**: Significantly improved in-game documentation and step-by-step installation instructions.
   - **About Page**: Added "Getting Started" section with a reordered onboarding flow, prioritizing resolution settings.
