@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="Internal\LibStub.lua"/>
+    <Script file="NoobTaco-Config.lua"/>
+    <Script file="Themes\Theme.lua"/>
+    <Script file="Internal\Schema.lua"/>
+    <Script file="Internal\State.lua"/>
+    <Script file="Internal\Layout.lua"/>
+    <Script file="Internal\Renderer.lua"/>
+</Ui>

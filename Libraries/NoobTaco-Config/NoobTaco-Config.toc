@@ -1,0 +1,41 @@
+## Interface: 120001, 120000, 110207, 110107, 50503, 50500, 40402, 38000, 11508, 11507
+## Title: Lib: |cFFD78144NoobTaco|r-Config
+## Notes: Standalone Configuration Library
+## Author: NoobTaco
+## Version: @project-version@
+## IconTexture: Interface\AddOns\NoobTaco-Config\Media\Textures\noobtaco-config-logo.tga
+## X-GitHub-Project: NoobTaco/NoobTaco-Config
+## X-GitHub-Repository: https://github.com/NoobTaco/NoobTaco-Config
+## X-GitHub-Repository-Type: library
+## X-Website: https://github.com/NoobTaco/NoobTaco-Config
+## X-Feedback-Url: https://github.com/NoobTaco/NoobTaco-Config/issues
+## X-Curse-Project-ID: 1424810
+## X-Wago-ID: qKQm11Kx
+
+## Category-enUS: Libraries
+## Category-deDE: Bibliotheken
+## Category-esES: Bibliotecas
+## Category-esMX: Bibliotecas
+## Category-frFR: Bibliothèques
+## Category-itIT: Biblioteche
+## Category-koKR: 도서관
+## Category-ptBR: Bibliotecas
+## Category-ruRU: Biblioteki
+## Category-zhCN: 函数库
+## Category-zhTW: 函式庫
+
+# Core LibStub
+Internal/LibStub.lua
+NoobTaco-Config.lua
+
+# Themes
+Themes/Theme.lua
+
+# Internal Engine
+Internal/Schema.lua
+Internal/State.lua
+Internal/Layout.lua
+Internal/Renderer.lua
+
+# Testing
+# Tests/ConfigTest.lua
