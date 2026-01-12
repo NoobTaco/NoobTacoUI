@@ -263,7 +263,7 @@ local function BuildSchemas()
     type = "group",
     children = {
       { type = "header",      label = "General Settings" },
-      { type = "description", text = "General settings for NoobTacoUI." },
+      { type = "description", text = "Configure how NoobTacoUI appears and behaves in your game." },
       { type = "header",      label = "Minimap & Interface" },
       {
         type = "checkbox",
@@ -352,7 +352,7 @@ local function BuildSchemas()
     type = "group",
     children = {
       { type = "header",      label = "Game Settings" },
-      { type = "description", text = "Configure advanced game settings and CVars" },
+      { type = "description", text = "Optimize your display settings for the best visual experience." },
       {
         type = "alert",
         text =
@@ -363,7 +363,7 @@ local function BuildSchemas()
       {
         type = "description",
         text =
-        "Set your UI scale to match your resolution for maximum sharpness. High Visibility modes (2:1 logic) keep things crisp while being much easier to read."
+        "|cheader|What Is This?|r Pixel Perfect Scaling ensures your UI is rendered at the optimal scale for your monitor, eliminating blurriness and making text crisp.\n\n|cheader|Two Modes Available:|r\n• |csuccess|Standard (1:1)|r - Maximum screen space, smaller UI elements, perfectly sharp\n• |csuccess|High Visibility (2:1)|r - Doubled UI size for easier reading, still perfectly sharp\n\n|cheader|How To Choose:|r\n1. Check your detected resolution below\n2. Try the Standard mode first\n3. If text is too small, use High Visibility mode\n4. A UI reload is required after changing"
       },
       {
         type = "description",
@@ -470,7 +470,7 @@ local function BuildSchemas()
         icon = [[Interface\AddOns\NoobTacoUI\Media\Textures\logo.tga]],
         title = "NoobTaco|cffF8F9FAUI|r",
         version = "Version " ..
-            (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "1.4.3"),
+            (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(addonName, "Version") or "2.1.0"),
         description =
         "Shared media assets and enhanced UI components for the NoobTacoUI addon suite. Featuring modern NoobTaco-themed visual assets and robust configuration systems designed for the Midnight expansion and beyond.\n\nCreated by NoobTaco Development Team.",
         links = {
@@ -520,6 +520,18 @@ local function BuildSchemas()
           },
         }
       },
+      { type = "header", label = "Getting Started" },
+      {
+        type = "description",
+        text =
+            "|cheader|New to NoobTacoUI? Start Here!|r\n\n" ..
+            "|csuccess|Step 1:|r Visit 'Game Settings' to optimize your display\n" ..
+            "|csuccess|Step 2:|r Click 'Addon Integration' in the sidebar\n" ..
+            "|csuccess|Step 3:|r Follow the mandatory Edit Mode setup\n" ..
+            "|csuccess|Step 4:|r Use the automated profile application to set up all addons\n" ..
+            "|csuccess|Step 5:|r Customize 'General' settings to your preference\n\n" ..
+            "|chighlight|Need Help?|r Each section has detailed explanations to guide you through the process."
+      },
     }
   }
 
@@ -534,18 +546,32 @@ local function BuildSchemas()
       {
         type = "description",
         text =
-        "Import optimized profiles for supported addons to match the NoobTacoUI aesthetic. For the best experience, please ensure all recommended addons are installed."
-      }
+        "Welcome to NoobTacoUI! Follow these steps to set up your interface. Each step builds on the previous one for a complete UI experience."
+      },
     }
+
+    table.insert(integrationChildren, {
+      type = "callout",
+      title = "STEP 1: PIXEL PERFECT SCALING",
+      text =
+      "|cheader|Do This First:|r Before importing your layout, ensure your UI scale is optimized for your resolution. This ensures that all UI elements are positioned exactly as intended.\n\n|cheader|What To Do:|r\n1. Click 'GO TO GAME SETTINGS' below\n2. Choose the mode (Standard or High Vis) that fits your monitor\n3. Reload UI when prompted",
+      buttonText = "GO TO GAME SETTINGS",
+      severity = "info",
+      onButtonClick = function()
+        if MainLayout and MainLayout.sidebarButtons["gamesettings"] then
+          MainLayout.sidebarButtons["gamesettings"]:Click()
+        end
+      end
+    })
 
     if IsRetail() then
       local editModeProfile = addon.AddonProfiles and addon.AddonProfiles.EditMode
       if editModeProfile then
         table.insert(integrationChildren, {
           type = "callout",
-          title = "STEP 1: MANDATORY EDIT MODE SETUP",
+          title = "STEP 2: MANDATORY EDIT MODE SETUP",
           text =
-          "You MUST import the Edit Mode layout for the UI to function correctly. This controls the position of all standard Blizzard frames.",
+          "|cheader|Why This Matters:|r Edit Mode controls the position and layout of all default Blizzard UI elements (player frame, target frame, action bars, minimap, etc.). This is the foundation of NoobTacoUI.\n\n|cheader|What To Do:|r\n1. Click 'GET IMPORT STRING' below\n2. Copy the string (CTRL+C)\n3. Press ESC to open the game menu, then click 'Edit Mode'\n4. In Edit Mode, click the Layout dropdown menu at the top\n5. Select 'Import' and paste (CTRL+V) the string, then click Import",
           buttonText = "GET IMPORT STRING",
           severity = "warning",
           onButtonClick = function()
@@ -557,12 +583,11 @@ local function BuildSchemas()
       end
     end
 
-    -- table.insert(integrationChildren, { type = "header", label = " 2: AUTOMATED SETUPSTEP" })
     table.insert(integrationChildren, {
       type = "callout",
-      title = "STEP 2: AUTOMATED SETUP",
+      title = "STEP 3: AUTOMATED SETUP",
       text =
-      "Automatically apply profiles for all detected and supported addons. This will overwrite existing settings for these addons.",
+      "|cheader|What This Does:|r Applies profiles for ALL supported addons you have installed. Each profile is pre-configured to work perfectly with NoobTacoUI.\n\n|cheader|Your Choice:|r You can:\n• Use this button to apply all profiles at once (recommended for new users)\n• Or scroll down and apply profiles individually (advanced users)\n\n|cwarning|Note:|r This will overwrite your existing addon settings for supported addons.",
       buttonText = "APPLY ALL PROFILES",
       severity = "success",
       onButtonClick = function()
@@ -606,7 +631,7 @@ local function BuildSchemas()
     table.insert(integrationChildren, {
       type = "description",
       text =
-      "|chighlight|TIP:|r You can also update or apply profiles for each addon individually in the list below. Simply look for the |csuccess|[NEW]|r or |csuccess|[UPDATE]|r badges and click the addon name to expand its options."
+      "|cheader|Advanced Setup:|r Pick and choose which addon profiles to apply. This is useful if:\n• You only use certain addons\n• You want to update one specific addon profile\n• You prefer to configure addons yourself\n\nEach addon card below shows its status and lets you apply profiles individually."
     })
 
     if addon.AddonProfiles then
@@ -642,7 +667,7 @@ local function BuildSchemas()
             elseif currentVer < profile.version then
               status = "|cwarning|UPDATE|r"
             else
-              status = "|csuccess|INSTALLED|r"
+              status = "|csuccess|UP TO DATE|r"
             end
           end
 

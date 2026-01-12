@@ -1,5 +1,22 @@
 # NoobTacoUI
 
+## [2.1.0] - 2026-01-12
+### Documentation
+- **Enhancement**: Significantly improved in-game documentation and step-by-step installation instructions.
+  - **About Page**: Added "Getting Started" section with a reordered onboarding flow, prioritizing resolution settings.
+  - **Addon Integration**: 
+    - Added welcome message and comprehensive installation overview.
+    - Added alert box explaining all profile status badges (NEW, UPDATE, UP TO DATE, NOT LOADED) with clarified descriptions.
+    - Added **STEP 1: PIXEL PERFECT SCALING** callout with a direct link to Game Settings.
+    - Renumbered subsequent steps to follow the logical setup flow.
+    - Improved Edit Mode and Automated Setup explanations.
+    - Enhanced Individual Profiles section with clear use cases.
+  - **Game Settings**: 
+    - Added comprehensive explanation of "Pixel Perfect Scaling" concept.
+    - Clarified difference between Standard (1:1) and High Visibility (2:1) modes.
+    - Added step-by-step guide for choosing the right display setting.
+  - **General Settings**: Improved description for better clarity.
+
 ## [2.0.4] - 2026-01-11
 - **Accessibility**: Increased font weight of the body font in the configuration menu to improve readability for users with poor eyesight.
 - **Themes**: Updated default typography to use `Poppins-Medium` for 'Normal' and `Poppins-Bold` for 'Bold' weights.
