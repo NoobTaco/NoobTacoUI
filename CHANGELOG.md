@@ -3,12 +3,13 @@
 ## [Unreleased]
 ### Documentation
 - **Enhancement**: Significantly improved in-game documentation and step-by-step installation instructions.
-  - **About Page**: Added "Getting Started" section with clear navigation instructions for new users.
+  - **About Page**: Added "Getting Started" section with a reordered onboarding flow, prioritizing resolution settings.
   - **Addon Integration**: 
     - Added welcome message and comprehensive installation overview.
-    - Added alert box explaining all profile status badges (NEW, UPDATE, INSTALLED, NOT LOADED).
-    - Improved STEP 1 (Edit Mode) with detailed explanation of why it's mandatory and what it controls.
-    - Improved STEP 2 (Automated Setup) with explanation of functionality and user choices.
+    - Added alert box explaining all profile status badges (NEW, UPDATE, UP TO DATE, NOT LOADED) with clarified descriptions.
+    - Added **STEP 1: PIXEL PERFECT SCALING** callout with a direct link to Game Settings.
+    - Renumbered subsequent steps to follow the logical setup flow.
+    - Improved Edit Mode and Automated Setup explanations.
     - Enhanced Individual Profiles section with clear use cases.
   - **Game Settings**: 
     - Added comprehensive explanation of "Pixel Perfect Scaling" concept.

@@ -524,13 +524,13 @@ local function BuildSchemas()
       {
         type = "description",
         text =
-        "|cheader|New to NoobTacoUI? Start Here!|r\n\n" ..
-        "|csuccess|Step 1:|r Click 'Addon Integration' in the sidebar\n" ..
-        "|csuccess|Step 2:|r Follow the mandatory Edit Mode setup\n" ..
-        "|csuccess|Step 3:|r Use the automated profile application to set up all addons\n" ..
-        "|csuccess|Step 4:|r Visit 'Game Settings' to optimize your display\n" ..
-        "|csuccess|Step 5:|r Customize 'General' settings to your preference\n\n" ..
-        "|chighlight|Need Help?|r Each section has detailed explanations to guide you through the process."
+            "|cheader|New to NoobTacoUI? Start Here!|r\n\n" ..
+            "|csuccess|Step 1:|r Visit 'Game Settings' to optimize your display\n" ..
+            "|csuccess|Step 2:|r Click 'Addon Integration' in the sidebar\n" ..
+            "|csuccess|Step 3:|r Follow the mandatory Edit Mode setup\n" ..
+            "|csuccess|Step 4:|r Use the automated profile application to set up all addons\n" ..
+            "|csuccess|Step 5:|r Customize 'General' settings to your preference\n\n" ..
+            "|chighlight|Need Help?|r Each section has detailed explanations to guide you through the process."
       },
     }
   }
@@ -548,20 +548,28 @@ local function BuildSchemas()
         text =
         "Welcome to NoobTacoUI! Follow these steps to set up your interface. Each step builds on the previous one for a complete UI experience."
       },
-      {
-        type = "alert",
-        severity = "info",
-        text =
-        "|cheader|Understanding Profile Status:|r\n• |csuccess|INSTALLED|r - Profile is up to date\n• |cwarning|NEW|r - Profile has never been applied\n• |cwarning|UPDATE|r - A newer version is available\n• |cerror|NOT LOADED|r - Addon not installed or enabled"
-      }
     }
+
+    table.insert(integrationChildren, {
+      type = "callout",
+      title = "STEP 1: PIXEL PERFECT SCALING",
+      text =
+      "|cheader|Do This First:|r Before importing your layout, ensure your UI scale is optimized for your resolution. This ensures that all UI elements are positioned exactly as intended.\n\n|cheader|What To Do:|r\n1. Click 'GO TO GAME SETTINGS' below\n2. Choose the mode (Standard or High Vis) that fits your monitor\n3. Reload UI when prompted",
+      buttonText = "GO TO GAME SETTINGS",
+      severity = "info",
+      onButtonClick = function()
+        if MainLayout and MainLayout.sidebarButtons["gamesettings"] then
+          MainLayout.sidebarButtons["gamesettings"]:Click()
+        end
+      end
+    })
 
     if IsRetail() then
       local editModeProfile = addon.AddonProfiles and addon.AddonProfiles.EditMode
       if editModeProfile then
         table.insert(integrationChildren, {
           type = "callout",
-          title = "STEP 1: MANDATORY EDIT MODE SETUP",
+          title = "STEP 2: MANDATORY EDIT MODE SETUP",
           text =
           "|cheader|Why This Matters:|r Edit Mode controls the position and layout of all default Blizzard UI elements (player frame, target frame, action bars, minimap, etc.). This is the foundation of NoobTacoUI.\n\n|cheader|What To Do:|r\n1. Click 'GET IMPORT STRING' below\n2. Copy the string (CTRL+C)\n3. Press ESC to open the game menu, then click 'Edit Mode'\n4. In Edit Mode, click the Layout dropdown menu at the top\n5. Select 'Import' and paste (CTRL+V) the string, then click Import",
           buttonText = "GET IMPORT STRING",
@@ -577,7 +585,7 @@ local function BuildSchemas()
 
     table.insert(integrationChildren, {
       type = "callout",
-      title = "STEP 2: AUTOMATED SETUP",
+      title = "STEP 3: AUTOMATED SETUP",
       text =
       "|cheader|What This Does:|r Applies profiles for ALL supported addons you have installed. Each profile is pre-configured to work perfectly with NoobTacoUI.\n\n|cheader|Your Choice:|r You can:\n• Use this button to apply all profiles at once (recommended for new users)\n• Or scroll down and apply profiles individually (advanced users)\n\n|cwarning|Note:|r This will overwrite your existing addon settings for supported addons.",
       buttonText = "APPLY ALL PROFILES",
@@ -659,7 +667,7 @@ local function BuildSchemas()
             elseif currentVer < profile.version then
               status = "|cwarning|UPDATE|r"
             else
-              status = "|csuccess|INSTALLED|r"
+              status = "|csuccess|UP TO DATE|r"
             end
           end
 
