@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Documentation
-- **Enhancement**: Significantly improved in-game documentation and step-by-step installation instructions (Issue #TBD).
+- **Enhancement**: Significantly improved in-game documentation and step-by-step installation instructions.
   - **About Page**: Added "Getting Started" section with clear navigation instructions for new users.
   - **Addon Integration**: 
     - Added welcome message and comprehensive installation overview.

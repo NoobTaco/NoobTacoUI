@@ -575,7 +575,6 @@ local function BuildSchemas()
       end
     end
 
-    -- table.insert(integrationChildren, { type = "header", label = " 2: AUTOMATED SETUPSTEP" })
     table.insert(integrationChildren, {
       type = "callout",
       title = "STEP 2: AUTOMATED SETUP",
