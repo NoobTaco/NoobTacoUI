@@ -49,6 +49,8 @@ read_globals = {
   "BBF",
   "EditModeManagerFrame", "C_EditMode", "Enum", "ReloadUI", "GetBuildInfo", "StaticPopup_Show", "CopyToClipboard",
   "EditModeImportLayoutDialog",
+  -- Minimap-related API functions
+  "Minimap", "GetMinimapShape", "GetPhysicalScreenSize", "SetCVar", "GameTooltip",
   -- Add other WoW API functions here as needed
 }
 
