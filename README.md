@@ -53,6 +53,17 @@ Great additions that fit the theme but aren't strictly necessary.
 - **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - **Optional**. FFXIV-inspired info bar for tracking gold, currency, and more.
 - **[Details! Damage Meter](https://www.curseforge.com/wow/addons/details)** - **Optional**. The premier damage and healing meter.
 
+#### Suggested Extras
+These addons are not configured by NoobTacoUI profiles but are highly recommended for a better gameplay experience.
+
+- **[Chattynator](https://www.curseforge.com/wow/addons/chattynator)** - Cleans up the chat window for a more immersive look.
+- **[WaypointUI](https://www.curseforge.com/wow/addons/waypointui)** - A modern, clean waypoint arrow for navigation.
+- **[Baganator](https://www.curseforge.com/wow/addons/baganator)** - A highly efficient and clean bag addon.
+- **[Syndicator](https://www.curseforge.com/wow/addons/syndicator)** - **Required for Baganator**. Tracks inventory across characters.
+- **[Leatrix Maps](https://www.curseforge.com/wow/addons/leatrix-maps)** - Enhances the world map with coordinates, reveal, and more.
+- **[Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)** - Huge collection of quality of life improvements.
+- **[Plumber](https://www.curseforge.com/wow/addons/plumber)** - Enhances UI for secrets, collections, and world events.
+
 ### ⚙️ Easy Configuration
 
 I've rebuilt the menu from the ground up to match the NoobTaco vibe perfectly.

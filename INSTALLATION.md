@@ -2,12 +2,12 @@
 
 Welcome to NoobTacoUI! This guide will walk you through setting up your new interface from start to finish. Follow these steps carefully to ensure everything looks and functions perfectly.
 
-## 1. Install Addons
+## 📦 1. Install Addons
 
 First, install **NoobTacoUI** and any of the supported addons you wish to use (like BetterBlizzFrames, Platynator, etc.).
 *It is recommended to install all supported addons for the complete experience.*
 
-## 2. Launch & Resolution Setup
+## 🚀 2. Launch & Resolution Setup
 
 Launch World of Warcraft and open the NoobTacoUI options menu (Type `/nt config` or use the Minimap button).
 
@@ -17,14 +17,14 @@ Launch World of Warcraft and open the NoobTacoUI options menu (Type `/nt config`
 *   Select the option that matches your monitor (Standard or High Visibility).
 *   **Reload your UI** when prompted.
 
-## 3. Action Bar Setup
+## ⚔️ 3. Action Bar Setup
 
 **Why this is important:** NoobTacoUI defaults to a 3-bar layout. For the interface to look correct, you must enable the specific bars it expects.
 *   Go to **Options > Gameplay > Action Bars**.
 *   Enable **Action Bar 2** and **Action Bar 3**.
 *   *Note: You can enable Action Bars 4 through 8 if you need more buttons, but they will appear in the middle of the screen and it is up to you to move and place them where you want.*
 
-## 4. Mandatory Edit Mode Setup
+## 📐 4. Mandatory Edit Mode Setup
 
 ### Step 2: Import Layout
 **Why this is important:** This step positions all the standard Blizzard UI elements (Unit Frames, Minimap, Action Bars) to their correct spots. Without this, the NoobTacoUI profiles will be applied to a messy default layout.
@@ -35,7 +35,7 @@ Launch World of Warcraft and open the NoobTacoUI options menu (Type `/nt config`
 *   Name the profile something recognizable (e.g., "NoobTaco").
 *   **Inspect your screen:** If anything looks drastically out of place, make adjustments now.
 
-## 5. Apply Addon Profiles
+## 🎨 5. Apply Addon Profiles
 
 ### Step 3: Automated Application
 **Why this is important:** This applies the specific visual settings (fonts, colors, bar sizes) to all your supported addons so they match the NoobTacoUI theme perfectly.
@@ -46,7 +46,7 @@ Launch World of Warcraft and open the NoobTacoUI options menu (Type `/nt config`
 
 ---
 
-# Post-Install Cleanup
+# 🧹 Post-Install Cleanup
 
 After the initial setup, there are a few manual steps needed to polish the look.
 
@@ -89,7 +89,7 @@ If you wish to update them to fit the new layout, you can use **Quick Keybind Mo
 
 ---
 
-# Updates & Maintenance
+# 🔄 Updates & Maintenance
 
 ## Checking for Updates
 From time to time, profiles for specific addons may be updated to improve the look or fix issues.
@@ -97,7 +97,7 @@ From time to time, profiles for specific addons may be updated to improve the lo
 *   Look for tags labeled **UPDATE** or **NEW**.
 *   Simply click **APPLY PROFILE** on those specific addons to get the latest settings.
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
 ### Resource Bar Alignment
 **Issue:** Your power/resource bars don't line up perfectly with your cooldown bars.
