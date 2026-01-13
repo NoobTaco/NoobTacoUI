@@ -18,13 +18,6 @@ end
 local minimapModule = {}
 addon.MinimapModule = minimapModule
 
--- Settings defaults
-local defaultSettings = {
-  enabled = true,
-  drawerEnabled = true,
-  hiddenButtons = {}, -- Table to track which buttons are hidden from drawer
-}
-
 -------------------------------------------------------------------------------
 -- Utilities
 -------------------------------------------------------------------------------
@@ -99,13 +92,16 @@ local drawerFrame = nil
 local drawerButtons = {}
 
 local function CreateDrawerButton()
-  if drawerFrame then return end
-  
   -- Create drawer toggle button using LibDBIcon
   local LDB = LibStub("LibDataBroker-1.1", true)
   local LibDBIcon = LibStub("LibDBIcon-1.0", true)
   
   if not LDB or not LibDBIcon then
+    return
+  end
+  
+  -- Check if drawer button already registered
+  if LibDBIcon:IsRegistered("NoobTacoUI_MinimapDrawer") then
     return
   end
   
@@ -270,7 +266,7 @@ function minimapModule:UpdateDrawerDisplay()
                        NoobTacoUIDB.MinimapSettings.hiddenButtons or {}
   
   -- Create buttons for each addon
-  for i, btnData in ipairs(drawerButtons) do
+  for _, btnData in ipairs(drawerButtons) do
     local isHidden = hiddenButtons[btnData.name]
     
     -- Create drawer entry
@@ -412,7 +408,6 @@ end
 -------------------------------------------------------------------------------
 -- Auto-detect and collect minimap buttons
 -------------------------------------------------------------------------------
-local scanAttempts = 0
 local maxScanAttempts = 3
 
 local function ScanForMinimapButtons()
