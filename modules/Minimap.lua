@@ -21,6 +21,43 @@ addon.MinimapModule = minimapModule
 -------------------------------------------------------------------------------
 -- Utilities
 -------------------------------------------------------------------------------
+local function EnsureDatabase()
+  -- Ensure NoobTacoUIDB exists
+  if not _G.NoobTacoUIDB then
+    _G.NoobTacoUIDB = {}
+  end
+  
+  -- Ensure MinimapSettings exists with all required fields
+  if not _G.NoobTacoUIDB.MinimapSettings then
+    _G.NoobTacoUIDB.MinimapSettings = {
+      enabled = true,
+      drawerEnabled = true,
+      hiddenButtons = {},
+      drawer = {
+        hide = false,
+        minimapPos = 180,
+      }
+    }
+  else
+    -- Ensure all required fields exist if MinimapSettings was partially initialized
+    if not _G.NoobTacoUIDB.MinimapSettings.drawer then
+      _G.NoobTacoUIDB.MinimapSettings.drawer = {
+        hide = false,
+        minimapPos = 180,
+      }
+    end
+    if not _G.NoobTacoUIDB.MinimapSettings.hiddenButtons then
+      _G.NoobTacoUIDB.MinimapSettings.hiddenButtons = {}
+    end
+    if _G.NoobTacoUIDB.MinimapSettings.enabled == nil then
+      _G.NoobTacoUIDB.MinimapSettings.enabled = true
+    end
+    if _G.NoobTacoUIDB.MinimapSettings.drawerEnabled == nil then
+      _G.NoobTacoUIDB.MinimapSettings.drawerEnabled = true
+    end
+  end
+end
+
 local function GetThemeColor()
   -- Get border color from NoobTaco-Config theme
   if addon.ConfigTheme then
@@ -72,7 +109,7 @@ end
 
 local function RestoreRoundMinimap()
   -- Restore original round mask
-  Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
+  Minimap:SetMaskTexture("Interface\\Minimap\\UI-Minimap-Background")
   
   -- Hide border
   if Minimap.NoobTacoBorder then
@@ -92,6 +129,9 @@ local drawerFrame = nil
 local drawerButtons = {}
 
 local function CreateDrawerButton()
+  -- Ensure database is initialized
+  EnsureDatabase()
+  
   -- Create drawer toggle button using LibDBIcon
   local LDB = LibStub("LibDataBroker-1.1", true)
   local LibDBIcon = LibStub("LibDBIcon-1.0", true)
@@ -109,7 +149,7 @@ local function CreateDrawerButton()
   local drawerLDB = LDB:NewDataObject("NoobTacoUI_MinimapDrawer", {
     type = "launcher",
     text = "Addons",
-    icon = [[Interface\AddOns\NoobTacoUI\Media\Textures\logo.tga]],
+    icon = [[Interface\AddOns\]] .. addonName .. [[\Media\Textures\logo.tga]],
     OnClick = function(self, button)
       if button == "LeftButton" then
         minimapModule:ToggleDrawer()
@@ -122,30 +162,7 @@ local function CreateDrawerButton()
     end,
   })
   
-  -- Ensure complete MinimapSettings structure exists
-  if not NoobTacoUIDB.MinimapSettings then
-    NoobTacoUIDB.MinimapSettings = {
-      enabled = true,
-      drawerEnabled = true,
-      hiddenButtons = {},
-      drawer = {
-        hide = false,
-        minimapPos = 180,
-      }
-    }
-  else
-    -- Ensure all required fields exist if MinimapSettings was partially initialized
-    if not NoobTacoUIDB.MinimapSettings.drawer then
-      NoobTacoUIDB.MinimapSettings.drawer = {
-        hide = false,
-        minimapPos = 180,
-      }
-    end
-    if not NoobTacoUIDB.MinimapSettings.hiddenButtons then
-      NoobTacoUIDB.MinimapSettings.hiddenButtons = {}
-    end
-  end
-  
+  -- Database is already ensured to exist
   LibDBIcon:Register("NoobTacoUI_MinimapDrawer", drawerLDB, NoobTacoUIDB.MinimapSettings.drawer)
 end
 
@@ -342,17 +359,8 @@ function minimapModule:UpdateDrawerDisplay()
 end
 
 function minimapModule:ToggleButton(buttonName)
-  -- Ensure MinimapSettings and hiddenButtons exist
-  if not NoobTacoUIDB.MinimapSettings then
-    NoobTacoUIDB.MinimapSettings = {
-      enabled = true,
-      drawerEnabled = true,
-      hiddenButtons = {},
-    }
-  end
-  if not NoobTacoUIDB.MinimapSettings.hiddenButtons then
-    NoobTacoUIDB.MinimapSettings.hiddenButtons = {}
-  end
+  -- Ensure database is initialized
+  EnsureDatabase()
   
   -- Toggle button visibility
   local hiddenButtons = NoobTacoUIDB.MinimapSettings.hiddenButtons
@@ -449,18 +457,8 @@ end
 function minimapModule:Enable()
   if self.isEnabled then return end
   
-  -- Initialize settings if needed
-  if not NoobTacoUIDB.MinimapSettings then
-    NoobTacoUIDB.MinimapSettings = {
-      enabled = true,
-      drawerEnabled = true,
-      hiddenButtons = {},
-      drawer = {
-        hide = false,
-        minimapPos = 180,
-      }
-    }
-  end
+  -- Ensure database is initialized
+  EnsureDatabase()
   
   MakeMinimapSquare()
   
@@ -507,6 +505,9 @@ function minimapModule:EnableDrawer()
     return
   end
   
+  -- Ensure database is initialized
+  EnsureDatabase()
+  
   NoobTacoUIDB.MinimapSettings.drawerEnabled = true
   CreateDrawerButton()
   ScanForMinimapButtons()
@@ -520,6 +521,9 @@ function minimapModule:EnableDrawer()
 end
 
 function minimapModule:DisableDrawer()
+  -- Ensure database is initialized
+  EnsureDatabase()
+  
   NoobTacoUIDB.MinimapSettings.drawerEnabled = false
   
   if drawerFrame then
@@ -543,8 +547,11 @@ local function Initialize()
   initFrame:RegisterEvent("PLAYER_LOGIN")
   initFrame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_LOGIN" then
+      -- Ensure database is initialized
+      EnsureDatabase()
+      
       -- Check if enabled in settings
-      if NoobTacoUIDB.MinimapSettings and NoobTacoUIDB.MinimapSettings.enabled then
+      if NoobTacoUIDB and NoobTacoUIDB.MinimapSettings and NoobTacoUIDB.MinimapSettings.enabled then
         minimapModule:Enable()
       end
       
