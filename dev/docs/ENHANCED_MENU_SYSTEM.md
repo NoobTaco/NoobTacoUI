@@ -106,7 +106,6 @@ local content = scrollFrame.scrollChild
 - **Supported Addons**:
   - BetterBlizzFrames
   - Platynator
-  - Cooldown Manager Tweaks
   - zBarButtonBG
   - XIV_Databar Continued
   - Sensei Class Resource Bar

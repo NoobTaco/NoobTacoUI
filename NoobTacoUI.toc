@@ -2,7 +2,7 @@
 ## Title: |cffD78144NoobTaco|r|cffF8F9FAUI|r
 ## Author: NoobTaco
 ## Version: @project-version@
-## OptionalDeps: SharedMedia, LibSharedMedia-3.0, LibDataBroker-1.1, LibDBIcon-1.0, BetterBlizzFrames, Platynator, CooldownManagerTweaks, zBarButtonBG, XIV_Databar, SenseiClassResourceBar
+## OptionalDeps: SharedMedia, LibSharedMedia-3.0, LibDataBroker-1.1, LibDBIcon-1.0, BetterBlizzFrames, Platynator, zBarButtonBG, XIV_Databar, SenseiClassResourceBar
 ## Notes: The complete UI configuration, profile, and media framework, ready for Midnight.
 ## X-License: GPL-3.0-or-later
 ## DefaultState: enabled

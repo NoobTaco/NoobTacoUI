@@ -607,10 +607,9 @@ local function BuildSchemas()
                 "BetterBlizzFrames",
                 "Platynator",
                 "SenseiClassResourceBar",
-                "XIV_Databar",
-                "Details",
                 "zBarButtonBG",
-                "CooldownManagerTweaks"
+                "XIV_Databar",
+                "Details"
               }
               local count = 0
               local excludedProfiles = NoobTacoUIDB.GeneralSettings.ExcludedProfiles or {}
@@ -639,36 +638,42 @@ local function BuildSchemas()
     table.insert(integrationChildren, {
       type = "description",
       text =
-      "|cheader|Advanced Setup:|r Pick and choose which addon profiles to apply. This is useful if:\n• You only use certain addons\n• You want to update one specific addon profile\n• You prefer to configure addons yourself\n\nEach addon card below shows its status and lets you apply profiles individually."
+      "|cheader|Advanced Setup:|r Pick and choose which addon profiles to apply. This is useful if:\n• You only use certain addons\n• You want to update one specific addon profile\n• You prefer to configure addons yourself"
     })
 
     if addon.AddonProfiles then
-      local displayOrder = {
-        "BetterBlizzFrames",
-        "Platynator",
-        "XIV_Databar",
-        "SenseiClassResourceBar",
-        "Details",
-        "CooldownManagerTweaks",
-        "zBarButtonBG"
-      }
-
       local appliedProfiles = NoobTacoUIDB.GeneralSettings.AppliedProfiles or {}
 
-      for _, profileKey in ipairs(displayOrder) do
-        local profile = addon.AddonProfiles[profileKey]
-        if profile and IsProfileSupported(profile) then
-          local status = "|cerror|NOT LOADED|r"
-          local isLoaded = false
-          if profileKey == "XIV_Databar" then
-            if C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued_Mainline") or C_AddOns.IsAddOnLoaded("XIV_DataBar") then
-              isLoaded = true
-            end
-          else
-            isLoaded = C_AddOns.IsAddOnLoaded(profile.name)
-          end
+      -- Helper to generate a card for a given profile key (or nil if manual profile object)
+      local function GenerateAddonCard(profileKey, manualProfile, sectionTag)
+        local profile = manualProfile or addon.AddonProfiles[profileKey]
+        if not profile then return end
 
-          if isLoaded then
+        if not manualProfile and not IsProfileSupported(profile) then return end
+
+        local status = "|cerror|NOT LOADED|r"
+        local isLoaded = false
+        local addonNameCheck = profile.name
+
+        -- Special handling for complex addon names
+        if profileKey == "XIV_Databar" then
+          if C_AddOns.IsAddOnLoaded("XIV_Databar") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar-Continued") or C_AddOns.IsAddOnLoaded("XIV_Databar_Continued_Mainline") or C_AddOns.IsAddOnLoaded("XIV_DataBar") then
+            isLoaded = true
+          end
+        elseif profileKey == "NoobTaco-GotOne" then
+          if C_AddOns.IsAddOnLoaded("NoobTaco-GotOne") or C_AddOns.IsAddOnLoaded("NoobTaco_GotOne") then
+            isLoaded = true
+          end
+        else
+          isLoaded = C_AddOns.IsAddOnLoaded(profile.name)
+        end
+
+        local displayTag = sectionTag or ""
+
+        if isLoaded then
+          if profileKey == "NoobTaco-GotOne" then
+            status = "|csuccess|ACTIVE|r"
+          else
             local currentVer = appliedProfiles[profileKey]
             if not currentVer then
               status = "|cwarning|NEW|r"
@@ -678,11 +683,13 @@ local function BuildSchemas()
               status = "|csuccess|UP TO DATE|r"
             end
           end
+        end
 
-          local profileChildren = {}
-          table.insert(profileChildren, { type = "description", text = profile.description })
+        local profileChildren = {}
+        table.insert(profileChildren, { type = "description", text = profile.description })
 
-          -- Add Exclusion Checkbox
+        -- Add Exclusion Checkbox (Skip for GotOne as it has no profile to apply)
+        if profileKey ~= "NoobTaco-GotOne" then
           table.insert(profileChildren, {
             type = "checkbox",
             label = "Include in Bulk Setup",
@@ -693,16 +700,18 @@ local function BuildSchemas()
               if addon.ConfigState then addon.ConfigState:Commit() end
             end
           })
+        end
 
-          if profile.instructions then
-            local instructText = ""
-            for i, line in ipairs(profile.instructions) do
-              instructText = instructText .. i .. ". " .. line .. "\n"
-            end
-            table.insert(profileChildren, { type = "description", text = instructText })
+        if profile.instructions then
+          local instructText = ""
+          for i, line in ipairs(profile.instructions) do
+            instructText = instructText .. i .. ". " .. line .. "\n"
           end
+          table.insert(profileChildren, { type = "description", text = instructText })
+        end
 
-          if isLoaded then
+        if isLoaded then
+          if profileKey ~= "NoobTaco-GotOne" then
             table.insert(profileChildren, {
               type = "button",
               label = profile.isCustomApply and "APPLY PROFILE" or "COPY PROFILE STRING",
@@ -729,49 +738,83 @@ local function BuildSchemas()
                 end
               end
             })
-          else
-            if profile.downloadUrl and profile.downloadUrl ~= "N/A" then
-              table.insert(profileChildren, {
-                type = "description",
-                text = "|cerror|Addon is not loaded.|r"
-              })
-              table.insert(profileChildren, {
-                type = "button",
-                label = "DOWNLOAD ADDON",
-                width = 200,
-                onClick = function()
-                  StaticPopupDialogs["NOOBTACOUI_DOWNLOAD_LINK"] = {
-                    text = "CTRL+C to copy the download link for " .. profile.displayName,
-                    button1 = "Close",
-                    hasEditBox = true,
-                    editBoxWidth = 400,
-                    OnShow = function(self)
-                      self.EditBox:SetText(profile.downloadUrl)
-                      self.EditBox:SetFocus()
-                      self.EditBox:HighlightText()
-                    end,
-                    timeout = 0,
-                    whileDead = true,
-                    hideOnEscape = true,
-                    preferredIndex = 3,
-                  }
-                  StaticPopup_Show("NOOBTACOUI_DOWNLOAD_LINK")
-                end
-              })
-            else
-              table.insert(profileChildren, {
-                type = "description",
-                text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
-              })
-            end
           end
-
-          table.insert(integrationChildren, {
-            type = "card",
-            label = profile.displayName .. "  " .. status,
-            children = profileChildren
-          })
+        else
+          if profile.downloadUrl and profile.downloadUrl ~= "N/A" then
+            table.insert(profileChildren, {
+              type = "description",
+              text = "|cerror|Addon is not loaded.|r"
+            })
+            table.insert(profileChildren, {
+              type = "button",
+              label = "DOWNLOAD ADDON",
+              width = 200,
+              onClick = function()
+                StaticPopupDialogs["NOOBTACOUI_DOWNLOAD_LINK"] = {
+                  text = "CTRL+C to copy the download link for " .. profile.displayName,
+                  button1 = "Close",
+                  hasEditBox = true,
+                  editBoxWidth = 400,
+                  OnShow = function(self)
+                    self.EditBox:SetText(profile.downloadUrl)
+                    self.EditBox:SetFocus()
+                    self.EditBox:HighlightText()
+                  end,
+                  timeout = 0,
+                  whileDead = true,
+                  hideOnEscape = true,
+                  preferredIndex = 3,
+                }
+                StaticPopup_Show("NOOBTACOUI_DOWNLOAD_LINK")
+              end
+            })
+          else
+            table.insert(profileChildren, {
+              type = "description",
+              text = "|cerror|Addon is not loaded. Please enable it to apply the profile.|r"
+            })
+          end
         end
+
+        table.insert(integrationChildren, {
+          type = "card",
+          label = profile.displayName .. "  " .. status .. displayTag,
+          children = profileChildren
+        })
+      end
+
+      -- 1. Core Required Addons
+      table.insert(integrationChildren, { type = "header", label = "Core Required Addons" })
+      local requiredAddons = {
+        "BetterBlizzFrames",
+        "Platynator",
+        "SenseiClassResourceBar",
+        "zBarButtonBG"
+      }
+      for _, key in ipairs(requiredAddons) do
+        GenerateAddonCard(key, nil, "  |cerror|REQUIRED|r")
+      end
+
+      -- 2. Recommended & Optional Addons
+      table.insert(integrationChildren, { type = "header", label = "Recommended & Optional Addons" })
+
+      -- Manual Entry for NoobTaco-GotOne
+      local gotOneProfile = {
+        name = "NoobTaco-GotOne",
+        displayName = "NoobTaco-GotOne",
+        description =
+        "Companion addon for high-performance audio notifications. Highly recommended for the full experience.",
+        downloadUrl = "https://www.curseforge.com/wow/addons/noobtaco-gotone",
+        version = "1.0" -- Placeholder
+      }
+      GenerateAddonCard("NoobTaco-GotOne", gotOneProfile, "  |csuccess|RECOMMENDED|r")
+
+      local optionalAddons = {
+        "XIV_Databar",
+        "Details"
+      }
+      for _, key in ipairs(optionalAddons) do
+        GenerateAddonCard(key, nil, "  |cinfo|OPTIONAL|r")
       end
     end
 

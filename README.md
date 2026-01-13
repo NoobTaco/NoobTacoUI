@@ -36,16 +36,22 @@ All media is automatically registered with **LibSharedMedia-3.0** and available 
 - **NoobTaco Theme Textures**: 32 high-quality status bar textures (Solid and Gradient) based on the popular NoobTaco color palette.
 ### 🧩 Addon Support
 
-I've included profiles for these addons to keep everything looking sharp:
+I've included profiles for these addons to keep everything looking sharp.
 
-- **[BetterBlizzFrames](https://www.curseforge.com/wow/addons/betterblizzframes)** - Enhances Blizzard unit frames with customizable auras and castbars.
-- **[Platynator](https://www.curseforge.com/wow/addons/platynator)** - High-performance nameplate addon with threat coloring.
-- **[Cooldown Manager Tweaks](https://www.curseforge.com/wow/addons/cooldown-manager-tweaks)** - Advanced layout control for Blizzard's Cooldown Manager.
-- **[zBarButtonBG](https://www.curseforge.com/wow/addons/zbarbuttonbg)** - Customizable background frames for action bar buttons.
-- **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - FFXIV-inspired info bar for tracking gold, currency, and more.
-- **[Sensei Class Resource Bar](https://www.curseforge.com/wow/addons/senseiclassresourcebar)** - Adaptive resource bar that stylizes based on class/spec.
-- **[Details! Damage Meter](https://www.curseforge.com/wow/addons/details)** - The premier damage and healing meter.
-- **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)** - Companion addon for high-performance audio notifications.
+#### Core Required Addons
+These addons are essential for the NoobTacoUI look and feel.
+
+- **[BetterBlizzFrames](https://www.curseforge.com/wow/addons/betterblizzframes)** - **Required**. Enhances Blizzard unit frames with customizable auras and castbars.
+- **[Platynator](https://www.curseforge.com/wow/addons/platynator)** - **Required**. High-performance nameplate addon with threat coloring.
+- **[Sensei Class Resource Bar](https://www.curseforge.com/wow/addons/senseiclassresourcebar)** - **Required**. Adaptive resource bar that stylizes based on class/spec.
+- **[zBarButtonBG](https://www.curseforge.com/wow/addons/zbarbuttonbg)** - **Required**. Customizable background frames for action bar buttons.
+
+#### Recommended & Optional Addons
+Great additions that fit the theme but aren't strictly necessary.
+
+- **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)** - **Recommended**. Companion addon for high-performance audio notifications.
+- **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - **Optional**. FFXIV-inspired info bar for tracking gold, currency, and more.
+- **[Details! Damage Meter](https://www.curseforge.com/wow/addons/details)** - **Optional**. The premier damage and healing meter.
 
 ### ⚙️ Easy Configuration
 

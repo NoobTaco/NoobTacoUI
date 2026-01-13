@@ -1,5 +1,11 @@
 # NoobTacoUI
 
+## [2.1.3] - 2026-01-13
+### Addon Profiles
+- **Categorization**: Grouped supported addons into **Required** and **Recommended/Optional** categories in both the `README` and in-game configuration menu.
+- **New Profile**: Added **NoobTaco-GotOne** to the in-game "Addon Integration" list as a recommended companion addon.
+- **Removed**: Removed the **Cooldown Manager Tweaks** profile and associated integration code.
+
 ## [2.1.2] - 2026-01-12
 ### Addon Profiles
 - **Edit Mode**: Updated the **Midnight and Retail** Edit Mode profile strings to version 1.4 with optimized positioning for a consistent layout across game expansions.
