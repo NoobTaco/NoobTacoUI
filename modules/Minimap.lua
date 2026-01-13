@@ -46,7 +46,7 @@ local function MakeMinimapSquare()
   
   -- Create border frame if it doesn't exist
   if not Minimap.NoobTacoBorder then
-    local border = CreateFrame("Frame", nil, Minimap, "BackdropTemplate")
+    local border = CreateFrame("Frame", "NoobTacoUI_MinimapBorder", Minimap, "BackdropTemplate")
     border:SetFrameLevel(Minimap:GetFrameLevel() + 1)
     border:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -1, 1)
     border:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", 1, -1)
@@ -126,14 +126,28 @@ local function CreateDrawerButton()
     end,
   })
   
-  -- Register with LibDBIcon
+  -- Ensure complete MinimapSettings structure exists
   if not NoobTacoUIDB.MinimapSettings then
     NoobTacoUIDB.MinimapSettings = {
+      enabled = true,
+      drawerEnabled = true,
+      hiddenButtons = {},
       drawer = {
         hide = false,
         minimapPos = 180,
       }
     }
+  else
+    -- Ensure all required fields exist if MinimapSettings was partially initialized
+    if not NoobTacoUIDB.MinimapSettings.drawer then
+      NoobTacoUIDB.MinimapSettings.drawer = {
+        hide = false,
+        minimapPos = 180,
+      }
+    end
+    if not NoobTacoUIDB.MinimapSettings.hiddenButtons then
+      NoobTacoUIDB.MinimapSettings.hiddenButtons = {}
+    end
   end
   
   LibDBIcon:Register("NoobTacoUI_MinimapDrawer", drawerLDB, NoobTacoUIDB.MinimapSettings.drawer)
@@ -332,10 +346,21 @@ function minimapModule:UpdateDrawerDisplay()
 end
 
 function minimapModule:ToggleButton(buttonName)
+  -- Ensure MinimapSettings and hiddenButtons exist
+  if not NoobTacoUIDB.MinimapSettings then
+    NoobTacoUIDB.MinimapSettings = {
+      enabled = true,
+      drawerEnabled = true,
+      hiddenButtons = {},
+    }
+  end
+  if not NoobTacoUIDB.MinimapSettings.hiddenButtons then
+    NoobTacoUIDB.MinimapSettings.hiddenButtons = {}
+  end
+  
   -- Toggle button visibility
-  local hiddenButtons = NoobTacoUIDB.MinimapSettings.hiddenButtons or {}
+  local hiddenButtons = NoobTacoUIDB.MinimapSettings.hiddenButtons
   hiddenButtons[buttonName] = not hiddenButtons[buttonName]
-  NoobTacoUIDB.MinimapSettings.hiddenButtons = hiddenButtons
   
   -- Find and toggle the actual button
   for _, btnData in ipairs(drawerButtons) do
@@ -387,21 +412,39 @@ end
 -------------------------------------------------------------------------------
 -- Auto-detect and collect minimap buttons
 -------------------------------------------------------------------------------
+local scanAttempts = 0
+local maxScanAttempts = 3
+
 local function ScanForMinimapButtons()
-  -- Wait a bit for other addons to create their buttons
-  C_Timer.After(5, function()
+  -- Use a retry mechanism with progressive delays
+  local function doScan(attempt)
     local LibDBIcon = LibStub("LibDBIcon-1.0", true)
     if not LibDBIcon then return end
     
+    local foundCount = 0
     -- Get all registered LibDBIcon buttons
     for name, data in pairs(LibDBIcon.objects or {}) do
       -- Skip our own buttons
       if name ~= "NoobTacoUI" and name ~= "NoobTacoUI_MinimapDrawer" then
         if data.button and data.button:IsShown() then
           minimapModule:AddButtonToDrawer(name, data.button)
+          foundCount = foundCount + 1
         end
       end
     end
+    
+    -- If no buttons found and we haven't exceeded max attempts, try again
+    if foundCount == 0 and attempt < maxScanAttempts then
+      local nextDelay = 2 * attempt -- Progressive delay: 2s, 4s, 6s
+      C_Timer.After(nextDelay, function()
+        doScan(attempt + 1)
+      end)
+    end
+  end
+  
+  -- Start first scan after a short delay
+  C_Timer.After(2, function()
+    doScan(1)
   end)
 end
 
