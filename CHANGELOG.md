@@ -13,6 +13,11 @@
 ## [2.1.2] - 2026-01-12
 ### Addon Profiles
 - **Edit Mode**: Updated the **Midnight and Retail** Edit Mode profile strings to version 1.4 with optimized positioning for a consistent layout across game expansions.
+- **Global Font Replacer**: Completely rewrote the font replacement engine for better compatibility.
+  - Implemented a "Source-Based" replacement system that scans specifically for game font files (`FRIZQT__.TTF`, `ARIALN.TTF`, etc.), ensuring much broader coverage.
+  - Added specific fixes for **Scrolling Combat Text** and **Floating Names**, forcing them to use the user-selected Combat font.
+  - Added support for **Load-On-Demand** frames (Spellbook, Talents, Professions), ensuring they are styled correctly when loaded.
+  - Renamed configuration categories to "Chat & Meter" and "Combat Text & Names" for clarity.
 
 ## [2.1.1] - 2026-01-12
 ### Features

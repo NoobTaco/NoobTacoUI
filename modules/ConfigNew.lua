@@ -128,6 +128,9 @@ local function InitializeDatabase()
       minimapPos = 225,
       AppliedProfiles = {},
       ExcludedProfiles = {},
+      enableGlobalFont = false,
+      globalFont = "Poppins-Regular",
+      fontOverrides = {},
     }
   end
 
@@ -321,6 +324,121 @@ local function BuildSchemas()
       { type = "description", text = "|cheader|Minimap Button Angle:|r Adjusts the angle of the minimap button. Changes take effect immediately." },
       { type = "description", text = "|cheader|Addon Drawer:|r Integrates with WoW's addon compartment (the new addon drawer button) for easy access from the micro menu. When disabled, the drawer entry will show but be non-functional until re-enabled." },
       { type = "alert",       severity = "info",                                                                                                                                                                                                             text = "WARNING: Changing Addon Compartment settings requires a UI reload." },
+
+      { type = "header",      label = "Global Fonts" },
+      {
+        type = "checkbox",
+        label = "Enable Global Font Replacement",
+        id = "GeneralSettings.enableGlobalFont",
+        default = false,
+        onChange = function(val)
+          if val then
+            -- Try to apply immediately
+            if addon.GlobalFontReplacer then addon.GlobalFontReplacer:ApplyFont() end
+          else
+            addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Global font disabled. Reload UI to reset to defaults.")
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "dropdown",
+        label = "Interface Font (Main)",
+        id = "GeneralSettings.globalFont",
+        width = 250,
+        options = function()
+          local LSM = LibStub("LibSharedMedia-3.0")
+          local fonts = LSM:HashTable("font")
+          local list = {}
+          for name, _ in pairs(fonts) do
+            table.insert(list, { label = name, value = name })
+          end
+          table.sort(list, function(a, b) return a.label < b.label end)
+          return list
+        end,
+        onChange = function(val)
+          -- Updates main fallback and applies immediately
+          if NoobTacoUIDB.GeneralSettings.enableGlobalFont and addon.GlobalFontReplacer then
+            addon.GlobalFontReplacer:ApplyFont()
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "dropdown",
+        label = "Chat & Meter Font",
+        id = "GeneralSettings.fontOverrides.chat",
+        placeholder = "Use Interface Font",
+        width = 250,
+        options = function()
+          local LSM = LibStub("LibSharedMedia-3.0")
+          local fonts = LSM:HashTable("font")
+          local list = {}
+          for name, _ in pairs(fonts) do
+            table.insert(list, { label = name, value = name })
+          end
+          table.sort(list, function(a, b) return a.label < b.label end)
+          -- Add "None" option to fallback to main
+          table.insert(list, 1, { label = "Use Interface Font", value = nil })
+          return list
+        end,
+        onChange = function(val)
+          if NoobTacoUIDB.GeneralSettings.enableGlobalFont and addon.GlobalFontReplacer then
+            addon.GlobalFontReplacer:ApplyFont()
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "dropdown",
+        label = "Combat Text & Names",
+        id = "GeneralSettings.fontOverrides.combat",
+        placeholder = "Use Interface Font",
+        width = 250,
+        options = function()
+          local LSM = LibStub("LibSharedMedia-3.0")
+          local fonts = LSM:HashTable("font")
+          local list = {}
+          for name, _ in pairs(fonts) do
+            table.insert(list, { label = name, value = name })
+          end
+          table.sort(list, function(a, b) return a.label < b.label end)
+          table.insert(list, 1, { label = "Use Interface Font", value = nil })
+          return list
+        end,
+        onChange = function(val)
+          if NoobTacoUIDB.GeneralSettings.enableGlobalFont and addon.GlobalFontReplacer then
+            addon.GlobalFontReplacer:ApplyFont()
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "dropdown",
+        label = "Quest & Header Font",
+        id = "GeneralSettings.fontOverrides.quester",
+        placeholder = "Use Interface Font",
+        width = 250,
+        options = function()
+          local LSM = LibStub("LibSharedMedia-3.0")
+          local fonts = LSM:HashTable("font")
+          local list = {}
+          for name, _ in pairs(fonts) do
+            table.insert(list, { label = name, value = name })
+          end
+          table.sort(list, function(a, b) return a.label < b.label end)
+          table.insert(list, 1, { label = "Use Interface Font", value = nil })
+          return list
+        end,
+        onChange = function(val)
+          if NoobTacoUIDB.GeneralSettings.enableGlobalFont and addon.GlobalFontReplacer then
+            addon.GlobalFontReplacer:ApplyFont()
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      { type = "description", text = "Replaces standard system fonts with your selected choices.\n|cinfo|Note:|r 'Interface Font' is the base fallback if others are not set." },
+
       {
         type = "button",
         label = "Reload UI",
