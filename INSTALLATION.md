@@ -17,7 +17,14 @@ Launch World of Warcraft and open the NoobTacoUI options menu (Type `/nt config`
 *   Select the option that matches your monitor (Standard or High Visibility).
 *   **Reload your UI** when prompted.
 
-## 3. Mandatory Edit Mode Setup
+## 3. Action Bar Setup
+
+**Why this is important:** NoobTacoUI defaults to a 3-bar layout. For the interface to look correct, you must enable the specific bars it expects.
+*   Go to **Options > Gameplay > Action Bars**.
+*   Enable **Action Bar 2** and **Action Bar 3**.
+*   *Note: You can enable Action Bars 4 through 8 if you need more buttons, but they will appear in the middle of the screen and it is up to you to move and place them where you want.*
+
+## 4. Mandatory Edit Mode Setup
 
 ### Step 2: Import Layout
 **Why this is important:** This step positions all the standard Blizzard UI elements (Unit Frames, Minimap, Action Bars) to their correct spots. Without this, the NoobTacoUI profiles will be applied to a messy default layout.
@@ -28,7 +35,7 @@ Launch World of Warcraft and open the NoobTacoUI options menu (Type `/nt config`
 *   Name the profile something recognizable (e.g., "NoobTaco").
 *   **Inspect your screen:** If anything looks drastically out of place, make adjustments now.
 
-## 4. Apply Addon Profiles
+## 5. Apply Addon Profiles
 
 ### Step 3: Automated Application
 **Why this is important:** This applies the specific visual settings (fonts, colors, bar sizes) to all your supported addons so they match the NoobTacoUI theme perfectly.
@@ -70,6 +77,15 @@ If you want the clean, square Minimap look seen in the screenshots, you will nee
     2.  Click the **cog wheel** icon next to the Enhanced Minimap option.
     3.  **Select everything EXCEPT "Unclamp".**
     4.  *Why this is important:* This hides the clutter of addon buttons around your minimap and places them in a tidy "Button Drawer". You can access them by **Right-Clicking** anywhere on the minimap.
+
+## 3. Keybindings
+
+**Important:** NoobTacoUI does not change your keybindings.
+If you wish to update them to fit the new layout, you can use **Quick Keybind Mode**:
+*   Open the Game Menu (`Esc`).
+*   Click **Quick Keybind Mode**.
+*   Hover over a button on your action bar and press the key you want to use (e.g., `1`, `Q`, `Ctrl+F1`).
+*   Click **Okay** to save.
 
 ---
 
