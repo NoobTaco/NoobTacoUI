@@ -3,6 +3,7 @@
 	<Script file="Commands.lua"/>
 
 	<Script file="AddonProfiles.lua"/>
+	<Script file="Minimap.lua"/>
 
 	<Script file="ConfigNew.lua"/>
 </Ui>

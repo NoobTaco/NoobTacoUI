@@ -22,6 +22,12 @@ Keep everything looking consistent across your whole screen with built-in profil
 - **Pixel Perfect Scaling**: Built-in tools to set your UI scale perfectly for 4K, 1440p, and 1080p resolutions.
   - **Standard (1:1)**: Maximum screen real estate with mathematical sharpness.
   - **High Visibility (2:1)**: Doubled UI size for better accessibility while maintaining perfect clarity on high-DPI monitors.
+- **Square Minimap**: Transform your minimap into a clean square design with:
+  - **1-Pixel Themed Border**: Uses NoobTaco's signature Burnt Sienna color (#D78144).
+  - **Addon Button Drawer**: Automatically collects all minimap addon buttons into a single organized drawer.
+  - **Individual Button Control**: Show or hide specific addon buttons as needed.
+  - **Minimal Overhead**: Lightweight implementation with smart button detection.
+  - **Fully Configurable**: Enable/disable the feature through the options menu.
 - **Addon Profiles**: Guided, three-step setup for a perfect UI:
   - **Step 1: Mandatory Edit Mode**: One-click export of optimized layout strings.
   - **Step 2: Automated Application**: Apply all loaded addon profiles at once. You can now customize your bulk setup by toggling "Include in Bulk Setup" for specific addons.
@@ -69,6 +75,12 @@ You can open the settings menu a few different ways:
 - **`/nt version`** - Display current addon version
 - **`/nt`** - Show help with available commands
 - **`/rl`** or **`/reloadui`** - Fast UI reload
+- **`/ntminimap`** - Toggle square minimap
+  - **`/ntminimap enable`** - Enable square minimap
+  - **`/ntminimap disable`** - Disable square minimap
+  - **`/ntminimap drawer`** - Toggle addon button drawer
+  - **`/ntminimap drawerenable`** - Enable addon drawer
+  - **`/ntminimap drawerdisable`** - Disable addon drawer
 
 ## 📦 How to Install
 

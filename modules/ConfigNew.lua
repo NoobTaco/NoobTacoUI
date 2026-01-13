@@ -541,6 +541,89 @@ local function BuildSchemas()
     }
   }
 
+  -- Minimap Settings Schema
+  addon.ConfigSchemas.Minimap = {
+    type = "group",
+    children = {
+      { type = "header", label = "Minimap Settings" },
+      { type = "description", text = "Configure the NoobTaco square minimap with themed border and addon button drawer." },
+      { type = "header", label = "Square Minimap" },
+      {
+        type = "checkbox",
+        label = "Enable Square Minimap",
+        id = "MinimapSettings.enabled",
+        default = true,
+        onChange = function(val)
+          if addon.MinimapModule then
+            if val then
+              addon.MinimapModule:Enable()
+            else
+              addon.MinimapModule:Disable()
+            end
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "description",
+        text = "|cheader|Square Minimap:|r Transforms the default round minimap into a clean square minimap with a 1-pixel themed border. The border color uses the NoobTaco theme (Burnt Sienna #D78144) and automatically updates with theme changes."
+      },
+      { type = "header", label = "Addon Button Drawer" },
+      {
+        type = "checkbox",
+        label = "Enable Addon Drawer",
+        id = "MinimapSettings.drawerEnabled",
+        default = true,
+        onChange = function(val)
+          if addon.MinimapModule then
+            if val then
+              addon.MinimapModule:EnableDrawer()
+            else
+              addon.MinimapModule:DisableDrawer()
+            end
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "description",
+        text = "|cheader|Addon Drawer:|r Automatically collects all addon minimap buttons into a single drawer button. Click the drawer button to see all collected addon buttons and show/hide individual addons as needed. The drawer scans for LibDBIcon buttons from other addons and organizes them in a clean panel."
+      },
+      {
+        type = "button",
+        label = "Open Drawer",
+        onClick = function()
+          if addon.MinimapModule then
+            addon.MinimapModule:ShowDrawer()
+          end
+        end
+      },
+      { type = "alert", severity = "info", text = "The drawer button appears on your minimap after enabling. Click it to manage your addon buttons." },
+      { type = "header", label = "Quick Actions" },
+      {
+        type = "row",
+        children = {
+          {
+            type = "button",
+            label = "Toggle Square Minimap",
+            width = 160,
+            onClick = function()
+              if addon.MinimapModule then
+                addon.MinimapModule:Toggle()
+              end
+            end
+          },
+          {
+            type = "button",
+            label = "Reload UI",
+            width = 160,
+            onClick = function() ReloadUI() end
+          }
+        }
+      },
+    }
+  }
+
   -- Addon Integration (Profiles)
   -- Build schema dynamically to ensure addon load state is current
   addon.BuildAddonsSchema = function()
@@ -832,6 +915,11 @@ local function InitializeConfigUI()
       addon.ConfigState:SetValue("lastSection", "gamesettings")
       addon.ConfigRenderer:Render(addon.ConfigSchemas.Game, MainLayout)
     end)
+
+  MainLayout.sidebarButtons["minimap"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "minimap", "Minimap", function()
+    addon.ConfigState:SetValue("lastSection", "minimap")
+    addon.ConfigRenderer:Render(addon.ConfigSchemas.Minimap, MainLayout)
+  end)
 
   MainLayout.sidebarButtons["general"] = addon.ConfigLayout:AddSidebarButton(MainLayout, "general", "General", function()
     addon.ConfigState:SetValue("lastSection", "general")
