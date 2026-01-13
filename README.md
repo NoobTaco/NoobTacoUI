@@ -80,6 +80,8 @@ You can open the settings menu a few different ways:
 
 Simply install the addon through your preferred addon manager (CurseForge, Wago, etc.) or manually extract it to your `Interface/AddOns` folder.
 
+For a detailed, step-by-step walkthrough of the setup process, please read our **[Installation Guide](INSTALLATION.md)**.
+
 ## 🔧 Works With
 
 **🌙 Midnight Beta Ready**: Fully compatible with World of Warcraft Midnight Beta (Interface: 120000).

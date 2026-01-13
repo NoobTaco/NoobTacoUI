@@ -6,6 +6,10 @@
 - **New Profile**: Added **NoobTaco-GotOne** to the in-game "Addon Integration" list as a recommended companion addon.
 - **Removed**: Removed the **Cooldown Manager Tweaks** profile and associated integration code.
 
+### Documentation
+- **New Guide**: Added a comprehensive **[Installation Guide](INSTALLATION.md)** covering step-by-step setup, Edit Mode, and manual post-install adjustments (Cooldowns, Minimap).
+- **README**: Added direct link to the new installation guide.
+
 ## [2.1.2] - 2026-01-12
 ### Addon Profiles
 - **Edit Mode**: Updated the **Midnight and Retail** Edit Mode profile strings to version 1.4 with optimized positioning for a consistent layout across game expansions.
