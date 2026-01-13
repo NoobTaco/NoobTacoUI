@@ -47,13 +47,14 @@ After the initial setup, there are a few manual steps needed to polish the look.
 
 **Why this is important:** The base game's cooldown tracking functionality is robust, but it needs to be sized correctly to fit the NoobTaco layout. Incorrect settings will cause icons to overlap your utilities or cast bars.
 
-*   Open **Edit Mode** again and select **Advanced Options**.
-*   Locate the settings for **Essential Cooldowns** and **Utilities**.
-*   **Essential Cooldowns:** Set the visible icon count to **6**.
+*   Open the game menu and navigate to **Options > Gameplay Enhancement > Advanced Cooldown Settings**.
+*   This menu allows you to drag spells between categories. There is no automatic counter, so you must count them manually.
+*   **Essential Cooldowns:** Drag icons here until you have **6** active spells.
     *   *Reason:* Any more than 6 will cause the bar to wrap and obscure the row below it.
-*   **Utilities:** Set the visible icon count to **12**.
+*   **Utilities:** Drag icons here until you have **12** active spells.
     *   *Reason:* Ensure this is set to 12 to prevent it from overlapping with the cast bar.
-*   *(Note: Adjusting these lists might be tricky during the pre-patch period as spell lists change, but these settings will ensure the UI requires minimal maintenance after patch launch).*
+*   **Not Displayed:** Drag any excess or unwanted icons into this section to hide them.
+*   *(Note: Some icons may appear greyed out. This is normal and indicates the spell is not active for your current talent build).*
 
 ## 2. Cleaner Minimap (Optional - Requires Leatrix Plus)
 
