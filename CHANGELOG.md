@@ -1,5 +1,10 @@
 # NoobTacoUI
 
+## [2.1.4] - 2026-01-13
+### Global Font Replacer
+- **Fix**: Improved combat text font initialization timing. The `DAMAGE_TEXT_FONT` and other critical font globals are now set on `ADDON_LOADED` instead of `PLAYER_ENTERING_WORLD`, ensuring they are available before the combat text system initializes.
+- **Note**: Combat text font changes require a `/reload` to take effect due to WoW engine limitations.
+
 ## [2.1.3] - 2026-01-13
 ### Addon Profiles
 - **Categorization**: Grouped supported addons into **Required** and **Recommended/Optional** categories in both the `README` and in-game configuration menu.

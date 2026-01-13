@@ -170,30 +170,70 @@ function GlobalFontReplacer:GetQuestFontPath()
     return nil
 end
 
+-- Helper to set critical global variables early
+-- NOTE: DAMAGE_TEXT_FONT must be set before the combat text system initializes.
+-- Changes to combat text font require a /reload to take effect.
+local function SetEarlyCombatGlobals()
+    if not NoobTacoUIDB or not NoobTacoUIDB.GeneralSettings or not NoobTacoUIDB.GeneralSettings.enableGlobalFont then
+        return
+    end
+
+    local settings = NoobTacoUIDB.GeneralSettings
+    local overrides = settings.fontOverrides or {}
+
+    -- Combat Text Font (requires reload to take effect)
+    local combatFontPath = LSM:Fetch("font", overrides.combat or settings.globalFont or "Poppins-Regular")
+    if combatFontPath then
+        DAMAGE_TEXT_FONT = combatFontPath
+    end
+
+    -- Interface/Names fonts
+    local interfaceFontPath = LSM:Fetch("font", settings.globalFont or "Poppins-Regular")
+    if interfaceFontPath then
+        UNIT_NAME_FONT = interfaceFontPath
+        NAMEPLATE_FONT = interfaceFontPath
+        STANDARD_TEXT_FONT = interfaceFontPath
+    end
+end
+
+-- Public method to check if reload is needed after settings change
+function GlobalFontReplacer:RequiresReload()
+    return true -- Combat text changes always require reload
+end
+
 -- Event handling
 local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-eventFrame:RegisterEvent("ADDON_LOADED") -- Hook for spellbook/talents
+
+local addonLoaded = false
 
 eventFrame:SetScript("OnEvent", function(self, event, arg1)
-    if event == "PLAYER_ENTERING_WORLD" then
-        GlobalFontReplacer:Initialize()
-        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    elseif event == "ADDON_LOADED" then
+    if event == "ADDON_LOADED" then
+        -- Set global variables AS EARLY AS POSSIBLE when our addon loads
+        if arg1 == "NoobTacoUI" and not addonLoaded then
+            addonLoaded = true
+            SetEarlyCombatGlobals()
+        end
+
         -- Handle LoadOnDemand Addons for Spellbook/Talents/Professions
         -- We apply the "Quest/Header" font to these.
         local questFontPath = GlobalFontReplacer:GetQuestFontPath()
-        if not questFontPath then return end
-
-        if arg1 == "Blizzard_PlayerSpells" then
-            local f = _G.PlayerSpellsFrame
-            if f then RecursiveApplyFont(f, questFontPath) end
-        elseif arg1 == "Blizzard_ClassTalentUI" then
-            local f = _G.ClassTalentFrame
-            if f then RecursiveApplyFont(f, questFontPath) end
-        elseif arg1 == "Blizzard_Professions" then
-            local f = _G.ProfessionFrame
-            if f then RecursiveApplyFont(f, questFontPath) end
+        if questFontPath then
+            if arg1 == "Blizzard_PlayerSpells" then
+                local f = _G.PlayerSpellsFrame
+                if f then RecursiveApplyFont(f, questFontPath) end
+            elseif arg1 == "Blizzard_ClassTalentUI" then
+                local f = _G.ClassTalentFrame
+                if f then RecursiveApplyFont(f, questFontPath) end
+            elseif arg1 == "Blizzard_Professions" then
+                local f = _G.ProfessionFrame
+                if f then RecursiveApplyFont(f, questFontPath) end
+            end
         end
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        -- Full font application (Font Objects, frame traversal, etc.)
+        GlobalFontReplacer:Initialize()
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
     end
 end)
