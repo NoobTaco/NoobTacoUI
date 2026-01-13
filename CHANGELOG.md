@@ -1,5 +1,9 @@
 # NoobTacoUI
 
+## [2.1.5] - 2026-01-13
+### Bug Fixes
+- **Config**: Added a combat check to the configuration menu to prevent "Addon Blocked" errors when attempting to open the config while in combat.
+
 ## [2.1.4] - 2026-01-13
 ### Global Font Replacer
 - **Fix**: Improved combat text font initialization timing. The `DAMAGE_TEXT_FONT` and other critical font globals are now set on `ADDON_LOADED` instead of `PLAYER_ENTERING_WORLD`, ensuring they are available before the combat text system initializes.

@@ -1029,6 +1029,11 @@ local function InitializeConfigUI()
 end
 
 function addon.ShowConfigMenu()
+  if InCombatLockdown() then
+    addon:Print("|cffD78144NoobTaco|r|cffF8F9FAUI|r: |cerror|Cannot open configuration while in combat.|r")
+    return
+  end
+
   InitializeConfigUI()
   if MainLayout then
     -- Open valid settings panel
