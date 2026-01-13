@@ -5,4 +5,5 @@
 	<Script file="AddonProfiles.lua"/>
 
 	<Script file="ConfigNew.lua"/>
+	<Script file="GlobalFontReplacer.lua"/>
 </Ui>

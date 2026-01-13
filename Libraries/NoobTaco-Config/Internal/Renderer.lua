@@ -873,9 +873,15 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
       eb:SetText(State:GetValue(item.id) or item.default or "")
     end)
   elseif item.type == "dropdown" and item.options then
+    -- Resolve options if it's a function
+    local optionsList = item.options
+    if type(optionsList) == "function" then
+      optionsList = optionsList() or {}
+    end
+
     -- Initial Text
     local found = false
-    for _, opt in ipairs(item.options) do
+    for _, opt in ipairs(optionsList) do
       if opt.value == currentVal then
         frame.Text:SetText(opt.label)
         found = true
@@ -893,7 +899,13 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
 
         local yOff = 0
         local itemHeight = 20
-        for _, opt in ipairs(item.options) do
+        -- Re-resolve options in case they changed
+        local currentOptions = item.options
+        if type(currentOptions) == "function" then
+          currentOptions = currentOptions() or {}
+        end
+
+        for _, opt in ipairs(currentOptions) do
           local btn = GetFrame("dropdown_item", popupContent)
           btn:SetSize(frame.Popup:GetWidth() - 25, itemHeight)
           btn:SetPoint("TOPLEFT", 5, yOff)
