@@ -33,6 +33,11 @@ globals = {
   "PLATYNATOR_CONFIG",
   "PLATYNATOR_CURRENT_PROFILE",
   "StaticPopupDialogs",
+  -- Font Overrides (GlobalFontReplacer)
+  "DAMAGE_TEXT_FONT",
+  "UNIT_NAME_FONT",
+  "NAMEPLATE_FONT",
+  "STANDARD_TEXT_FONT",
 }
 
 -- Allow access to WoW API globals (read-only)
