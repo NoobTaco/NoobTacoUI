@@ -63,6 +63,7 @@ These addons are not configured by NoobTacoUI profiles but are highly recommende
 - **[Leatrix Maps](https://www.curseforge.com/wow/addons/leatrix-maps)** - Enhances the world map with coordinates, reveal, and more.
 - **[Leatrix Plus](https://www.curseforge.com/wow/addons/leatrix-plus)** - Huge collection of quality of life improvements.
 - **[Plumber](https://www.curseforge.com/wow/addons/plumber)** - Enhances UI for secrets, collections, and world events.
+- **[Dialogue UI](https://www.curseforge.com/wow/addons/dialogueui)** - Modernizes questing with better camera angles and readable fonts.
 
 ### ⚙️ Easy Configuration
 
