@@ -129,7 +129,7 @@ local function InitializeDatabase()
       AppliedProfiles = {},
       ExcludedProfiles = {},
       enableGlobalFont = false,
-      globalFont = "Poppins-Regular",
+      globalFont = "Poppins-SemiBold",
       fontOverrides = {},
     }
   end
@@ -391,7 +391,7 @@ local function BuildSchemas()
       },
       {
         type = "dropdown",
-        label = "Combat Text & Names",
+        label = "Combat Text & Menu",
         id = "GeneralSettings.fontOverrides.combat",
         placeholder = "Use Interface Font",
         width = 250,
@@ -415,7 +415,7 @@ local function BuildSchemas()
       },
       {
         type = "dropdown",
-        label = "Quest & Header Font",
+        label = "Quest Header Font",
         id = "GeneralSettings.fontOverrides.quester",
         placeholder = "Use Interface Font",
         width = 250,
@@ -437,7 +437,7 @@ local function BuildSchemas()
           if addon.ConfigState then addon.ConfigState:Commit() end
         end
       },
-      { type = "description", text = "Replaces standard system fonts with your selected choices.\n|cinfo|Note:|r 'Interface Font' is the base fallback if others are not set." },
+      { type = "description", text = "Replaces standard system fonts with your selected choices.\n|cinfo|Note:|r 'Interface Font' is the base fallback if others are not set.\n\n|cinfo|Note:|r that Combat Text change will need a log out to take effect.\n\n" },
 
       {
         type = "button",

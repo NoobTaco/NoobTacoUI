@@ -63,12 +63,12 @@ function GlobalFontReplacer:ApplyFont()
     local settings = NoobTacoUIDB.GeneralSettings
 
     -- 1. Setup Font Paths from LSM
-    local interfaceFontPath = LSM:Fetch("font", settings.globalFont or "Poppins-Regular")
+    local interfaceFontPath = LSM:Fetch("font", settings.globalFont or "Poppins-SemiBold")
 
     local overrides = settings.fontOverrides or {}
-    local chatFontPath = LSM:Fetch("font", overrides.chat or settings.globalFont or "Poppins-Regular")
-    local combatFontPath = LSM:Fetch("font", overrides.combat or settings.globalFont or "Poppins-Regular")
-    local questFontPath = LSM:Fetch("font", overrides.quester or settings.globalFont or "Poppins-Regular")
+    local chatFontPath = LSM:Fetch("font", overrides.chat or settings.globalFont or "Poppins-SemiBold")
+    local combatFontPath = LSM:Fetch("font", overrides.combat or settings.globalFont or "Poppins-SemiBold")
+    local questFontPath = LSM:Fetch("font", overrides.quester or settings.globalFont or "Poppins-SemiBold")
 
     if not interfaceFontPath then return end
 
@@ -164,7 +164,7 @@ function GlobalFontReplacer:GetQuestFontPath()
     if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings then
         local settings = NoobTacoUIDB.GeneralSettings
         local overrides = settings.fontOverrides or {}
-        local fontName = overrides.quester or settings.globalFont or "Poppins-Regular"
+        local fontName = overrides.quester or settings.globalFont or "Poppins-SemiBold"
         return LSM:Fetch("font", fontName)
     end
     return nil
@@ -182,13 +182,13 @@ local function SetEarlyCombatGlobals()
     local overrides = settings.fontOverrides or {}
 
     -- Combat Text Font (requires reload to take effect)
-    local combatFontPath = LSM:Fetch("font", overrides.combat or settings.globalFont or "Poppins-Regular")
+    local combatFontPath = LSM:Fetch("font", overrides.combat or settings.globalFont or "Poppins-SemiBold")
     if combatFontPath then
         DAMAGE_TEXT_FONT = combatFontPath
     end
 
     -- Interface/Names fonts
-    local interfaceFontPath = LSM:Fetch("font", settings.globalFont or "Poppins-Regular")
+    local interfaceFontPath = LSM:Fetch("font", settings.globalFont or "Poppins-SemiBold")
     if interfaceFontPath then
         UNIT_NAME_FONT = interfaceFontPath
         NAMEPLATE_FONT = interfaceFontPath

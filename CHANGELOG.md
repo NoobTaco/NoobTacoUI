@@ -3,6 +3,7 @@
 ## [2.1.4] - 2026-01-13
 ### Global Font Replacer
 - **Fix**: Improved combat text font initialization timing. The `DAMAGE_TEXT_FONT` and other critical font globals are now set on `ADDON_LOADED` instead of `PLAYER_ENTERING_WORLD`, ensuring they are available before the combat text system initializes.
+- **Defaults**: Updated default font to **Poppins-SemiBold** (was Regular) for better readability across all UI elements (Interface, Chat, Combat Text).
 - **Note**: Combat text font changes require a `/reload` to take effect due to WoW engine limitations.
 
 ## [2.1.3] - 2026-01-13
