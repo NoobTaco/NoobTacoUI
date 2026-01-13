@@ -63,7 +63,17 @@ After the initial setup, there are a few manual steps needed to polish the look.
 *   **Not Displayed:** Drag any excess or unwanted icons into this section to hide them.
 *   *(Note: Some icons may appear greyed out. This is normal and indicates the spell is not active for your current talent build).*
 
-## 2. Cleaner Minimap (Optional - Requires Leatrix Plus)
+## 2. Enable Global Fonts (Optional)
+
+**Why this is important:** NoobTacoUI comes with a custom font system that makes all game text, damage numbers, and chat logs consistent and legible. **This feature is disabled by default.**
+
+*   Open the NoobTacoUI configuration menu (`/nt config`).
+*   Go to the **General** settings tab.
+*   Check the box for **Enable Global Fonts**.
+*   **Reload your UI** to apply the changes.
+*   *Note: You can customize individual fonts (Chat, Combat Text, etc.) in this same menu if you want specific looks for different parts of the UI.*
+
+## 3. Cleaner Minimap (Optional - Requires Leatrix Plus)
 
 If you want the clean, square Minimap look seen in the screenshots, you will need the **Leatrix Plus** addon.
 
@@ -78,7 +88,7 @@ If you want the clean, square Minimap look seen in the screenshots, you will nee
     3.  **Select everything EXCEPT "Unclamp".**
     4.  *Why this is important:* This hides the clutter of addon buttons around your minimap and places them in a tidy "Button Drawer". You can access them by **Right-Clicking** anywhere on the minimap.
 
-## 3. Keybindings
+## 4. Keybindings
 
 **Important:** NoobTacoUI does not change your keybindings.
 If you wish to update them to fit the new layout, you can use **Quick Keybind Mode**:
