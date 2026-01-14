@@ -54,7 +54,7 @@ These addons are essential for the NoobTacoUI look and feel.
 Great additions that fit the theme but aren't strictly necessary.
 
 - **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)** - **Recommended**. Companion addon for high-performance audio notifications.
-- **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - **Optional**. FFXIV-inspired info bar for tracking gold, currency, and more.
+- **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - **Optional**. Titan Panel-inspired info bar for tracking gold, currency, and more.
 - **[Details! Damage Meter](https://www.curseforge.com/wow/addons/details)** - **Optional**. The premier damage and healing meter.
 
 #### Suggested Extras
@@ -96,7 +96,7 @@ You can open the settings menu a few different ways:
 
 Simply install the addon through your preferred addon manager (CurseForge, Wago, etc.) or manually extract it to your `Interface/AddOns` folder.
 
-For a detailed, step-by-step walkthrough of the setup process, please read our **[Installation Guide](INSTALLATION.md)**.
+For a detailed, step-by-step walkthrough of the setup process, please read our **[Installation Guide](https://github.com/NoobTaco/NoobTacoUI/blob/main/INSTALLATION.md)**.
 
 ## 🔧 Works With
 
