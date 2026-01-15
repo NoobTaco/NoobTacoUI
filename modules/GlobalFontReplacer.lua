@@ -4,6 +4,9 @@ addon.GlobalFontReplacer = GlobalFontReplacer
 
 local LSM = LibStub("LibSharedMedia-3.0")
 
+-- Luacheck globals for Blizzard frames
+-- luacheck: globals PlayerSpellsFrame ClassTalentFrame ProfessionFrame
+
 -- Helper to safely check if an object is a Font
 local function SafeIsFont(obj)
     if type(obj) ~= "table" then return false end
@@ -102,7 +105,22 @@ function GlobalFontReplacer:ApplyFont()
                     local filename = normalizedFile:match("([^/]+)$")
 
                     if filename and sourceMap[filename] then
-                        obj:SetFont(sourceMap[filename], height, flags)
+                        local finalFlags = flags
+                        -- Apply SLUG and FILTER flags to combat-related fonts for Midnight kerning fix
+                        if sourceMap[filename] == combatFontPath then
+                            if not finalFlags or finalFlags == "" then
+                                finalFlags = "SLUG, FILTER"
+                            else
+                                if not string.find(finalFlags, "SLUG") then finalFlags = finalFlags .. ", SLUG" end
+                                if not string.find(finalFlags, "FILTER") then finalFlags = finalFlags .. ", FILTER" end
+                            end
+                        end
+                        obj:SetFont(sourceMap[filename], height, finalFlags)
+
+                        -- Apply SetSpacing(0) fallback for combat fonts
+                        if sourceMap[filename] == combatFontPath and obj.SetSpacing then
+                            obj:SetSpacing(0)
+                        end
                     end
                 end
             end
@@ -113,19 +131,34 @@ function GlobalFontReplacer:ApplyFont()
     -- These are used by the C engine for floating text
     if combatFontPath then
         DAMAGE_TEXT_FONT = combatFontPath
+        UNIT_NAME_FONT = combatFontPath
+        NAMEPLATE_FONT = combatFontPath
     end
     if interfaceFontPath then
-        UNIT_NAME_FONT = interfaceFontPath
-        NAMEPLATE_FONT = interfaceFontPath
         STANDARD_TEXT_FONT = interfaceFontPath
     end
 
     -- 5. Manual Overrides for stubborn system fonts (Combat & Names)
+    -- We force these regardless of current font path to ensure we override other addons
     if combatFontPath then
         local manualTargets = {
             "CombatTextFont",
+            "NumberFont_Shadow_Huge",
+            "NumberFont_Shadow_Med",
+            "NumberFont_Shadow_Small",
             "SystemFont_Shadow_Huge",
+            "SystemFont_Shadow_Huge1",
+            "SystemFont_Shadow_Huge2",
+            "SystemFont_Shadow_Huge3",
+            "SystemFont_Shadow_Huge4",
             "SystemFont_Shadow_Large",
+            "SystemFont_Shadow_Med1",
+            "SystemFont_Shadow_Med2",
+            "SystemFont_Shadow_Med3",
+            "SystemFont_Huge1",
+            "SystemFont_Huge2",
+            "SystemFont_Huge3",         -- Modern Retail SCT
+            "SystemFont_Outline_Huge2", -- Modern Retail SCT
             "SystemFont_NamePlateFixed",
             "SystemFont_LargeNamePlateFixed",
             "SystemFont_World",
@@ -133,8 +166,23 @@ function GlobalFontReplacer:ApplyFont()
         for _, name in ipairs(manualTargets) do
             local obj = _G[name]
             if obj and obj.SetFont and obj.GetFont then
-                local _, h, f = obj:GetFont()
-                obj:SetFont(combatFontPath, h, f)
+                local _, h, _ = obj:GetFont()
+
+                -- Force SLUG only for a clean look without outline
+                -- We REPLACE instead of append to prevent FIXEDHEIGHT/CLOSEDHEIGHT conflicts
+                local finalFlags = "SLUG"
+
+                obj:SetFont(combatFontPath, h, finalFlags)
+
+                -- Force SetSpacing(0) to fix "stretching" on modern fonts
+                if obj.SetSpacing then
+                    obj:SetSpacing(0)
+                end
+
+                -- Ensure no shadow for a perfectly clean look
+                if obj.SetShadowOffset then
+                    obj:SetShadowOffset(0, 0)
+                end
             end
         end
     end
@@ -156,7 +204,19 @@ end
 
 -- Initialize the module
 function GlobalFontReplacer:Initialize()
+    -- Apply immediately
     self:ApplyFont()
+
+    -- Re-apply on a slight delay to ensure we override addons like Platynator
+    -- that might be applying their own fonts during the same initialization window.
+    C_Timer.After(0.5, function()
+        self:ApplyFont()
+    end)
+
+    -- Second fallback for late-loading nameplate elements
+    C_Timer.After(2, function()
+        self:ApplyFont()
+    end)
 end
 
 -- Helper to get Quest Font path for the Event Handler
@@ -193,6 +253,14 @@ local function SetEarlyCombatGlobals()
         UNIT_NAME_FONT = interfaceFontPath
         NAMEPLATE_FONT = interfaceFontPath
         STANDARD_TEXT_FONT = interfaceFontPath
+    end
+
+    -- Ensure Combat Text CVars are enabled (Platynator usually does this)
+    if GetCVar("floatingCombatTextCombatDamage") == "0" then
+        SetCVar("floatingCombatTextCombatDamage", "1")
+    end
+    if GetCVar("floatingCombatTextCombatHealing") == "0" then
+        SetCVar("floatingCombatTextCombatHealing", "1")
     end
 end
 

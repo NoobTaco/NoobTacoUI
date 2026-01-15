@@ -52,24 +52,25 @@ local function NeedsTextureFallback()
 end
 
 -- Asset paths for easy management
+local assetPath = "Interface/AddOns/" .. addonName .. "/Media/Textures/"
 addon.UIAssets = {
   -- Logo and branding
-  Logo = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\logo.tga",
+  Logo = assetPath .. "logo.tga",
 
   -- Background textures using your NoobTaco theme
   Background = {
-    Main = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord0",
-    Panel = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord1",
-    Dark = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord3",
-    Accent = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord8",
+    Main = assetPath .. "NT_nord0",
+    Panel = assetPath .. "NT_nord1",
+    Dark = assetPath .. "NT_nord3",
+    Accent = assetPath .. "NT_nord8",
   },
 
   -- Gradient textures for depth
   Gradients = {
-    MainGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord0_grd",
-    PanelGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord1_grd",
-    DarkGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord3_grd",
-    AccentGrad = "Interface\\AddOns\\NoobTacoUI\\Media\\Textures\\NT_nord8_grd",
+    MainGrad = assetPath .. "NT_nord0_grd",
+    PanelGrad = assetPath .. "NT_nord1_grd",
+    DarkGrad = assetPath .. "NT_nord3_grd",
+    AccentGrad = assetPath .. "NT_nord8_grd",
   },
 
   -- Colors extracted from NoobTaco theme
