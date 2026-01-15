@@ -1,6 +1,6 @@
 # NoobTacoUI
 
-## [2.1.6] - 2026-01-14
+## [2.1.7] - 2026-01-14
 ### Bug Fixes
 - **Global Font Replacer**: Fixed a Lua error ("bad argument #3 to 'SetFont'") on current Retail/Classic clients by making the `SLUG` and `FILTER` font flags conditionally available only on WoW 12.0.0 (Midnight) and higher.
 
