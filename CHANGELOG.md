@@ -1,5 +1,9 @@
 # NoobTacoUI
 
+## [2.2.1-beta.1] - 2026-01-15
+### Addon Profiles
+- **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.5 with an improved layout for modern WoW clients.
+
 ## [2.2.0] - 2026-01-15
 ### Features
 - **Granular Font Control**: Completely overhauled the font replacement system to provide 5 specialized categories:
