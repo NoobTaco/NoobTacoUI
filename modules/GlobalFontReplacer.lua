@@ -108,11 +108,21 @@ function GlobalFontReplacer:ApplyFont()
                         local finalFlags = flags
                         -- Apply SLUG and FILTER flags to combat-related fonts for Midnight kerning fix
                         if sourceMap[filename] == combatFontPath then
-                            if not finalFlags or finalFlags == "" then
-                                finalFlags = "SLUG, FILTER"
+                            local _, _, _, interfaceVersion = GetBuildInfo()
+                            local isMidnight = interfaceVersion >= 120000
+
+                            if isMidnight then
+                                if not finalFlags or finalFlags == "" then
+                                    finalFlags = "SLUG, FILTER"
+                                else
+                                    if not string.find(finalFlags, "SLUG") then finalFlags = finalFlags .. ", SLUG" end
+                                    if not string.find(finalFlags, "FILTER") then finalFlags = finalFlags .. ", FILTER" end
+                                end
                             else
-                                if not string.find(finalFlags, "SLUG") then finalFlags = finalFlags .. ", SLUG" end
-                                if not string.find(finalFlags, "FILTER") then finalFlags = finalFlags .. ", FILTER" end
+                                -- Fallback for Retail/Classic: Use standard OUTLINE if no flags exist
+                                if not finalFlags or finalFlags == "" then
+                                    finalFlags = "OUTLINE"
+                                end
                             end
                         end
                         obj:SetFont(sourceMap[filename], height, finalFlags)
@@ -168,9 +178,10 @@ function GlobalFontReplacer:ApplyFont()
             if obj and obj.SetFont and obj.GetFont then
                 local _, h, _ = obj:GetFont()
 
-                -- Force SLUG only for a clean look without outline
-                -- We REPLACE instead of append to prevent FIXEDHEIGHT/CLOSEDHEIGHT conflicts
-                local finalFlags = "SLUG"
+                -- Use SLUG for Midnight, OUTLINE for Retail/Classic
+                local _, _, _, interfaceVersion = GetBuildInfo()
+                local isMidnight = interfaceVersion >= 120000
+                local finalFlags = isMidnight and "SLUG" or "OUTLINE"
 
                 obj:SetFont(combatFontPath, h, finalFlags)
 
