@@ -72,6 +72,7 @@ function GlobalFontReplacer:ApplyFont()
     local chatFontPath = LSM:Fetch("font", overrides.chat or settings.globalFont or "Poppins-SemiBold")
     local combatFontPath = LSM:Fetch("font", overrides.combat or settings.globalFont or "Poppins-SemiBold")
     local questFontPath = LSM:Fetch("font", overrides.quester or settings.globalFont or "Poppins-SemiBold")
+    local systemFontPath = LSM:Fetch("font", overrides.system or settings.globalFont or "Poppins-SemiBold")
 
     if not interfaceFontPath then return end
 
@@ -148,11 +149,20 @@ function GlobalFontReplacer:ApplyFont()
         STANDARD_TEXT_FONT = interfaceFontPath
     end
 
-    -- 5. Manual Overrides for stubborn system fonts (Combat & Names)
+    -- 5. Manual Overrides for stubborn system fonts
     -- We force these regardless of current font path to ensure we override other addons
-    if combatFontPath then
-        local manualTargets = {
+    if combatFontPath or interfaceFontPath then
+        -- Pure Combat / World targets
+        local combatTargets = {
             "CombatTextFont",
+            "SystemFont_NamePlateFixed",
+            "SystemFont_LargeNamePlateFixed",
+            "SystemFont_World",
+        }
+
+        -- Large System Headers (Main Menu, etc.)
+        -- We'll link these to Combat for now as per current mapping, but split them for future granularity
+        local systemTargets = {
             "NumberFont_Shadow_Huge",
             "NumberFont_Shadow_Med",
             "NumberFont_Shadow_Small",
@@ -169,33 +179,37 @@ function GlobalFontReplacer:ApplyFont()
             "SystemFont_Huge2",
             "SystemFont_Huge3",         -- Modern Retail SCT
             "SystemFont_Outline_Huge2", -- Modern Retail SCT
-            "SystemFont_NamePlateFixed",
-            "SystemFont_LargeNamePlateFixed",
-            "SystemFont_World",
         }
-        for _, name in ipairs(manualTargets) do
-            local obj = _G[name]
-            if obj and obj.SetFont and obj.GetFont then
-                local _, h, _ = obj:GetFont()
 
-                -- Use SLUG for Midnight, OUTLINE for Retail/Classic
-                local _, _, _, interfaceVersion = GetBuildInfo()
-                local isMidnight = interfaceVersion >= 120000
-                local finalFlags = isMidnight and "SLUG" or "OUTLINE"
+        local function ApplyForced(list, fontPath)
+            if not fontPath then return end
+            for _, name in ipairs(list) do
+                local obj = _G[name]
+                if obj and obj.SetFont and obj.GetFont then
+                    local _, h, _ = obj:GetFont()
 
-                obj:SetFont(combatFontPath, h, finalFlags)
+                    -- Use SLUG for Midnight, OUTLINE for Retail/Classic
+                    local _, _, _, interfaceVersion = GetBuildInfo()
+                    local isMidnight = interfaceVersion >= 120000
+                    local finalFlags = isMidnight and "SLUG" or "OUTLINE"
 
-                -- Force SetSpacing(0) to fix "stretching" on modern fonts
-                if obj.SetSpacing then
-                    obj:SetSpacing(0)
-                end
+                    obj:SetFont(fontPath, h, finalFlags)
 
-                -- Ensure no shadow for a perfectly clean look
-                if obj.SetShadowOffset then
-                    obj:SetShadowOffset(0, 0)
+                    -- Force SetSpacing(0) to fix "stretching" on modern fonts
+                    if obj.SetSpacing then
+                        obj:SetSpacing(0)
+                    end
+
+                    -- Ensure no shadow for a perfectly clean look
+                    if obj.SetShadowOffset then
+                        obj:SetShadowOffset(0, 0)
+                    end
                 end
             end
         end
+
+        ApplyForced(combatTargets, combatFontPath)
+        ApplyForced(systemTargets, systemFontPath) -- Decoupled from combatFontPath
     end
 
     -- 6. Standard Frames that are already loaded

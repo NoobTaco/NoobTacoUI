@@ -29,7 +29,12 @@ Keep everything looking consistent across your whole screen with built-in profil
 - **Game Settings**: Direct control over critical CVars to ensure your UI looks crisp.
 - **Global Font Replacement**: Complete control over your game's typography.
   - **Smart Replacement**: Automatically overrides system fonts with your chosen typeface.
-  - **Granular Control**: Set different fonts for **Interface**, **Chat & Meter**, **Combat Text**, and **Quest Headers**.
+  - **Granular Control**: Set different fonts for 5 specialized categories:
+    - **Interface**: Unit Frames, Bags, Tooltips, and general interface text.
+    - **Chat & Info Labels**: Action bar binds, bag counts, and chat logs.
+    - **World Combat Text**: Floating damage/healing numbers and nameplate levels.
+    - **Main Menu & Large Titles**: Game menu, talking heads, and screen alerts.
+    - **Quest & System Headers**: Quest log, objective tracker, and system frames.
   - **Consistent Look**: Forces sticky frames like Combat Text and Nameplates to match your theme.
 
 ### 📚 Extensive Media Library

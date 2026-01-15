@@ -1,5 +1,23 @@
 # NoobTacoUI
 
+## [2.2.0] - 2026-01-15
+### Features
+- **Granular Font Control**: Completely overhauled the font replacement system to provide 5 specialized categories:
+  - **Interface**: Controls Bags, Unit Frames, and standard UI elements.
+  - **Chat & Info Labels**: Targets action bar keybinds, bag counts, and social displays.
+  - **World Combat Text**: Purely for floating damage/healing and nameplate levels.
+  - **Main Menu & Large Titles**: Support for Escape menu, Talking Heads, and large screen alerts.
+  - **Quest & System Headers**: Objective tracker, Spellbook, Talents, and Professions.
+- **Diagnostic Tooling**: Implemented a temporary "Identify Mode" to precisely map every font in the game UI.
+
+### Bug Fixes
+- **Combat Text**: Fixed initialization timing for Scrolling Combat Text to ensure custom fonts are applied early enough for the engine to recognize them (requires relog).
+- **Menu Decoupling**: Decoupled the Main Menu (Escape) and large title fonts from the World Combat category.
+
+### Documentation
+- **In-Game Help**: Added detailed "Affects:" descriptions to every font category in the configuration menu.
+- **Research**: Documented comprehensive font mappings in `docs/FONT_MAPPING.md`.
+
 ## [2.1.7] - 2026-01-14
 ### Bug Fixes
 - **Global Font Replacer**: Fixed a Lua error ("bad argument #3 to 'SetFont'") on current Retail/Classic clients by making the `SLUG` and `FILTER` font flags conditionally available only on WoW 12.0.0 (Midnight) and higher.

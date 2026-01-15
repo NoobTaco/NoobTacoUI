@@ -342,8 +342,13 @@ local function BuildSchemas()
         end
       },
       {
+        type = "description",
+        text =
+        "Replaces standard system fonts with your selected choices. Each category below controls specific areas of the game interface.\n\n"
+      },
+      {
         type = "dropdown",
-        label = "Interface Font (Main)",
+        label = "Interface (Bags & Unit Frames)",
         id = "GeneralSettings.globalFont",
         width = 250,
         options = function()
@@ -365,8 +370,13 @@ local function BuildSchemas()
         end
       },
       {
+        type = "description",
+        text =
+        "|cheader|Affects:|r Unit Frames, Interface Options, Macro/Quest/Tooltip body text, Minimap, Bag/Calendar headers, and Nameplate names."
+      },
+      {
         type = "dropdown",
-        label = "Chat & Meter Font",
+        label = "Chat & Info Labels",
         id = "GeneralSettings.fontOverrides.chat",
         placeholder = "Use Interface Font",
         width = 250,
@@ -390,8 +400,12 @@ local function BuildSchemas()
         end
       },
       {
+        type = "description",
+        text = "|cheader|Affects:|r Chat logs, Action bar keybinds, Bag counts, and Bagbar icons."
+      },
+      {
         type = "dropdown",
-        label = "Combat Text & Menu",
+        label = "World Combat Text",
         id = "GeneralSettings.fontOverrides.combat",
         placeholder = "Use Interface Font",
         width = 250,
@@ -414,8 +428,41 @@ local function BuildSchemas()
         end
       },
       {
+        type = "description",
+        text = "|cheader|Affects:|r Floating damage/healing numbers and Nameplate levels. |cwarning|(Requires Logout)|r"
+      },
+      {
         type = "dropdown",
-        label = "Quest Header Font",
+        label = "Main Menu & Large Titles",
+        id = "GeneralSettings.fontOverrides.system",
+        placeholder = "Use Interface Font",
+        width = 250,
+        options = function()
+          local LSM = LibStub("LibSharedMedia-3.0")
+          local fonts = LSM:HashTable("font")
+          local list = {}
+          for name, _ in pairs(fonts) do
+            table.insert(list, { label = name, value = name })
+          end
+          table.sort(list, function(a, b) return a.label < b.label end)
+          table.insert(list, 1, { label = "Use Interface Font", value = nil })
+          return list
+        end,
+        onChange = function(val)
+          if NoobTacoUIDB.GeneralSettings.enableGlobalFont and addon.GlobalFontReplacer then
+            addon.GlobalFontReplacer:ApplyFont()
+          end
+          if addon.ConfigState then addon.ConfigState:Commit() end
+        end
+      },
+      {
+        type = "description",
+        text =
+        "|cheader|Affects:|r Game Menu (Esc), Talking Heads, Edit Mode labels, Big Screen alerts, and Covenant/Reputation interfaces."
+      },
+      {
+        type = "dropdown",
+        label = "Quest & System Headers",
         id = "GeneralSettings.fontOverrides.quester",
         placeholder = "Use Interface Font",
         width = 250,
@@ -437,7 +484,13 @@ local function BuildSchemas()
           if addon.ConfigState then addon.ConfigState:Commit() end
         end
       },
-      { type = "description", text = "Replaces standard system fonts with your selected choices.\n|cinfo|Note:|r 'Interface Font' is the base fallback if others are not set.\n\n|cinfo|Note:|r that Combat Text change will need a log out to take effect.\n\n" },
+      {
+        type = "description",
+        text =
+        "|cheader|Affects:|r Objective Tracker titles, Quest Log headers, Spellbook/Profession/Adventure Guide headers."
+      },
+      { type = "description", text = " " },
+
 
       {
         type = "button",
