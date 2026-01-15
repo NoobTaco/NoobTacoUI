@@ -76,12 +76,12 @@ These addons are not configured by NoobTacoUI profiles but are highly recommende
 
 ### ⚙️ Easy Configuration
 
-I've rebuilt the menu from the ground up to match the NoobTaco vibe perfectly.
+I've rebuilt the menu from the ground up to match NoobTacoUI.
 
 - **Easy Access**: Open via Minimap button, Addon Compartment, or chat commands.
 - **Account-Wide Settings**: Configuration persists across all your characters.
 
-## 🚀 How to Start
+## How to Start
 
 ### How to Configure
 
