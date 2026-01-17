@@ -120,6 +120,10 @@ Now includes standard **LibDataBroker** support for better minimap button compat
 
 ### Support
 
+If you're looking for help, have questions, or want to join the community, join us on Discord!
+
+[![Discord](https://img.shields.io/badge/Discord-Taco%20Labs-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Mby5KwkCH9)
+
 If you like what I've built and want to support it, you can do that here:
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G01GM9G)
