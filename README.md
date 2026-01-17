@@ -7,11 +7,11 @@
 > Please download **GotOne** to continue receiving high-performance, audio-only notifications for your collections.
 
 
-[![CI Status](https://img.shields.io/github/actions/workflow/status/NoobTaco/NoobTacoUI/ci.yml?style=for-the-badge&logo=github&logoColor=white&label=CI%20Status)](https://github.com/NoobTaco/NoobTacoUI/actions/workflows/ci.yml) [![Release Status](https://img.shields.io/github/actions/workflow/status/NoobTaco/NoobTacoUI/release.yml?style=for-the-badge&logo=github&logoColor=white&label=Release%20Status)](https://github.com/NoobTaco/NoobTacoUI/actions/workflows/release.yml) [![Discord](https://img.shields.io/badge/Discord-Taco%20Labs-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Mby5KwkCH9)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/NoobTaco/NoobTacoUI/ci.yml?style=for-the-badge&logo=github&logoColor=white&label=CI%20Status)](https://github.com/NoobTaco/NoobTacoUI/actions/workflows/ci.yml) [![Release Status](https://img.shields.io/github/actions/workflow/status/NoobTaco/NoobTacoUI/release.yml?style=for-the-badge&logo=github&logoColor=white&label=Release%20Status)](https://github.com/NoobTaco/NoobTacoUI/actions/workflows/release.yml) [![Discord](https://img.shields.io/badge/Discord-Taco%20Labs-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Mby5KwkCH9) [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/devnoobtaco)
 
 **I built NoobTacoUI to give you a clean, consistent, and awesome-looking interface in World of Warcraft.**
 
-It's a collection of high-quality fonts, sounds, and textures, plus it comes with all the settings you need to get your UI dialed in just right.
+It's a collection of fonts, sounds, and textures, plus it comes with all the settings you need to get your UI dialed in just right.
 
 ## ✨ What's Inside
 
@@ -50,15 +50,15 @@ I've included profiles for these addons to keep everything looking sharp.
 #### Core Required Addons
 These addons are essential for the NoobTacoUI look and feel.
 
-- **[BetterBlizzFrames](https://www.curseforge.com/wow/addons/betterblizzframes)** - **Required**. Enhances Blizzard unit frames with customizable auras and castbars.
-- **[Platynator](https://www.curseforge.com/wow/addons/platynator)** - **Required**. High-performance nameplate addon with threat coloring.
+- **[BetterBlizzFrames](https://www.curseforge.com/wow/addons/betterblizzframes)** - **Required**. Enhances Blizzard unit frames with customizable auras and coloring.
+- **[Platynator](https://www.curseforge.com/wow/addons/platynator)** - **Required**. High-performance nameplate addon with threat coloring and more. Love this nameplate!!
 - **[Sensei Class Resource Bar](https://www.curseforge.com/wow/addons/senseiclassresourcebar)** - **Required**. Adaptive resource bar that stylizes based on class/spec.
 - **[zBarButtonBG](https://www.curseforge.com/wow/addons/zbarbuttonbg)** - **Required**. Customizable background frames for action bar buttons.
 
 #### Recommended & Optional Addons
 Great additions that fit the theme but aren't strictly necessary.
 
-- **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)** - **Recommended**. Companion addon for high-performance audio notifications.
+- **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)** - **Recommended**. Companion addon for audio notifications when you collect mounts, pets, toys, and transmog.
 - **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - **Optional**. Titan Panel-inspired info bar for tracking gold, currency, and more.
 - **[Details! Damage Meter](https://www.curseforge.com/wow/addons/details)** - **Optional**. The premier damage and healing meter.
 
@@ -107,8 +107,6 @@ For a detailed, step-by-step walkthrough of the setup process, please read our *
 
 **🌙 Midnight Beta Ready**: Fully compatible with World of Warcraft Midnight Beta (Interface: 120000).
 
-Works seamlessly with any addon that uses LibSharedMedia-3.0, including Bartender4, WeakAuras, Plater, and many more.
-Now includes standard **LibDataBroker** support for better minimap button compatibility.
 
 ## ❤️ Links & Support
 
@@ -124,10 +122,11 @@ If you're looking for help, have questions, or want to join the community, join 
 
 [![Discord](https://img.shields.io/badge/Discord-Taco%20Labs-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Mby5KwkCH9)
 
-If you like what I've built and want to support it, you can do that here:
+If you like what I've built and want to support it, you can do that from any of these options. Thank you!
 
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G01GM9G)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/devnoobtaco)
 [![sponsormeongithub](https://user-images.githubusercontent.com/1172935/97088810-463e0e00-15e8-11eb-8078-f18da01c6e9e.png)](https://github.com/sponsors/NoobTaco)
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G01GM9G)
 
 ## 📄 License
 
