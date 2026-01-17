@@ -7,7 +7,7 @@
 > Please download **GotOne** to continue receiving high-performance, audio-only notifications for your collections.
 
 
-![CI Status](https://github.com/NoobTaco/NoobTacoUI/workflows/CI/badge.svg) ![Release Status](https://github.com/NoobTaco/NoobTacoUI/workflows/Release/badge.svg)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/NoobTaco/NoobTacoUI/ci.yml?style=for-the-badge&logo=github&logoColor=white&label=CI%20Status)](https://github.com/NoobTaco/NoobTacoUI/actions/workflows/ci.yml) [![Release Status](https://img.shields.io/github/actions/workflow/status/NoobTaco/NoobTacoUI/release.yml?style=for-the-badge&logo=github&logoColor=white&label=Release%20Status)](https://github.com/NoobTaco/NoobTacoUI/actions/workflows/release.yml) [![Discord](https://img.shields.io/badge/Discord-Taco%20Labs-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/Mby5KwkCH9)
 
 **I built NoobTacoUI to give you a clean, consistent, and awesome-looking interface in World of Warcraft.**
 
