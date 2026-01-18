@@ -1,8 +1,5 @@
 # AI Usage & Development Ethics
 
-**Source of Truth:** [NoobTacoUI GitHub](https://github.com/NoobTaco/NoobTacoUI)
-
-
 ## Our Stance on AI in Addon Development
 
 In the current era of software development, AI tools have become a double-edged sword. While they offer speed, we are witnessing a rise in "rampant" AI-generated code—often referred to as **Vibe Coding**—where logic is generated without deep understanding, leading to bloated, inefficient, and potentially breaking addons.
