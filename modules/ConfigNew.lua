@@ -653,15 +653,15 @@ local function BuildSchemas()
         links = {
           {
             label = "Donate",
-            url = "https://ko-fi.com/mikenorton",
+            url = "https://buymeacoffee.com/devnoobtaco",
             onClick = function()
               StaticPopupDialogs["NOOBTACOUI_GENERIC_COPY"] = {
-                text = "CTRL+C to copy the link: https://ko-fi.com/mikenorton",
+                text = "CTRL+C to Buy me a Coffee",
                 button1 = "Close",
                 hasEditBox = true,
                 editBoxWidth = 400,
                 OnShow = function(self)
-                  self.EditBox:SetText("https://ko-fi.com/mikenorton")
+                  self.EditBox:SetText("https://buymeacoffee.com/devnoobtaco")
                   self.EditBox:SetFocus()
                   self.EditBox:HighlightText()
                 end,
