@@ -1,9 +1,11 @@
 # AI Usage & Development Ethics
 
+**Source of Truth:** [NoobTacoUI GitHub](https://github.com/NoobTaco/NoobTacoUI)
+
+
 ## Our Stance on AI in Addon Development
 
-> [!IMPORTANT]
-> In the current era of software development, AI tools have become a double-edged sword. While they offer speed, we are witnessing a rise in "rampant" AI-generated code—often referred to as **Vibe Coding**—where logic is generated without deep understanding, leading to bloated, inefficient, and potentially breaking addons.
+In the current era of software development, AI tools have become a double-edged sword. While they offer speed, we are witnessing a rise in "rampant" AI-generated code—often referred to as **Vibe Coding**—where logic is generated without deep understanding, leading to bloated, inefficient, and potentially breaking addons.
 
 I am firmly against this approach. Addons should be crafted with intent, especially when they interface with the World of Warcraft engine, where performance and reliability are paramount.
 
@@ -17,4 +19,7 @@ I use AI as a high-powered assistant, not a replacement for engineering. Its rol
 
 ## My Commitment to You
 
-Every single line of code in this repository is reviewed, tested, and validated by me personally. I do not ship code that I do not understand. My priority is to maintain the lean, high-performance standards expected of the **NoobTaco** name, ensuring that AI serves the addon, rather than the addon serving as a playground for unverified AI output.
+Every single line of code in this repository is reviewed, tested, and validated by me personally. My priority is to maintain the lean, high-performance standards expected of the **NoobTaco** name, ensuring that AI serves the addon, rather than the addon serving as a playground for unverified AI output.
+
+---
+NoobTaco
