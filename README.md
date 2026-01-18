@@ -132,3 +132,7 @@ If you like what I've built and want to support it, you can do that from any of 
 
 Code in this repository is licensed under GPL-3.0-or-later. See `LICENSE` for details.
 *Media files (fonts, audio, textures) are included under their respective upstream licenses.*
+
+## 📄 AI Usage
+
+See [AI_USAGE.md](https://github.com/NoobTaco/NoobTacoUI/blob/main/AI_USAGE.md) for more information.
