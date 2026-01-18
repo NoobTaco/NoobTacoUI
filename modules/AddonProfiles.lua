@@ -200,73 +200,83 @@ addon.AddonProfiles.Platynator = {
       return
     end
 
-    -- 1. Get the profile data
+    -- 1. Decode the profile data
     local profileData = addon.AddonProfiles.Platynator
     local profileString = profileData.profileString
 
-    -- 2. Decode JSON
-    local success, import = pcall(C_EncodingUtil.DeserializeJSON, profileString)
-    if not success or not import then
-      if not isBulk then
-        addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Failed to deserialize Platynator profile string.")
+    -- 2. Try to use Platynator API (Modern/Programmatic approach)
+    local Platy = _G.Platynator
+    local profileName = "NoobTacoUI"
+
+    if Platy and Platy.API and Platy.API.Import then
+      -- The API typically handles its own JSON deserialization and state updates
+      -- We attempt to import via the API first.
+      -- Note: Platynator API import might prompt a dialog in some versions,
+      -- but programmatic calls often bypass it or have specific signatures.
+      local success, err = pcall(Platy.API.Import, profileString, profileName)
+      if success then
+        -- Tracking below...
+      else
+        addon:Print(
+        "|chighlight|NoobTaco|r|cffF8F9FAUI|r: Platynator API import failed, falling back to manual injection.")
       end
-      return
     end
 
-    -- 3. Initialize Global Config if needed
-    if not PLATYNATOR_CONFIG then PLATYNATOR_CONFIG = { Profiles = {} } end
-    if not PLATYNATOR_CONFIG.Profiles then PLATYNATOR_CONFIG.Profiles = {} end
+    -- 3. Fallback or Manual Injection (If API failed or doesn't exist)
+    if not PLATYNATOR_CURRENT_PROFILE or PLATYNATOR_CURRENT_PROFILE ~= profileName then
+      -- 3.1 Decode JSON
+      local success, import = pcall(C_EncodingUtil.DeserializeJSON, profileString)
+      if not success or not import then
+        if not isBulk then
+          addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Failed to deserialize Platynator profile string.")
+        end
+        return
+      end
 
-    -- 4. Create/Update NoobTacoUI Profile
-    local profileName = "NoobTacoUI"
-    local config = PLATYNATOR_CONFIG.Profiles[profileName]
+      -- 3.2 Initialize Global Config if needed
+      if not PLATYNATOR_CONFIG then PLATYNATOR_CONFIG = { Profiles = {} } end
+      if not PLATYNATOR_CONFIG.Profiles then PLATYNATOR_CONFIG.Profiles = {} end
 
-    if not config then
-      config = {
+      -- 3.3 Create/Overwrite NoobTacoUI Profile
+      local config = {
         designs = {},
         designs_assigned = {},
-        style = "NoobTacoUI",
+        style = "NoobTacoUI", -- Default fallback
       }
+
+      -- Copy all settings from import to our new config
+      for k, v in pairs(import) do
+        if k ~= "version" and k ~= "addon" and k ~= "kind" then
+          config[k] = v
+        end
+      end
+
+      -- Ensure designs are cleaned up if they contain metadata
+      if config.designs then
+        for _, designData in pairs(config.designs) do
+          designData.version = nil
+          designData.addon = nil
+          designData.kind = nil
+        end
+      end
+
+      -- 3.4 Specifically ensure design assignments point to valid designs
+      -- In the current NoobTacoUI profile, we only have "NoobTacoUI" and "_custom"
+      if config.designs and config.designs["NoobTacoUI"] then
+        config.designs_assigned = config.designs_assigned or {}
+        config.designs_assigned["enemy"] = "NoobTacoUI"
+        config.designs_assigned["friend"] = "NoobTacoUI"
+        config.designs_assigned["enemySimplified"] = "NoobTacoUI"
+      end
+
+      -- 3.5 Apply to Global Database
       PLATYNATOR_CONFIG.Profiles[profileName] = config
+
+      -- 3.6 Switch active profile
+      PLATYNATOR_CURRENT_PROFILE = profileName
     end
 
-    -- 5. Inject Profile Settings and Designs
-    -- Copy top-level settings from import to config (excluding metadata and designs)
-    for k, v in pairs(import) do
-      if k ~= "designs" and k ~= "version" and k ~= "addon" and k ~= "kind" then
-        config[k] = v
-      end
-    end
-
-    -- Correctly inject the designs
-    if import.designs then
-      if not config.designs then config.designs = {} end
-      for designName, designData in pairs(import.designs) do
-        -- Clean import data within individual designs if needed
-        designData.version = nil
-        designData.addon = nil
-        designData.kind = nil
-        config.designs[designName] = designData
-      end
-    end
-
-    -- 6. Ensure Specific Style and Design Assignment
-    -- Enforce NoobTacoUI style as the default for this profile
-    config.style = "NoobTacoUI"
-
-    if not config.designs_assigned then
-      config.designs_assigned = {}
-    end
-
-    -- Assign specific designs
-    config.designs_assigned["enemy"] = "NoobTacoUI"
-    config.designs_assigned["friend"] = "NoobTacoUI-Simplified"
-    config.designs_assigned["enemySimplified"] = "NoobTacoUI-Simplified"
-
-    -- 7. Switch Profile
-    PLATYNATOR_CURRENT_PROFILE = profileName
-
-    -- 8. Track application
+    -- 4. Track application
     if NoobTacoUIDB and NoobTacoUIDB.GeneralSettings and NoobTacoUIDB.GeneralSettings.AppliedProfiles then
       NoobTacoUIDB.GeneralSettings.AppliedProfiles["Platynator"] = profileData.version
     end
@@ -291,7 +301,7 @@ addon.AddonProfiles.Platynator = {
     end
   end,
   profileString =
-  '{"stack_region_scale_x":1.2,"design_all":[],"closer_to_screen_edges":true,"designs":{"NoobTacoUIv2":{"highlights":[{"anchor":[],"height":1,"kind":"target","color":{"a":1,"r":1,"g":1,"b":1},"scale":1.02,"layer":0,"asset":"arrows","width":1}],"specialBars":[],"texts":[{"showWhenWowDoes":false,"truncate":true,"align":"LEFT","layer":2,"autoColors":[],"scale":1,"anchor":["TOPLEFT",-60,4.5],"kind":"creatureName","color":{"b":1,"g":1,"r":1},"widthLimit":93},{"scale":1,"align":"LEFT","widthLimit":0,"truncate":false,"color":{"b":1,"g":1,"r":1},"kind":"castSpellName","layer":2,"anchor":["TOPLEFT",-62,-19]},{"widthLimit":35,"truncate":false,"scale":1,"layer":2,"align":"RIGHT","anchor":["TOPRIGHT",60,4.5],"kind":"health","displayTypes":["percentage"],"color":{"r":1,"g":1,"b":1}}],"font":{"outline":true,"shadow":false,"asset":"Poppins SemiBold"},"bars":[{"marker":{"asset":"none"},"layer":1,"border":{"color":{"a":0.2499999403953552,"b":0,"g":0,"r":0},"height":0.75,"asset":"soft","width":1},"autoColors":[{"colors":{"cast":{"r":1,"g":0.09411764705882352,"b":0.1529411764705883},"channel":{"r":0.0392156862745098,"g":0.2627450980392157,"b":1}},"kind":"importantCast"},{"colors":{"uninterruptable":{"b":0.7647058823529411,"g":0.7529411764705882,"r":0.5137254901960784}},"kind":"uninterruptableCast"},{"colors":{"cast":{"b":0,"g":0.5490196078431373,"r":0.9882352941176472},"interrupted":{"b":0.8784313725490196,"g":0.2117647058823529,"r":0.9882352941176472},"channel":{"r":0.2431372549019608,"g":0.7764705882352941,"b":0.2156862745098039}},"kind":"cast"}],"scale":1,"anchor":["TOP",0,-8],"foreground":{"asset":"white"},"background":{"color":{"a":0.5,"r":1,"g":1,"b":1},"applyColor":false,"asset":"wide/bevelled-grey"},"kind":"cast","interruptMarker":{"asset":"none"}},{"absorb":{"color":{"a":1,"b":1,"g":1,"r":1},"asset":"white"},"marker":{"asset":"none"},"layer":1,"border":{"color":{"a":0.2460939139127731,"b":0,"g":0,"r":0},"height":0.98,"asset":"thin","width":1},"autoColors":[{"kind":"eliteType","colors":{"boss":{"a":1,"b":0,"g":0.1098039215686274,"r":0.7372549019607844},"melee":{"a":1,"b":0.9882352941176472,"g":0.9882352941176472,"r":0.9882352941176472},"caster":{"a":1,"r":0.9568628072738648,"g":0,"b":0.9333333969116212},"trivial":{"a":1,"b":0.3333333333333333,"g":0.5568627450980392,"r":0.6980392156862745},"miniboss":{"a":1,"r":1,"g":0.7333333492279053,"b":0.1803921610116959}},"instancesOnly":true},{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"combatOnly":false,"colors":{"transition":{"r":1,"g":0.6274509803921569,"b":0},"warning":{"r":0.8,"g":0,"b":0},"safe":{"b":0.9019607843137256,"g":0.5882352941176471,"r":0.05882352941176471},"offtank":{"r":0.05882352941176471,"g":0.6666666666666666,"b":0.7843137254901961}},"kind":"threat","instancesOnly":false,"useSafeColor":true},{"colors":{"neutral":{"a":1,"b":0.545098066329956,"g":0.7960785031318665,"r":0.9215686917304992},"unfriendly":{"a":1,"b":0.4392157196998596,"g":0.529411792755127,"r":0.8156863451004028},"hostile":{"a":1,"b":0.415686309337616,"g":0.3803921937942505,"r":0.7490196228027344},"friendly":{"a":1,"b":0.5490196347236633,"g":0.7450980544090271,"r":0.6392157077789307}},"kind":"reaction"}],"relativeTo":0,"anchor":[],"foreground":{"asset":"white"},"background":{"color":{"a":0.44,"r":1,"g":1,"b":1},"applyColor":false,"asset":"wide/bevelled-grey"},"kind":"health","scale":1}],"markers":[{"anchor":["TOPLEFT",-77.5,9],"scale":0.9,"color":{"b":1,"g":1,"r":1},"kind":"quest","asset":"normal/quest-blizzard","layer":3},{"anchor":["BOTTOM",0,7],"scale":1,"color":{"b":1,"g":1,"r":1},"kind":"raid","asset":"normal/blizzard-raid","layer":3},{"color":{"a":1,"b":0.9372549653053284,"g":0.9058824181556702,"r":0.7411764860153198},"anchor":["TOPRIGHT",61,-19],"scale":0.5,"kind":"cannotInterrupt","asset":"normal/shield-soft","layer":3},{"openWorldOnly":false,"color":{"r":1,"g":1,"b":1},"kind":"elite","anchor":["LEFT",-79,0],"layer":2,"asset":"special/blizzard-elite-star","scale":0.8},{"color":{"r":1,"g":1,"b":1},"anchor":["LEFT",-80,0],"scale":0.8,"kind":"rare","asset":"normal/blizzard-rare-midnight","layer":2}],"auras":[{"direction":"RIGHT","scale":0.82,"showCountdown":true,"filters":{"important":true,"fromYou":true},"textScale":1,"showPandemic":true,"height":1,"kind":"debuffs","anchor":["BOTTOMLEFT",-64,8],"sorting":{"reversed":false,"kind":"duration"}},{"direction":"RIGHT","scale":0.78,"showCountdown":true,"filters":{"fromYou":false},"textScale":1,"anchor":["LEFT",66,0],"kind":"crowdControl","height":1,"sorting":{"reversed":false,"kind":"duration"}},{"direction":"LEFT","scale":1.16,"showCountdown":true,"filters":{"dispelable":true,"important":true},"textScale":1,"anchor":["LEFT",-88,0],"kind":"buffs","height":1,"sorting":{"reversed":false,"kind":"duration"}}]},"_custom":{"highlights":[{"color":{"a":0.468750149011612,"b":0.9294118285179138,"g":0.8980392813682556,"r":0.8980392813682556},"height":1.18,"layer":0,"scale":0.51,"anchor":["BOTTOM",0,-14],"kind":"target","asset":"glow","width":1}],"specialBars":[],"auras":[{"direction":"RIGHT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"textScale":1,"showPandemic":true,"height":1,"kind":"debuffs","anchor":["BOTTOMLEFT",-63,37],"filters":{"important":true,"fromYou":true}},{"direction":"LEFT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"anchor":["BOTTOMLEFT",-90,2],"height":1,"kind":"buffs","textScale":1,"filters":{"dispelable":true,"important":true}},{"direction":"RIGHT","scale":1,"showCountdown":true,"sorting":{"kind":"duration","reversed":false},"anchor":["BOTTOMRIGHT",90,2],"height":1,"kind":"crowdControl","textScale":1,"filters":{"fromYou":false}}],"font":{"outline":true,"shadow":true,"asset":"RobotoCondensed-Bold"},"bars":[],"markers":[{"color":{"r":1,"g":1,"b":1},"scale":0.9,"anchor":["BOTTOMLEFT",-82,0],"layer":3,"asset":"normal/quest-boss-blizzard","kind":"quest"},{"color":{"r":1,"g":1,"b":1},"scale":1.45,"anchor":["BOTTOM",0,32],"layer":3,"asset":"normal/blizzard-raid","kind":"raid"}],"texts":[{"showWhenWowDoes":true,"truncate":false,"color":{"b":0.9686275124549866,"g":0.9686275124549866,"r":0.9686275124549866},"layer":2,"autoColors":[{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"colors":{"neutral":{"r":1,"g":1,"b":0},"friendly":{"r":0,"g":1,"b":0},"hostile":{"r":1,"g":0,"b":0},"unfriendly":{"b":0,"g":0.5058823529411765,"r":1}},"kind":"reaction"}],"scale":1.27,"anchor":["BOTTOM",0,7],"kind":"creatureName","widthLimit":130,"align":"CENTER"},{"showWhenWowDoes":true,"truncate":true,"align":"CENTER","layer":2,"widthLimit":124,"anchor":["BOTTOM",0,-4],"kind":"guild","color":{"r":1,"g":1,"b":1},"scale":0.91}]},"NoobTacoUI":{"highlights":[{"anchor":[],"scale":1,"kind":"target","color":{"a":1,"b":1,"g":1,"r":1},"height":1,"layer":0,"asset":"arrows","width":1}],"specialBars":[],"auras":[{"direction":"RIGHT","scale":1,"textScale":1,"filters":{"important":true,"fromYou":true},"showPandemic":true,"showCountdown":true,"height":1,"kind":"debuffs","anchor":["BOTTOMLEFT",-62,9],"sorting":{"kind":"duration","reversed":false}},{"direction":"LEFT","scale":1,"textScale":1,"filters":{"dispelable":true,"important":true},"showCountdown":true,"height":1,"kind":"buffs","anchor":["LEFT",-100,0],"sorting":{"kind":"duration","reversed":false}},{"direction":"RIGHT","scale":1,"textScale":1,"filters":{"fromYou":false},"showCountdown":true,"height":1,"kind":"crowdControl","anchor":["RIGHT",87,0],"sorting":{"kind":"duration","reversed":false}}],"font":{"outline":false,"shadow":true,"asset":"Poppins-Bold"},"bars":[{"relativeTo":0,"marker":{"asset":"none"},"layer":1,"border":{"color":{"a":1,"b":0,"g":0,"r":0},"height":1,"asset":"thin","width":1},"autoColors":[{"colors":{"tapped":{"r":0.4313725490196079,"g":0.4313725490196079,"b":0.4313725490196079}},"kind":"tapped"},{"colors":[],"kind":"classColors"},{"combatOnly":false,"colors":{"offtank":{"a":1,"r":0.5333333611488342,"g":0.7529412508010864,"b":0.8156863451004028},"warning":{"a":1,"r":0.7490196228027344,"g":0.3803921937942505,"b":0.415686309337616},"safe":{"a":1,"r":0.3686274588108063,"g":0.5058823823928833,"b":0.6745098233222961},"transition":{"a":1,"r":0.8156863451004028,"g":0.529411792755127,"b":0.4392157196998596}},"kind":"threat","instancesOnly":false,"useSafeColor":true},{"colors":{"neutral":{"a":1,"r":0.9215686917304992,"g":0.7960785031318665,"b":0.545098066329956},"friendly":{"a":1,"r":0.6392157077789307,"g":0.7450980544090271,"b":0.5490196347236633},"hostile":{"a":1,"r":0.7490196228027344,"g":0.3803921937942505,"b":0.415686309337616},"unfriendly":{"a":1,"r":0.8156863451004028,"g":0.529411792755127,"b":0.4392157196998596}},"kind":"reaction"}],"absorb":{"color":{"a":1,"r":1,"g":1,"b":1},"asset":"wide/blizzard-absorb"},"anchor":[],"foreground":{"asset":"white"},"background":{"color":{"a":0.44,"b":1,"g":1,"r":1},"applyColor":false,"asset":"black"},"kind":"health","scale":1},{"marker":{"asset":"wide/glow"},"layer":1,"border":{"color":{"a":1,"b":0,"g":0,"r":0},"height":0.75,"asset":"thin","width":1},"autoColors":[{"colors":{"cast":{"r":1,"g":0.09411764705882352,"b":0.1529411764705883},"channel":{"r":0.0392156862745098,"g":0.2627450980392157,"b":1}},"kind":"importantCast"},{"colors":{"uninterruptable":{"b":0.7647058823529411,"g":0.7529411764705882,"r":0.5137254901960784}},"kind":"uninterruptableCast"},{"colors":{"cast":{"b":0,"g":0.5490196078431373,"r":0.9882352941176472},"interrupted":{"b":0.8784313725490196,"g":0.211764705882353,"r":0.9882352941176472},"channel":{"b":0.2156862745098039,"g":0.7764705882352941,"r":0.2431372549019608}},"kind":"cast"}],"foreground":{"asset":"white"},"scale":1,"anchor":["TOP",0,-7],"kind":"cast","background":{"color":{"a":0,"b":0.7803922295570374,"g":0.7803922295570374,"r":0.7803922295570374},"applyColor":true,"asset":"grey"},"interruptMarker":{"asset":"none"}}],"markers":[{"scale":1,"color":{"b":1,"g":1,"r":1},"anchor":["LEFT",-78,0],"kind":"quest","asset":"normal/quest-blizzard","layer":3},{"scale":0.8,"color":{"b":0.9019608497619628,"g":0.9019608497619628,"r":1},"anchor":["TOP",0,-10],"kind":"cannotInterrupt","asset":"normal/shield-soft","layer":3},{"openWorldOnly":false,"scale":1,"kind":"elite","anchor":["LEFT",-83,0],"layer":3,"asset":"special/blizzard-elite-midnight","color":{"b":1,"g":1,"r":1}},{"scale":1.25,"color":{"b":1,"g":1,"r":1},"anchor":["BOTTOM",0,12],"kind":"raid","asset":"normal/blizzard-raid","layer":3}],"texts":[{"widthLimit":124,"truncate":true,"align":"LEFT","layer":2,"autoColors":[],"showWhenWowDoes":false,"anchor":["RIGHT",64,0],"kind":"creatureName","scale":0.8,"color":{"r":1,"g":1,"b":1}},{"anchor":["TOPLEFT",-60,-9],"align":"LEFT","widthLimit":0,"truncate":true,"scale":0.7,"kind":"castSpellName","layer":2,"color":{"b":1,"g":1,"r":1}},{"widthLimit":0,"displayTypes":["percentage"],"align":"RIGHT","layer":2,"scale":0.8,"anchor":["RIGHT",60,0],"kind":"health","color":{"b":1,"g":1,"r":1},"truncate":false}]}},"cast_scale":1.1,"simplified_nameplates":{"minor":true,"minion":true,"instancesNormal":true},"stacking_nameplates":true,"designs_assigned":{"friend":"NoobTacoUIv2","enemySimplified":"NoobTacoUIv2","enemy":"NoobTacoUIv2"},"version":1,"stack_region_scale_y":1.1,"simplified_scale":0.4,"show_friendly_in_instances_1":"always","cast_alpha":1,"addon":"Platynator","apply_cvars":true,"not_target_alpha":1,"show_nameplates_only_needed":false,"global_scale":1.5,"click_region_scale_y":1,"target_scale":1.2,"click_region_scale_x":1,"style":"NoobTacoUIv2","kind":"profile","current_skin":"blizzard","show_nameplates":{"player":false,"npc":false,"enemy":true}}',
+  '{"stack_region_scale_x":1.2,"design_all":[],"closer_to_screen_edges":true,"global_scale":1.5,"cast_scale":1.1,"simplified_nameplates":{"minor":true,"minion":true,"instancesNormal":true},"stacking_nameplates":true,"designs_assigned":{"enemySimplified":"NoobTacoUI","friend":"NoobTacoUI","enemy":"NoobTacoUI"},"version":1,"stack_region_scale_y":1.1,"simplified_scale":0.4,"show_friendly_in_instances_1":"always","cast_alpha":1,"addon":"Platynator","apply_cvars":true,"not_target_alpha":1,"show_nameplates_only_needed":false,"designs":{"_custom":{"highlights":[{"color":{"a":0.468750149011612,"r":0.8980392813682556,"g":0.8980392813682556,"b":0.9294118285179138},"height":1.18,"kind":"target","anchor":["BOTTOM",0,-14],"scale":0.51,"layer":0,"asset":"glow","width":1}],"specialBars":[],"texts":[{"showWhenWowDoes":true,"truncate":false,"scale":1.27,"layer":2,"autoColors":[{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"r":0.4313725490196079,"g":0.4313725490196079,"b":0.4313725490196079}},"kind":"tapped"},{"colors":{"unfriendly":{"r":1,"g":0.5058823529411765,"b":0},"neutral":{"b":0,"g":1,"r":1},"friendly":{"b":0,"g":1,"r":0},"hostile":{"b":0,"g":0,"r":1}},"kind":"reaction"}],"color":{"r":0.9686275124549866,"g":0.9686275124549866,"b":0.9686275124549866},"anchor":["BOTTOM",0,7],"kind":"creatureName","widthLimit":130,"align":"CENTER"},{"widthLimit":124,"truncate":true,"scale":0.91,"layer":2,"align":"CENTER","anchor":["BOTTOM",0,-4],"kind":"guild","color":{"b":1,"g":1,"r":1},"showWhenWowDoes":true}],"font":{"outline":true,"shadow":true,"asset":"RobotoCondensed-Bold"},"bars":[],"markers":[{"color":{"b":1,"g":1,"r":1},"scale":0.9,"anchor":["BOTTOMLEFT",-82,0],"kind":"quest","asset":"normal/quest-boss-blizzard","layer":3},{"color":{"b":1,"g":1,"r":1},"scale":1.45,"anchor":["BOTTOM",0,32],"kind":"raid","asset":"normal/blizzard-raid","layer":3}],"auras":[{"direction":"RIGHT","scale":1,"showCountdown":true,"filters":{"fromYou":true,"important":true},"showPandemic":true,"textScale":1,"anchor":["BOTTOMLEFT",-63,37],"kind":"debuffs","height":1,"sorting":{"reversed":false,"kind":"duration"}},{"direction":"LEFT","scale":1,"showCountdown":true,"filters":{"dispelable":true,"important":true},"textScale":1,"height":1,"kind":"buffs","anchor":["BOTTOMLEFT",-90,2],"sorting":{"reversed":false,"kind":"duration"}},{"direction":"RIGHT","scale":1,"showCountdown":true,"filters":{"fromYou":false},"textScale":1,"height":1,"kind":"crowdControl","anchor":["BOTTOMRIGHT",90,2],"sorting":{"reversed":false,"kind":"duration"}}]},"NoobTacoUI":{"highlights":[{"anchor":[],"scale":1.02,"kind":"target","color":{"a":1,"r":1,"g":1,"b":1},"height":1,"layer":0,"asset":"arrows","width":1}],"specialBars":[],"texts":[{"widthLimit":93,"truncate":true,"align":"LEFT","layer":2,"autoColors":[],"scale":1,"anchor":["TOPLEFT",-60,4.5],"kind":"creatureName","color":{"b":1,"g":1,"r":1},"showWhenWowDoes":false},{"anchor":["TOPLEFT",-62,-19],"scale":1,"widthLimit":0,"truncate":false,"align":"LEFT","layer":2,"kind":"castSpellName","color":{"b":1,"g":1,"r":1}},{"widthLimit":35,"truncate":false,"color":{"r":1,"g":1,"b":1},"layer":2,"align":"RIGHT","anchor":["TOPRIGHT",60,4.5],"kind":"health","displayTypes":["percentage"],"scale":1}],"font":{"outline":true,"shadow":false,"asset":"Poppins SemiBold"},"bars":[{"scale":1,"layer":1,"border":{"height":0.75,"color":{"a":0.2499999403953552,"b":0,"g":0,"r":0},"asset":"soft","width":1},"autoColors":[{"colors":{"cast":{"r":1,"g":0.09411764705882352,"b":0.1529411764705883},"channel":{"r":0.0392156862745098,"g":0.2627450980392157,"b":1}},"kind":"importantCast"},{"colors":{"uninterruptable":{"b":0.7647058823529411,"g":0.7529411764705882,"r":0.5137254901960784}},"kind":"uninterruptableCast"},{"colors":{"cast":{"b":0,"g":0.5490196078431373,"r":0.9882352941176472},"interrupted":{"b":0.8784313725490196,"g":0.2117647058823529,"r":0.9882352941176472},"channel":{"r":0.2431372549019608,"g":0.7764705882352941,"b":0.2156862745098039}},"kind":"cast"}],"marker":{"asset":"none"},"foreground":{"asset":"white"},"anchor":["TOP",0,-8],"kind":"cast","background":{"color":{"a":0.5,"r":1,"g":1,"b":1},"applyColor":false,"asset":"wide/bevelled-grey"},"interruptMarker":{"asset":"none"}},{"absorb":{"color":{"a":1,"b":1,"g":1,"r":1},"asset":"white"},"scale":1,"layer":1,"border":{"height":0.98,"color":{"a":0.2460939139127731,"b":0,"g":0,"r":0},"asset":"thin","width":1},"autoColors":[{"kind":"eliteType","colors":{"boss":{"a":1,"b":0,"g":0.1098039215686274,"r":0.7372549019607844},"melee":{"a":1,"b":0.9882352941176472,"g":0.9882352941176472,"r":0.9882352941176472},"caster":{"a":1,"r":0.9568628072738648,"g":0,"b":0.9333333969116212},"trivial":{"a":1,"b":0.3333333333333333,"g":0.5568627450980392,"r":0.6980392156862745},"miniboss":{"a":1,"r":1,"g":0.7333333492279053,"b":0.1803921610116959}},"instancesOnly":true},{"colors":[],"kind":"classColors"},{"colors":{"tapped":{"b":0.4313725490196079,"g":0.4313725490196079,"r":0.4313725490196079}},"kind":"tapped"},{"combatOnly":false,"colors":{"transition":{"r":1,"g":0.6274509803921569,"b":0},"warning":{"r":0.8,"g":0,"b":0},"offtank":{"r":0.05882352941176471,"g":0.6666666666666666,"b":0.7843137254901961},"safe":{"b":0.9019607843137256,"g":0.5882352941176471,"r":0.05882352941176471}},"kind":"threat","instancesOnly":false,"useSafeColor":true},{"colors":{"unfriendly":{"a":1,"b":0.4392157196998596,"g":0.529411792755127,"r":0.8156863451004028},"neutral":{"a":1,"b":0.545098066329956,"g":0.7960785031318665,"r":0.9215686917304992},"friendly":{"a":1,"b":0.5490196347236633,"g":0.7450980544090271,"r":0.6392157077789307},"hostile":{"a":1,"b":0.415686309337616,"g":0.3803921937942505,"r":0.7490196228027344}},"kind":"reaction"}],"relativeTo":0,"foreground":{"asset":"white"},"anchor":[],"kind":"health","background":{"color":{"a":0.44,"r":1,"g":1,"b":1},"applyColor":false,"asset":"wide/bevelled-grey"},"marker":{"asset":"none"}}],"markers":[{"scale":0.9,"anchor":["TOPLEFT",-77.5,9],"color":{"b":1,"g":1,"r":1},"kind":"quest","asset":"normal/quest-blizzard","layer":3},{"scale":1,"anchor":["BOTTOM",0,7],"color":{"b":1,"g":1,"r":1},"kind":"raid","asset":"normal/blizzard-raid","layer":3},{"anchor":["TOPRIGHT",61,-19],"color":{"a":1,"b":0.9372549653053284,"g":0.9058824181556702,"r":0.7411764860153198},"scale":0.5,"kind":"cannotInterrupt","asset":"normal/shield-soft","layer":3},{"openWorldOnly":false,"scale":0.8,"kind":"elite","anchor":["LEFT",-79,0],"layer":2,"asset":"special/blizzard-elite-star","color":{"r":1,"g":1,"b":1}},{"anchor":["LEFT",-80,0],"color":{"r":1,"g":1,"b":1},"scale":0.8,"kind":"rare","asset":"normal/blizzard-rare-midnight","layer":2}],"auras":[{"direction":"RIGHT","scale":0.82,"showCountdown":true,"filters":{"important":true,"fromYou":true},"textScale":1,"showPandemic":true,"anchor":["BOTTOMLEFT",-64,8],"kind":"debuffs","height":1,"sorting":{"reversed":false,"kind":"duration"}},{"direction":"RIGHT","scale":0.78,"showCountdown":true,"filters":{"fromYou":false},"textScale":1,"anchor":["LEFT",66,0],"kind":"crowdControl","height":1,"sorting":{"reversed":false,"kind":"duration"}},{"direction":"LEFT","scale":1.16,"showCountdown":true,"filters":{"dispelable":true,"important":true},"textScale":1,"anchor":["LEFT",-88,0],"kind":"buffs","height":1,"sorting":{"reversed":false,"kind":"duration"}}]}},"click_region_scale_y":1,"style":"NoobTacoUI","click_region_scale_x":1,"target_scale":1.2,"kind":"profile","current_skin":"blizzard","show_nameplates":{"player":false,"npc":false,"enemy":true}}',
   version = "1.4",
 }
 

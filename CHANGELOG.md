@@ -1,9 +1,10 @@
 # NoobTacoUI
 
+## [2.2.1-beta.3] - 2026-01-18
+### Bug Fixes
+- **Platynator Profile**: Fixed a Lua error ("attempt to index local 'design' (a nil value)") by refactoring the profile import logic to use the proper Platynator API when available and fixing a design name mismatch in the manual injection fallback.
+
 ## [2.2.1-beta.2] - 2026-01-17
-### Release Preparation
-- **Midnight Prepatch branch**: Created a dedicated branch for the upcoming Midnight prepatch release.
-- **Edit Mode Profile Cleanup**: Unified the Edit Mode profile logic by removing legacy "Retail" profile strings and refactoring the apply function to exclusively use the Midnight (12.0+) layout.
 
 ## [2.2.1-beta.1] - 2026-01-15
 ### Addon Profiles
