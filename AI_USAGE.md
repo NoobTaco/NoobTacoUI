@@ -2,7 +2,8 @@
 
 ## Our Stance on AI in Addon Development
 
-In the current era of software development, AI tools have become a double-edged sword. While they offer speed, we are witnessing a rise in "rampant" AI-generated code—often referred to as **Vibe Coding**—where logic is generated without deep understanding, leading to bloated, inefficient, and potentially breaking addons.
+> [!IMPORTANT]
+> In the current era of software development, AI tools have become a double-edged sword. While they offer speed, we are witnessing a rise in "rampant" AI-generated code—often referred to as **Vibe Coding**—where logic is generated without deep understanding, leading to bloated, inefficient, and potentially breaking addons.
 
 I am firmly against this approach. Addons should be crafted with intent, especially when they interface with the World of Warcraft engine, where performance and reliability are paramount.
 

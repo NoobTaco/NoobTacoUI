@@ -1,6 +1,6 @@
 # NoobTacoUI
 
-## [2.2.1-beta.3] - 2026-01-18
+## [2.2.1] - 2026-01-20
 ### Bug Fixes
 - **Platynator Profile**: Fixed a Lua error ("attempt to index local 'design' (a nil value)") by refactoring the profile import logic to use the proper Platynator API when available and fixing a design name mismatch in the manual injection fallback.
 
