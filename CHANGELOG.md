@@ -1,5 +1,15 @@
 # NoobTacoUI
 
+## [2.2.1] - 2026-01-20
+### Bug Fixes
+- **Platynator Profile**: Fixed a Lua error ("attempt to index local 'design' (a nil value)") by refactoring the profile import logic to use the proper Platynator API when available and fixing a design name mismatch in the manual injection fallback.
+
+## [2.2.1-beta.2] - 2026-01-17
+
+## [2.2.1-beta.1] - 2026-01-15
+### Addon Profiles
+- **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.5 with an improved layout for modern WoW clients.
+
 ## [2.2.0] - 2026-01-15
 ### Features
 - **Granular Font Control**: Completely overhauled the font replacement system to provide 5 specialized categories:
