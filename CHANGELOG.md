@@ -1,4 +1,6 @@
-# NoobTacoUI
+## [2.2.4] - 2026-01-21
+### Bug Fixes
+- **BetterBlizzFrames Profile**: Fixed a Lua error ("attempt to perform indexed assignment on global 'BetterBlizzFramesDB' (a boolean value)") by refactoring the profile import logic to correctly handle boolean success returns and implementing a robust "hard-apply" logic.
 
 ## [2.2.3] - 2026-01-20
 ### Maintenance
