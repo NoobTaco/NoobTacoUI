@@ -15,4 +15,4 @@ externals:
         tag: main
     Libraries/NoobTaco-Config:
         url: https://github.com/NoobTaco/NoobTaco-Config
-        tag: v1.2.0
+        tag: v1.4.2
