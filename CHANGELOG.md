@@ -1,5 +1,10 @@
 # NoobTacoUI
 
+## [2.2.3] - 2026-01-20
+### Maintenance
+- **Release Verification**: Version bump to ensure a clean deployment and verify CI/CD pipeline consistency.
+- **Fixed**: Corrected file path and case sensitivity issues in previous release.
+
 ## [2.2.2] - 2026-01-20
 ### Libs
 - **NoobTaco-Config**: Updated embedded library to v1.4.2.
