@@ -875,7 +875,11 @@ local function BuildSchemas()
 
         if profile.instructions then
           local instructText = ""
-          for i, line in ipairs(profile.instructions) do
+          local instructions = profile.instructions
+          if type(instructions) == "function" then
+            instructions = instructions() or {}
+          end
+          for i, line in ipairs(instructions) do
             instructText = instructText .. i .. ". " .. line .. "\n"
           end
           table.insert(profileChildren, { type = "description", text = instructText })

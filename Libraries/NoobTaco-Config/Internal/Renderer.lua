@@ -7,6 +7,14 @@ local Theme = Lib.Theme
 local State = Lib.State
 local PixelUtil = Lib.PixelUtil or PixelUtil
 
+-- Helper to resolve dynamic values (functions or tables)
+local function Resolve(val)
+  if type(val) == "function" then
+    return val() or {}
+  end
+  return val or {}
+end
+
 -- Simple Object Pool
 local FramePool = {}
 
@@ -748,9 +756,8 @@ function ConfigRenderer:Render(schema, container)
 end
 
 function ConfigRenderer:RenderGroup(groupSchema, parent, cursor)
-  if not groupSchema or not groupSchema.children then return end
-
-  for _, item in ipairs(groupSchema.children) do
+  local children = Resolve(groupSchema.children)
+  for _, item in ipairs(children) do
     self:RenderItem(item, parent, cursor)
   end
 end
@@ -900,10 +907,7 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
         local yOff = 0
         local itemHeight = 20
         -- Re-resolve options in case they changed
-        local currentOptions = item.options
-        if type(currentOptions) == "function" then
-          currentOptions = currentOptions() or {}
-        end
+        local currentOptions = Resolve(item.options)
 
         for _, opt in ipairs(currentOptions) do
           local btn = GetFrame("dropdown_item", popupContent)
@@ -927,7 +931,8 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
   elseif item.type == "media" and item.options then
     -- Initial Text
     local found = false
-    for _, opt in ipairs(item.options) do
+    local optionsList = Resolve(item.options)
+    for _, opt in ipairs(optionsList) do
       if opt.value == currentVal then
         frame.Text:SetText(opt.label)
         found = true
@@ -947,7 +952,8 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
         local yOff = 0
         local itemHeight = 20
 
-        for _, opt in ipairs(item.options) do
+        local optionsList = Resolve(item.options)
+        for _, opt in ipairs(optionsList) do
           local btn = GetFrame("media_item", popupContent)
           btn:SetSize(frame.Popup:GetWidth() - 25, itemHeight)
           btn:SetPoint("TOPLEFT", 5, yOff)
@@ -1047,9 +1053,10 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
 
     -- Calculate content height by rendering children into content frame
     local contentHeight = 10 -- Initial padding
-    if item.children then
+    local children = Resolve(item.children)
+    if #children > 0 then
       local childCursor = { x = 0, startX = 0, y = 0, rowHeight = 0, maxWidth = cursor.maxWidth - 20 }
-      for _, child in ipairs(item.children) do
+      for _, child in ipairs(children) do
         self:RenderItem(child, frame.Content, childCursor)
       end
       -- Calculate total height from cursor
@@ -1090,9 +1097,10 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
       cursor.rowHeight = 0
     end
 
-    if item.children then
+    local children = Resolve(item.children)
+    if #children > 0 then
       local rowCursor = { x = cursor.x, startX = cursor.startX, y = cursor.y, rowHeight = 0, maxWidth = cursor.maxWidth }
-      for _, child in ipairs(item.children) do
+      for _, child in ipairs(children) do
         self:RenderItem(child, parent, rowCursor)
       end
       -- Update main cursor y to account for the row's total height consumption
@@ -1188,7 +1196,8 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
 
     -- Links
     local linkHeight = 0
-    if item.links then
+    local links = Resolve(item.links)
+    if #links > 0 then
       linkHeight = 30
       frame.Links:Show()
       frame.Links:ClearAllPoints()
@@ -1203,7 +1212,7 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
 
       -- Reuse/Create new links
       local kids = { frame.Links:GetChildren() }
-      local numLinks = #item.links
+      local numLinks = #links
       local btnWidth = 100
       local gap = 10
       local totalLinkWidth = (numLinks * btnWidth) + ((numLinks - 1) * gap)
@@ -1211,7 +1220,7 @@ function ConfigRenderer:RenderItem(item, parent, cursor)
       local startX = (availableWidth - totalLinkWidth) / 2
 
       local lx = startX
-      for i, link in ipairs(item.links) do
+      for i, link in ipairs(links) do
         local btn = kids[i]
         if not btn then
           btn = Theme:CreateThemedButton(frame.Links)
