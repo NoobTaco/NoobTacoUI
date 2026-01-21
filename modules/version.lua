@@ -3,8 +3,8 @@
 -- Version: @project-version@
 
 local addonName, addon = ...
-_G.NoobTacoUIAddon = addon           -- Maintain compatibility with other modules
-local addonVersion = "v2.2.1" -- Fallback version - should match latest git tag
+_G.NoobTacoUIAddon = addon    -- Maintain compatibility with other modules
+local addonVersion = "v2.2.2" -- Fallback version - should match latest git tag
 
 -- Bridge to NoobTaco-Config library
 local ConfigLib = LibStub("NoobTaco-Config-1.0", true)
