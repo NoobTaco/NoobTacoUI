@@ -88,7 +88,11 @@ LSM:Register("font", "Poppins Thin", fontPath .. "Poppins-Thin.ttf")
 
 -- Audio
 local audioPath = "Interface\\AddOns\\" .. addonName .. "\\Media\\Audio\\"
-LSM:Register("sound", "NT_NPC", audioPath .. "nt_sd_npc.ogg")
+LSM:Register("sound", "NT Infusion of Light", audioPath .. "nt_InfussionOfLight.ogg")
+LSM:Register("sound", "NT Chest", audioPath .. "nt_sd_chest.ogg")
+LSM:Register("sound", "NT Group NPC", audioPath .. "nt_sd_groupnpc.ogg")
+LSM:Register("sound", "NT Mount", audioPath .. "nt_sd_mount.ogg")
+LSM:Register("sound", "NT NPC", audioPath .. "nt_sd_npc.ogg")
 
 -- Status Bar Textures - NoobTaco Theme
 local texturePath = "Interface\\AddOns\\" .. addonName .. "\\Media\\Textures\\"

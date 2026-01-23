@@ -1,3 +1,10 @@
+## [2.2.5] - 2026-01-23
+### Addon Profiles
+- **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.8 with an improved layout.
+
+### Media
+- **Audio**: Re-added missing audio files for use with Silverdragon and Rare NPC scanners to the media registry.
+
 ## [2.2.4] - 2026-01-21
 ### Bug Fixes
 - **BetterBlizzFrames Profile**: Fixed a Lua error ("attempt to perform indexed assignment on global 'BetterBlizzFramesDB' (a boolean value)") by refactoring the profile import logic to correctly handle boolean success returns and implementing a robust "hard-apply" logic.
