@@ -1,3 +1,8 @@
+## [2.2.6] - 2026-02-11
+
+### 🛠 Improvements
+*   Updated TOC for the latest WoW client.
+
 ## [2.2.5] - 2026-01-23
 ### Addon Profiles
 - **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.8 with an improved layout.
