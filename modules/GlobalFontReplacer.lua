@@ -10,7 +10,11 @@ local LSM = LibStub("LibSharedMedia-3.0")
 -- Helper to safely check if an object is a Font
 local function SafeIsFont(obj)
     if type(obj) ~= "table" then return false end
-    if not obj.IsObjectType then return false end
+    
+    -- Safely check for IsObjectType to avoid "forbidden table" errors
+    local hasIsObjectType, isObjectType = pcall(function() return obj.IsObjectType end)
+    if not (hasIsObjectType and isObjectType) then return false end
+    
     local success, result = pcall(obj.IsObjectType, obj, "Font")
     return success and result
 end
@@ -22,7 +26,10 @@ local function RecursiveApplyFont(frame, fontPathToApply)
 
     -- If this frame itself is a FontString, apply it
     local isFontString
-    if frame.IsObjectType then
+    
+    -- Safely check for IsObjectType
+    local hasIsObjectType, isObjectType = pcall(function() return frame.IsObjectType end)
+    if hasIsObjectType and isObjectType then
         local success, result = pcall(frame.IsObjectType, frame, "FontString")
         isFontString = success and result
     end
@@ -44,7 +51,10 @@ local function RecursiveApplyFont(frame, fontPathToApply)
         local regions = { frame:GetRegions() }
         for _, region in ipairs(regions) do
             local isRegionFontString
-            if region.IsObjectType then
+            
+            -- Safely check for IsObjectType
+            local hasRegionIsObjectType, regionIsObjectType = pcall(function() return region.IsObjectType end)
+            if hasRegionIsObjectType and regionIsObjectType then
                 local success, result = pcall(region.IsObjectType, region, "FontString")
                 isRegionFontString = success and result
             end

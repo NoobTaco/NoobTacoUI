@@ -1,3 +1,7 @@
+## [2.2.7] - 2026-02-11
+### Bug Fixes
+- **Global Font**: Fixed a Lua error ("attempted to index a forbidden table") occurring during the global environment scan by implementing safe indexing for internal Blizzard tables.
+
 ## [2.2.6] - 2026-02-11
 ### Features
 - **Minimap**: Added a toggle for the built-in WoW 12.0 damage meter to the minimap button. Right-click the button to toggle visibility with a chat notification.
