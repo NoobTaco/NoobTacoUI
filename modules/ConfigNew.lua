@@ -169,7 +169,6 @@ local function InitializeMinimapButton()
         local enabled = GetCVar("damageMeterEnabled") == "1"
         local newState = not enabled
         SetCVar("damageMeterEnabled", newState and "1" or "0")
-        
         local stateText = newState and "|csuccess|Enabled|r" or "|cerror|Disabled|r"
         addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Built-in Damage Meter " .. stateText)
       end
