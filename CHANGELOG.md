@@ -1,3 +1,7 @@
+## [2.2.6] - 2026-02-11
+### Features
+- **Minimap**: Added a toggle for the built-in WoW 12.0 damage meter to the minimap button. Right-click the button to toggle visibility with a chat notification.
+
 ## [2.2.5] - 2026-01-23
 ### Addon Profiles
 - **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.8 with an improved layout.

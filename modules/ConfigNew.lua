@@ -165,6 +165,13 @@ local function InitializeMinimapButton()
     OnClick = function(self, button)
       if button == "LeftButton" then
         addon.ShowConfigMenu()
+      elseif button == "RightButton" then
+        local enabled = GetCVar("damageMeterEnabled") == "1"
+        local newState = not enabled
+        SetCVar("damageMeterEnabled", newState and "1" or "0")
+        
+        local stateText = newState and "|csuccess|Enabled|r" or "|cerror|Disabled|r"
+        addon:Print("|chighlight|NoobTaco|r|cffF8F9FAUI|r: Built-in Damage Meter " .. stateText)
       end
     end,
     OnTooltipShow = function(tooltip)
@@ -172,10 +179,12 @@ local function InitializeMinimapButton()
       if theme and theme.ProcessText then
         tooltip:AddLine(theme:ProcessText("|chighlight|NoobTaco|r|cffF8F9FAUI|r"))
         tooltip:AddLine(theme:ProcessText("Left-click: Open configuration"), 0.7, 0.7, 0.7)
+        tooltip:AddLine(theme:ProcessText("Right-click: Toggle Damage Meter"), 0.7, 0.7, 0.7)
         tooltip:AddLine(theme:ProcessText("Drag to reposition"), 0.5, 0.5, 0.5)
       else
         tooltip:AddLine("|chighlight|NoobTacoUI|r")
         tooltip:AddLine("Left-click: Open configuration", 0.7, 0.7, 0.7)
+        tooltip:AddLine("Right-click: Toggle Damage Meter", 0.7, 0.7, 0.7)
         tooltip:AddLine("Drag to reposition", 0.5, 0.5, 0.5)
       end
     end,
