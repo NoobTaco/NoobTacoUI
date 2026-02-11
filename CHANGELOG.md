@@ -1,12 +1,10 @@
 ## [2.2.6] - 2026-02-11
-<<<<<<< HEAD
+### Features
+- **Minimap**: Added a toggle for the built-in WoW 12.0 damage meter to the minimap button. Right-click the button to toggle visibility with a chat notification.
 
 ### 🛠 Improvements
 *   Updated TOC for the latest WoW client.
-=======
-### Features
-- **Minimap**: Added a toggle for the built-in WoW 12.0 damage meter to the minimap button. Right-click the button to toggle visibility with a chat notification.
->>>>>>> dev
+
 
 ## [2.2.5] - 2026-01-23
 ### Addon Profiles
