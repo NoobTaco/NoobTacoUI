@@ -1,3 +1,7 @@
+## [2.2.8] - 2026-02-23
+### Addon Profiles
+- **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.9 with an improved layout.
+
 ## [2.2.7] - 2026-02-11
 ### Bug Fixes
 - **Global Font**: Fixed a Lua error ("attempted to index a forbidden table") occurring during the global environment scan by implementing safe indexing for internal Blizzard tables.
