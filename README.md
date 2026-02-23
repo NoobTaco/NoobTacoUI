@@ -61,6 +61,7 @@ Great additions that fit the theme but aren't strictly necessary.
 - **[NoobTaco-GotOne](https://www.curseforge.com/wow/addons/noobtaco-gotone)** - **Recommended**. Companion addon for audio notifications when you collect mounts, pets, toys, and transmog.
 - **[XIV_Databar Continued](https://www.curseforge.com/wow/addons/xiv-databar-continued)** - **Optional**. Titan Panel-inspired info bar for tracking gold, currency, and more.
 - **[Details! Damage Meter](https://www.curseforge.com/wow/addons/details)** - **Optional**. The premier damage and healing meter.
+- **[Enhance QoL](https://www.curseforge.com/wow/addons/enhance-qol)** - **Optional**. Little tweaks for enhancing your Quality of Life in WoW.
 
 #### Suggested Extras
 These addons are not configured by NoobTacoUI profiles but are highly recommended for a better gameplay experience.

@@ -788,7 +788,8 @@ local function BuildSchemas()
                 "SenseiClassResourceBar",
                 "zBarButtonBG",
                 "XIV_Databar",
-                "Details"
+                "Details",
+                "EnhanceQoL"
               }
               local count = 0
               local excludedProfiles = NoobTacoUIDB.GeneralSettings.ExcludedProfiles or {}
@@ -994,7 +995,8 @@ local function BuildSchemas()
 
       local optionalAddons = {
         "XIV_Databar",
-        "Details"
+        "Details",
+        "EnhanceQoL"
       }
       for _, key in ipairs(optionalAddons) do
         GenerateAddonCard(key, nil, "  |cinfo|OPTIONAL|r")
