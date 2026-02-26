@@ -30,6 +30,7 @@ globals = {
   "NoobTacoDB",
   "NoobTacoUIAddon",
   "BetterBlizzFramesDB",
+  "EnhanceQoLDB",
   "PLATYNATOR_CONFIG",
   "PLATYNATOR_CURRENT_PROFILE",
   "StaticPopupDialogs",

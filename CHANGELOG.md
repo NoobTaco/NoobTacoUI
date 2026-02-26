@@ -1,4 +1,4 @@
-## [2.2.8] - 2026-02-23
+## [2.2.8] - 2026-02-26
 ### Addon Profiles
 - **Edit Mode**: Updated the **Midnight** Edit Mode profile string to version 1.9 with an improved layout.
 - **EnhanceQoL**: Added new **Enhance QoL** addon profile with automated import support.
